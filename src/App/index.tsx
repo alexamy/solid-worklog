@@ -41,7 +41,7 @@ export function App() {
 
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
-    const intervalId = setInterval(() => setNow(new Date()), 1000); // TODO: 60000
+    const intervalId = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(intervalId);
   });
 
@@ -377,4 +377,8 @@ const sCellGrayed = css`
 const sCellPomodoro = css`
   display: flex;
   gap: 5px;
+`;
+
+const sPomodoroGray = css`
+  filter: grayscale(1) brightness(1.2);
 `;
