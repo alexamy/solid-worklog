@@ -1,6 +1,7 @@
 import { createStore, unwrap } from 'solid-js/store'
 import { createEffect, For } from 'solid-js';
 import { css } from '@linaria/core';
+import * as devalue from 'devalue';
 
 // types
 interface Store {
@@ -28,12 +29,12 @@ export function App() {
   createEffect(() => {
     const items = localStorage.getItem(STORAGE_KEY);
     if (items) {
-      setStore(JSON.parse(items));
+      setStore(devalue.parse(items));
     }
   });
 
   createEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(unwrap(store)));
+    localStorage.setItem(STORAGE_KEY, devalue.stringify(store));
   });
 
   return (
