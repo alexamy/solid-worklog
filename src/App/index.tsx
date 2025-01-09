@@ -21,6 +21,7 @@ interface Item {
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
 
+  // date
   const [currentDate, setCurrentDate] = createSignal(new Date());
   const isToday = createMemo(() => currentDate().toDateString() === new Date().toDateString());
 
@@ -30,6 +31,7 @@ export function App() {
     setCurrentDate(next);
   }
 
+  // items
   const [selectedItemId, setSelectedItemId] = createSignal<number | undefined>(undefined);
   const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
 
@@ -75,23 +77,6 @@ export function App() {
   }
 
   const { reset } = persistStore(store, setStore);
-
-  function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
-    const selection = window.getSelection();
-    const offset = selection?.focusOffset || 0;
-
-    e.preventDefault();
-    e.currentTarget.blur();
-    e.currentTarget.focus();
-
-    const range = document.createRange();
-    const textNode = e.currentTarget.firstChild || e.currentTarget;
-    range.setStart(textNode, offset);
-    range.setEnd(textNode, offset);
-
-    selection?.removeAllRanges();
-    selection?.addRange(range);
-  }
 
   return (
     <div class={sApp}>
@@ -259,6 +244,23 @@ function getDateNoTime(date: Date) {
 
 function toPomodoro(minutes: number) {
   return Math.round(minutes / 25 * 5) / 5;
+}
+
+function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+  const selection = window.getSelection();
+  const offset = selection?.focusOffset || 0;
+
+  e.preventDefault();
+  e.currentTarget.blur();
+  e.currentTarget.focus();
+
+  const range = document.createRange();
+  const textNode = e.currentTarget.firstChild || e.currentTarget;
+  range.setStart(textNode, offset);
+  range.setEnd(textNode, offset);
+
+  selection?.removeAllRanges();
+  selection?.addRange(range);
 }
 
 // styles
