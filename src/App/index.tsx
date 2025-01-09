@@ -20,8 +20,8 @@ interface Item {
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
 
-  function updateItem(item: Partial<Item>, index: number) {
-    setStore('items', index, item);
+  function updateItem(item: Partial<Item>, id: number) {
+    setStore('items', item => item.id === id, item);
   }
 
   function addItem() {
@@ -42,6 +42,8 @@ export function App() {
 
   const { reset } = persistStore(store, setStore);
 
+  const reversedItems = () => store.items.slice().reverse();
+
   return (
     <div>
       <div class={sToolbar}>
@@ -50,8 +52,8 @@ export function App() {
         <button onClick={reset}>Reset</button>
       </div>
       <div class={sTable}>
-        <For each={store.items}>
-          {(item, index) => (
+        <For each={reversedItems()}>
+          {(item) => (
             <div class={sRow}>
               <div class={sCell}>{formatTime(item.start)}</div>
               <div class={sCell}>{calculateDuration(item.start, item.end)}</div>
@@ -59,14 +61,14 @@ export function App() {
               <div
                 class={cx(sCell, sCellEditable)}
                 contentEditable
-                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, index())}
+                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
               >
                 {item.tag}
               </div>
               <div
                 class={cx(sCell, sCellEditable)}
                 contentEditable
-                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, index())}
+                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
               >
                 {item.description}
               </div>
@@ -117,7 +119,7 @@ function persistStore(
 
 const defaultStore: Store = {
   items: [{
-    id: 0,
+    id: 125,
     description: 'dinner',
     tag: 'idle',
     start: new Date(2025, 0, 1, 17, 20, 0),
