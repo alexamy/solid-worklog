@@ -199,10 +199,13 @@ const sCell = css`
   flex: 1;
   border: 1px solid #ccc;
   padding: 10px 15px;
+
   cursor: default;
+  outline: none;
 `;
 
 const sCellEditable = css`
+  min-width: 120px;
   text-align: left;
   cursor: text;
 `;
