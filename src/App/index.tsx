@@ -63,7 +63,7 @@ export function App() {
   const { reset } = persistStore(store, setStore);
 
   return (
-    <div>
+    <div class={sApp}>
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
           <button disabled={isInProgress()} onClick={() => addItem()}>Add</button>
@@ -75,6 +75,7 @@ export function App() {
           <button onClick={reset}>Reset</button>
         </div>
       </div>
+
       <div class={sTable}>
         <For each={reversedItems()}>
           {(item) => (
@@ -104,9 +105,13 @@ export function App() {
                 {item.tag}
               </div>
             </div>
-            )}
-          </For>
-        </div>
+          )}
+        </For>
+      </div>
+
+      <div class={sSummary}>
+        Today stats
+      </div>
     </div>
   )
 }
@@ -168,6 +173,12 @@ function calculateDuration(start: Date, end: Date) {
 }
 
 // styles
+const sApp = css`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
 const sToolbar = css`
   display: flex;
   justify-content: space-between;
@@ -217,4 +228,7 @@ const sCellEditable = css`
   min-width: 120px;
   text-align: left;
   cursor: text;
+`;
+
+const sSummary = css`
 `;
