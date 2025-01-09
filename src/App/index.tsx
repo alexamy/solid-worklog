@@ -82,6 +82,7 @@ export function App() {
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
                 contentEditable
+                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
                 onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
               >
                 {item.description}
@@ -90,6 +91,7 @@ export function App() {
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
                 contentEditable
+                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
               >
                 {item.tag}
