@@ -190,7 +190,8 @@ function calculateTodayStats(itemsAll: Item[], now: () => Date) {
     const items = itemsToday.filter(item => item.tag === tag);
     const duration = items
       .reduce((acc, item) => acc + calculateDuration(item.start, item.end ?? now()), 0);
-    return [tag, duration];
+
+    return [tag || '*empty*', duration];
   });
 
   return entries;
