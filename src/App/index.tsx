@@ -32,8 +32,10 @@ export function App() {
     setCurrentDate(next);
   }
 
-  // items
+  // selected
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
+
+  // items
   const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
 
   const itemsAtDate = createMemo(() => store.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
@@ -84,7 +86,7 @@ export function App() {
   }
 
   return (
-    <div class={sApp}>
+    <div class={sApp} onClick={(e) => e.currentTarget === e.target && setSelectedItemId(undefined)}>
       <div class={sCurrentDate}>
         <div class={sToolbarLeft}>
           <button disabled={isToday()} onClick={() => setCurrentDate(new Date())}>Today</button>
