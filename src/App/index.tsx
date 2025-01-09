@@ -24,6 +24,12 @@ export function App() {
   const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
   const reversedItems = createMemo(() => store.items.slice().reverse());
 
+  const [now, setNow] = createSignal(new Date());
+  createEffect(() => {
+    const intervalId = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(intervalId);
+  });
+
   function updateItem(item: Partial<Item>, id: number) {
     setStore('items', item => item.id === id, item);
   }
@@ -70,7 +76,7 @@ export function App() {
               onClick={() => setSelectedItemId(item.id)}
             >
               <div class={sCell}>{formatTime(item.start)}</div>
-              <div class={sCell}>{item.end ? calculateDuration(item.start, item.end) : ''}</div>
+              <div class={sCell}>{calculateDuration(item.start, item.end ?? now())}</div>
               <div class={sCell}>{item.end ? formatTime(item.end) : ''}</div>
               <div
                 class={sCell}
