@@ -160,7 +160,10 @@ export function App() {
 }
 
 function PomodoroIcon(props: { amount?: number }) {
-  return <img width={24 * (props.amount ?? 1)} height={24} src={pomodoroSvg} alt="Pomodoro" />;
+  const targetWidth = () => 24 * (props.amount ?? 1);
+  const width = () => targetWidth() >= 10 ? targetWidth() : 0;
+
+  return <img width={width().toFixed(2)} height={24} src={pomodoroSvg} alt="Pomodoro" />;
 }
 
 // api
@@ -273,7 +276,7 @@ function getDateNoTime(date: Date) {
 }
 
 function toPomodoro(minutes: number) {
-  return Math.round((minutes / 25) * 100) / 100;
+  return minutes / 25;
 }
 
 function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
