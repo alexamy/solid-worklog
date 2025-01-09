@@ -86,10 +86,15 @@ export function App() {
   return (
     <div class={sApp}>
       <div class={sCurrentDate}>
-        <button disabled={isToday()} onClick={() => setCurrentDate(new Date())}>Today</button>
-        <button onClick={() => moveDate(-1)}>{'<'}</button>
-        {currentDate().toLocaleDateString()}
-        <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
+        <div class={sToolbarLeft}>
+          <button disabled={isToday()} onClick={() => setCurrentDate(new Date())}>Today</button>
+          <button onClick={() => moveDate(-1)}>{'<'}</button>
+          {currentDate().toLocaleDateString()}
+          <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
+        </div>
+        <div class={sToolbarRight}>
+          {toTimestamp(now())}
+        </div>
       </div>
 
       <div class={sToolbar}>
@@ -307,6 +312,7 @@ const sApp = css`
 const sToolbar = css`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 10px 0;
 `;
 
@@ -322,8 +328,9 @@ const sToolbarRight = css`
 
 const sCurrentDate = css`
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
   align-items: center;
+  gap: 10px;
 `;
 
 const sTable = css`
