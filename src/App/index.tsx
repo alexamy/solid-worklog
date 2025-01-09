@@ -100,7 +100,7 @@ export function App() {
         </div>
         <div class={sToolbarRight}>
           <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
-          <button onDblClick={reset}>Reset</button>
+          <button onDblClick={reset} title="Double click to reset">Reset</button>
         </div>
       </div>
 
