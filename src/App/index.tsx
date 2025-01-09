@@ -1,4 +1,4 @@
-import { createStore, unwrap } from 'solid-js/store'
+import { createStore, SetStoreFunction } from 'solid-js/store'
 import { createEffect, For } from 'solid-js';
 import { css } from '@linaria/core';
 import * as devalue from 'devalue';
@@ -16,8 +16,6 @@ interface Item {
   end: Date;
 }
 
-const STORAGE_KEY = 'solid-worklog-store';
-
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
@@ -26,27 +24,12 @@ export function App() {
     setStore('items', index, item);
   }
 
-  createEffect(() => {
-    const items = localStorage.getItem(STORAGE_KEY);
-    if (items) {
-      try {
-        setStore(devalue.parse(items));
-      } catch (error) {
-        console.error(error);
-        localStorage.removeItem(STORAGE_KEY);
-        setStore(defaultStore);
-      }
-    }
-  });
-
-  createEffect(() => {
-    localStorage.setItem(STORAGE_KEY, devalue.stringify(store));
-  });
+  const { reset } = persistStore(store, setStore);
 
   return (
     <div>
       <div class={sToolbar}>
-        <button onClick={() => localStorage.removeItem(STORAGE_KEY)}>Reset</button>
+        <button onClick={reset}>Reset</button>
       </div>
       <div class={sTable}>
         <For each={store.items}>
@@ -75,6 +58,41 @@ export function App() {
         </div>
     </div>
   )
+}
+
+function persistStore(
+  store: Store,
+  setStore: SetStoreFunction<Store>,
+  storageKey = 'solid-worklog-store',
+) {
+  // load from storage
+  createEffect(() => {
+    const items = localStorage.getItem(storageKey);
+    if (items) {
+      try {
+        setStore(devalue.parse(items));
+      } catch (error) {
+        console.error(error);
+        localStorage.removeItem(storageKey);
+        setStore(defaultStore);
+      }
+    }
+  });
+
+  // save to storage
+  createEffect(() => {
+    localStorage.setItem(storageKey, devalue.stringify(store));
+  });
+
+  function reset() {
+    localStorage.removeItem(storageKey);
+    setStore(defaultStore);
+    window.location.reload();
+  }
+
+  return {
+    reset,
+  };
 }
 
 const defaultStore: Store = {
