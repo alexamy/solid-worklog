@@ -25,19 +25,22 @@ export function App() {
     setStore('items', index, item);
   }
 
-  // createEffect(() => {
-  //   const items = localStorage.getItem(STORAGE_KEY);
-  //   if (items) {
-  //     setStore(JSON.parse(items));
-  //   }
-  // });
+  createEffect(() => {
+    const items = localStorage.getItem(STORAGE_KEY);
+    if (items) {
+      setStore(JSON.parse(items));
+    }
+  });
 
-  // createEffect(() => {
-  //   localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
-  // });
+  createEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(unwrap(store)));
+  });
 
   return (
     <div>
+      <div class={sToolbar}>
+        <button onClick={() => localStorage.removeItem(STORAGE_KEY)}>Reset</button>
+      </div>
       <div class={sTable}>
         <For each={store.items}>
           {(item, index) => (
@@ -87,6 +90,11 @@ function calculateDuration(start: Date, end: Date) {
 }
 
 // styles
+const sToolbar = css`
+  display: flex;
+  padding: 10px 15px;
+`;
+
 const sTable = css`
   display: flex;
   flex-direction: column;
