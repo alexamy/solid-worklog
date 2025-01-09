@@ -35,16 +35,16 @@ export function App() {
             <div
               class={sCell}
               contentEditable
-              onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, index())}
+              onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, index())}
             >
-              {item.description}
+              {item.tag}
             </div>
             <div
               class={sCell}
               contentEditable
-              onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, index())}
+              onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, index())}
             >
-              {item.tag}
+              {item.description}
             </div>
           </div>
         )}
@@ -57,6 +57,7 @@ function formatTime(date: Date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
+// styles
 const sTable = css`
   display: flex;
 `;
