@@ -79,6 +79,7 @@ export function App() {
         </div>
       </div>
 
+      Worklog
       <div class={sTable}>
         <For each={reversedItems()}>
           {(item) => (
@@ -112,23 +113,21 @@ export function App() {
         </For>
       </div>
 
-      <div class={sSummary}>
-        Today stats
-        <div class={sTableStats}>
-          <For each={todayStats()}>
-            {(entry) => (
-              <div class={sRow}>
-                <div class={sCell}>{entry.tag}</div>
-                <div class={sCell}>{entry.duration} minutes</div>
-                <div class={sCell}>
-                  <For each={Array(Math.floor(toPomodoro(entry.duration))).fill(0)}>
-                    {() => <PomodoroIcon />}
-                  </For>
-                </div>
+      Stats
+      <div class={sTableStats}>
+        <For each={todayStats()}>
+          {(entry) => (
+            <div class={sRow}>
+              <div class={sCell}>{entry.tag}</div>
+              <div class={sCell}>{entry.duration} minutes</div>
+              <div class={sCell}>
+                <For each={Array(Math.floor(toPomodoro(entry.duration))).fill(0)}>
+                  {() => <PomodoroIcon />}
+                </For>
               </div>
-            )}
-          </For>
-        </div>
+            </div>
+          )}
+        </For>
       </div>
     </div>
   )
@@ -282,7 +281,4 @@ const sCellEditable = css`
   min-width: 120px;
   justify-content: flex-start;
   cursor: text;
-`;
-
-const sSummary = css`
 `;
