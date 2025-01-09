@@ -31,6 +31,7 @@ export function App() {
         {(item, index) => (
           <div class={sTable}>
             <div class={sCell}>{formatTime(item.start)}</div>
+            <div class={sCell}>{calculateDuration(item.start, item.end)}</div>
             <div class={sCell}>{formatTime(item.end)}</div>
             <div
               class={sCell}
@@ -53,8 +54,13 @@ export function App() {
   )
 }
 
+// methods
 function formatTime(date: Date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+function calculateDuration(start: Date, end: Date) {
+  return Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
 }
 
 // styles
