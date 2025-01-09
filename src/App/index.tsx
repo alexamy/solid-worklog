@@ -1,11 +1,11 @@
-import { createStore } from 'solid-js/store'
-import { For } from 'solid-js';
+import { createStore, unwrap } from 'solid-js/store'
+import { createEffect, For } from 'solid-js';
 import { css } from '@linaria/core';
 
 export function App() {
   const [store, setStore] = createStore({
     items: [{
-      id: 1,
+      id: 0,
       description: 'dinner',
       tag: 'idle',
       start: new Date(2025, 0, 1, 17, 20, 0),
@@ -16,11 +16,18 @@ export function App() {
   return (
     <div>
       <For each={store.items}>
-        {(item) => (
+        {(item, index) => (
           <div class={sTable}>
             <div>{formatTime(item.start)}</div>
             <div>{formatTime(item.end)}</div>
-            <div>{item.description}</div>
+            <div
+              contentEditable
+              onInput={(e) => {
+                setStore('items', index(), { description: e.currentTarget.textContent! });
+              }}
+            >
+              {item.description}
+            </div>
             <div>{item.tag}</div>
           </div>
         )}
