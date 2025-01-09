@@ -19,7 +19,10 @@ interface Item {
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
+
   const [selectedItemId, setSelectedItemId] = createSignal<number | undefined>(undefined);
+  const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
+  const reversedItems = createMemo(() => store.items.slice().reverse());
 
   function updateItem(item: Partial<Item>, id: number) {
     setStore('items', item => item.id === id, item);
@@ -46,9 +49,6 @@ export function App() {
   }
 
   const { reset } = persistStore(store, setStore);
-
-  const reversedItems = createMemo(() => store.items.slice().reverse());
-  const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
 
   return (
     <div>
