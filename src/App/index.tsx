@@ -19,7 +19,7 @@ interface Item {
 
 // component
 export function App() {
-  const [store, setStore] = createStore<Store>(defaultStore);
+  const [store, setStore] = createStore<Store>(getDefaultStore());
   const { reset } = persistStore(store, setStore);
 
   // date
@@ -177,7 +177,7 @@ function persistStore(
       } catch (error) {
         console.error(error);
         localStorage.removeItem(storageKey);
-        setStore(defaultStore);
+        setStore(getDefaultStore());
       }
     }
   });
@@ -190,7 +190,7 @@ function persistStore(
   // api
   function reset() {
     localStorage.removeItem(storageKey);
-    setStore(defaultStore);
+    setStore(getDefaultStore());
     window.location.reload();
   }
 
@@ -199,15 +199,35 @@ function persistStore(
   };
 }
 
-const defaultStore: Store = {
-  items: [{
-    id: '1',
-    description: 'dinner',
-    tag: 'idle',
-    start: new Date(2025, 0, 1, 17, 20, 0),
-    end: new Date(2025, 0, 1, 18, 25, 0),
-  }],
-};
+function getDefaultStore(): Store {
+  const now = new Date();
+
+  function at(hour: number, minute: number) {
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0);
+  }
+
+  return {
+    items: [{
+      id: '1',
+      description: 'dinner',
+      tag: 'idle',
+      start: at(13, 20),
+      end: at(14, 0),
+  }, {
+      id: '2',
+      description: 'dev',
+      tag: 'task 1',
+      start: at(14, 5),
+      end: at(15, 0),
+    }, {
+      id: '3',
+      description: 'dev',
+      tag: 'task 2',
+      start: at(15, 15),
+      end: at(15, 35),
+    }],
+  };
+}
 
 // methods
 function randomId() {
