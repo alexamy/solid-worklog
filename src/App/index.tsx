@@ -27,7 +27,7 @@ export function App() {
 
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
-    const intervalId = setInterval(() => setNow(new Date()), 1000);
+    const intervalId = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(intervalId);
   });
 
@@ -120,7 +120,11 @@ export function App() {
               <div class={sRow}>
                 <div class={sCell}>{entry.tag}</div>
                 <div class={sCell}>{entry.duration} minutes</div>
-                <div class={sCell}>{toPomodoro(entry.duration)} <PomodoroIcon /></div>
+                <div class={sCell}>
+                  <For each={Array(Math.floor(toPomodoro(entry.duration))).fill(0)}>
+                    {() => <PomodoroIcon />}
+                  </For>
+                </div>
               </div>
             )}
           </For>
