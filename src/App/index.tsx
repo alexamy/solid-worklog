@@ -2,6 +2,14 @@ import { createStore, unwrap } from 'solid-js/store'
 import { createEffect, For } from 'solid-js';
 import { css } from '@linaria/core';
 
+interface Item {
+  id: number;
+  description: string;
+  tag: string;
+  start: Date;
+  end: Date;
+}
+
 export function App() {
   const [store, setStore] = createStore({
     items: [{
@@ -10,8 +18,12 @@ export function App() {
       tag: 'idle',
       start: new Date(2025, 0, 1, 17, 20, 0),
       end: new Date(2025, 0, 1, 18, 25, 0),
-    }]
+    }] satisfies Item[],
   });
+
+  function updateItem(item: Partial<Item>, index: number) {
+    setStore('items', index, item);
+  }
 
   return (
     <div>
@@ -22,13 +34,16 @@ export function App() {
             <div>{formatTime(item.end)}</div>
             <div
               contentEditable
-              onInput={(e) => {
-                setStore('items', index(), { description: e.currentTarget.textContent! });
-              }}
+              onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, index())}
             >
               {item.description}
             </div>
-            <div>{item.tag}</div>
+            <div
+              contentEditable
+              onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, index())}
+            >
+              {item.tag}
+            </div>
           </div>
         )}
       </For>
