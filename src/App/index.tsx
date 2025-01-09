@@ -113,11 +113,16 @@ export function App() {
 
       <div class={sSummary}>
         Today stats
-        <For each={todayStats()}>
-          {(entry) => (
-            <div>{entry[0]}: {entry[1]} minutes</div>
-          )}
-        </For>
+        <div class={sTableStats}>
+          <For each={todayStats()}>
+            {(entry) => (
+              <div class={sRow}>
+                <div class={sCell}>{entry.tag}</div>
+                <div class={sCell}>{entry.duration} minutes</div>
+              </div>
+            )}
+          </For>
+        </div>
       </div>
     </div>
   )
@@ -191,7 +196,7 @@ function calculateTodayStats(itemsAll: Item[], now: () => Date) {
     const duration = items
       .reduce((acc, item) => acc + calculateDuration(item.start, item.end ?? now()), 0);
 
-    return [tag || '*empty*', duration];
+    return { tag: tag || '*empty*', duration };
   });
 
   return entries;
@@ -224,6 +229,11 @@ const sToolbarRight = css`
 const sTable = css`
   display: grid;
   grid-template-columns: auto auto auto auto auto;
+`;
+
+const sTableStats = css`
+  display: grid;
+  grid-template-columns: auto auto;
 `;
 
 const sRowSelected = css`
