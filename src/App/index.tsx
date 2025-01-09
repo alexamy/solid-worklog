@@ -10,7 +10,7 @@ interface Store {
 }
 
 interface Item {
-  id: number;
+  id: string;
   description: string;
   tag: string;
   start: Date;
@@ -33,7 +33,7 @@ export function App() {
   }
 
   // items
-  const [selectedItemId, setSelectedItemId] = createSignal<number | undefined>(undefined);
+  const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
   const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
 
   const itemsAtDate = createMemo(() => store.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
@@ -53,13 +53,13 @@ export function App() {
   const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
   // methods
-  function updateItem(item: Partial<Item>, id: number) {
+  function updateItem(item: Partial<Item>, id: string) {
     setStore('items', item => item.id === id, item);
   }
 
   function addItem(item: Partial<Item> = {}) {
     setStore('items', (items) => [...items, {
-      id: items.length,
+      id: randomId(),
       description: '',
       tag: '',
       start: new Date(),
@@ -79,7 +79,7 @@ export function App() {
     addItem();
   }
 
-  function removeItem(id: number) {
+  function removeItem(id: string) {
     setStore('items', (items) => items.filter(item => item.id !== id));
   }
 
@@ -114,7 +114,7 @@ export function App() {
             >
               <div class={sCell}>{toTimestamp(item.start)}</div>
               <div class={sCell}>{calculateDuration(item.start, item.end ?? now())}</div>
-              <div class={sCell}>{item.end ? toTimestamp(item.end) : ''}</div>
+              <div class={sCell} classList={{ [sCellGrayed]: !item.end }}>{toTimestamp(item.end ?? now())}</div>
               <div
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
@@ -201,7 +201,7 @@ function persistStore(
 
 const defaultStore: Store = {
   items: [{
-    id: 125,
+    id: '1',
     description: 'dinner',
     tag: 'idle',
     start: new Date(2025, 0, 1, 17, 20, 0),
@@ -210,6 +210,10 @@ const defaultStore: Store = {
 };
 
 // methods
+function randomId() {
+  return Math.random().toString(16).substring(2, 6);
+}
+
 function toTimestamp(date: Date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 }
@@ -339,6 +343,11 @@ const sCellEditable = css`
   min-width: 120px;
   justify-content: flex-start;
   cursor: text;
+`;
+
+const sCellGrayed = css`
+  color: #555;
+  font-style: italic;
 `;
 
 const sCellPomodoro = css`
