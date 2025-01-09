@@ -63,14 +63,16 @@ export function App() {
               <div class={sCell}>{calculateDuration(item.start, item.end)}</div>
               <div class={sCell}>{formatTime(item.end)}</div>
               <div
-                class={cx(sCell, sCellEditable)}
+                class={sCell}
+                classList={{ [sCellEditable]: true }}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
               >
                 {item.tag}
               </div>
               <div
-                class={cx(sCell, sCellEditable)}
+                class={sCell}
+                classList={{ [sCellEditable]: true }}
                 contentEditable
                 onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
               >
