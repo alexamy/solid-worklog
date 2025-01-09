@@ -149,6 +149,7 @@ export function App() {
                 <For each={Array(Math.floor(toPomodoro(entry.duration))).fill(0)}>
                   {() => <PomodoroIcon />}
                 </For>
+                <PomodoroIcon amount={toPomodoro(entry.duration) % 1} />
               </div>
             </div>
           )}
@@ -158,8 +159,8 @@ export function App() {
   )
 }
 
-function PomodoroIcon() {
-  return <img width={24} height={24} src={pomodoroSvg} alt="Pomodoro" />;
+function PomodoroIcon(props: { amount?: number }) {
+  return <img width={24 * (props.amount ?? 1)} height={24} src={pomodoroSvg} alt="Pomodoro" />;
 }
 
 // api
@@ -272,7 +273,7 @@ function getDateNoTime(date: Date) {
 }
 
 function toPomodoro(minutes: number) {
-  return Math.round(minutes / 25 * 5) / 5;
+  return Math.round((minutes / 25) * 100) / 100;
 }
 
 function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
@@ -377,8 +378,9 @@ const sCellGrayed = css`
 const sCellPomodoro = css`
   display: flex;
   gap: 5px;
-`;
 
-const sPomodoroGray = css`
-  filter: grayscale(1) brightness(1.2);
+  img {
+    object-fit: cover;
+    object-position: left top;
+  }
 `;
