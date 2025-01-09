@@ -155,7 +155,7 @@ export function App() {
             <div class={sRow}>
               <div class={sCell}>{entry.tag}</div>
               <div class={sCell}>{entry.duration} minutes</div>
-              <div class={sCell}>
+              <div class={sCell} classList={{ [sCellPomodoro]: true }}>
                 <For each={Array(Math.floor(toPomodoro(entry.duration))).fill(0)}>
                   {() => <PomodoroIcon />}
                 </For>
@@ -333,4 +333,9 @@ const sCellEditable = css`
   min-width: 120px;
   justify-content: flex-start;
   cursor: text;
+`;
+
+const sCellPomodoro = css`
+  display: flex;
+  gap: 5px;
 `;
