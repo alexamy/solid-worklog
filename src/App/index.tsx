@@ -48,13 +48,14 @@ export function App() {
   const { reset } = persistStore(store, setStore);
 
   const reversedItems = createMemo(() => store.items.slice().reverse());
+  const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
 
   return (
     <div>
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
-          <button onClick={addItem}>Add</button>
-          <button onClick={finishItem}>Finish</button>
+          <button disabled={isInProgress()} onClick={addItem}>Add</button>
+          <button disabled={!isInProgress()} onClick={finishItem}>Finish</button>
         </div>
         <div class={sToolbarRight}>
           <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
