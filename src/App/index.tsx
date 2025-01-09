@@ -34,6 +34,14 @@ export function App() {
 
   // selected
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
+  createEffect(() => {
+    const listener = () => {
+      setSelectedItemId(undefined);
+    };
+
+    document.body.addEventListener('click', listener);
+    return () => document.body.removeEventListener('click', listener);
+  });
 
   // items
   const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
@@ -92,7 +100,7 @@ export function App() {
   }
 
   return (
-    <div class={sApp} onClick={(e) => e.currentTarget === e.target && setSelectedItemId(undefined)}>
+    <div class={sApp}>
       <div class={sCurrentDate}>
         <div class={sToolbarLeft}>
           <button disabled={isToday()} onClick={() => setCurrentDate(new Date())}>Today</button>
@@ -119,10 +127,15 @@ export function App() {
 
       Worklog
       <div class={sTable}>
+        <div class={sRow}>
+          <div class={sCell} classList={{ [sCellDuration]: true }}>Duration</div>
+          <div class={sCell}>Tag</div>
+          <div class={sCell}>Description</div>
+        </div>
         <For each={reversedItems()}>
           {(item) => (
             <div class={sRow}
-              classList={{ [sRowSelected]: selectedItemId() === item.id }}
+              classList={{ [sRowSelectable]: true, [sRowSelected]: selectedItemId() === item.id }}
               onClick={() => setSelectedItemId(item.id)}
             >
               <div class={sCell}>{toTimestamp(item.start)}</div>
@@ -162,7 +175,7 @@ export function App() {
                 <For each={Array(Math.floor(toPomodoro(entry.duration))).fill(0)}>
                   {() => <PomodoroIcon />}
                 </For>
-                <PomodoroIcon amount={toPomodoro(entry.duration) % 1} />
+                <PomodoroIcon amount={toPomodoro(entry.duration) % 1} grayed={true} />
               </div>
             </div>
           )}
@@ -172,11 +185,17 @@ export function App() {
   )
 }
 
-function PomodoroIcon(props: { amount?: number }) {
+function PomodoroIcon(props: { amount?: number, grayed?: boolean }) {
   const targetWidth = () => 24 * (props.amount ?? 1);
   const width = () => targetWidth() >= 10 ? targetWidth() : 0;
 
-  return <img width={width().toFixed(2)} height={24} src={pomodoroSvg} alt="Pomodoro" />;
+  return <img
+    width={width().toFixed(2)}
+    height={24}
+    src={pomodoroSvg}
+    alt="Pomodoro"
+    classList={{ [sPomodoroGrayed]: props.grayed }}
+  />;
 }
 
 // api
@@ -359,7 +378,9 @@ const sRow = css`
   display: grid;
   grid-template-columns: subgrid;
   grid-column: 1 / -1;
+`;
 
+const sRowSelectable = css`
   &:hover:not(.${sRowSelected}) {
     background-color: #333;
   }
@@ -376,6 +397,10 @@ const sCell = css`
 
   cursor: default;
   outline: none;
+`;
+
+const sCellDuration = css`
+  grid-column: span 3;
 `;
 
 const sCellEditable = css`
@@ -396,4 +421,8 @@ const sCellGrayed = css`
 const sCellPomodoro = css`
   display: flex;
   gap: 5px;
+`;
+
+const sPomodoroGrayed = css`
+  filter: grayscale(100%) brightness(120%);
 `;
