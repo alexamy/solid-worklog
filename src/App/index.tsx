@@ -34,13 +34,14 @@ export function App() {
     setStore('items', item => item.id === id, item);
   }
 
-  function addItem() {
+  function addItem(item: Partial<Item> = {}) {
     setStore('items', (items) => [...items, {
       id: items.length,
       description: '',
       tag: '',
       start: new Date(),
       end: undefined,
+      ...item,
     }]);
   }
 
@@ -48,6 +49,11 @@ export function App() {
     setStore('items', store.items.length - 1, {
       end: new Date(),
     });
+  }
+
+  function tapItem() {
+    finishItem();
+    addItem();
   }
 
   function removeItem(id: number) {
@@ -62,6 +68,7 @@ export function App() {
         <div class={sToolbarLeft}>
           <button disabled={isInProgress()} onClick={addItem}>Add</button>
           <button disabled={!isInProgress()} onClick={finishItem}>Finish</button>
+          <button disabled={!isInProgress()} onClick={tapItem}>Tap</button>
         </div>
         <div class={sToolbarRight}>
           <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
