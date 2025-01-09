@@ -378,9 +378,4 @@ const sCellGrayed = css`
 const sCellPomodoro = css`
   display: flex;
   gap: 5px;
-
-  img {
-    object-fit: cover;
-    object-position: left top;
-  }
 `;
