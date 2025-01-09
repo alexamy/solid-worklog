@@ -212,12 +212,10 @@ function calculateDuration(start: Date, end: Date) {
 }
 
 function calculateStatsAtDate(itemsAll: Item[], date: () => Date) {
-  const target = new Date(date());
-  target.setHours(0, 0, 0, 0);
+  const target = getDateNoTime(date());
 
   const itemsAtDate = itemsAll.filter(item => {
-    const itemDate = new Date(item.start);
-    itemDate.setHours(0, 0, 0, 0);
+    const itemDate = getDateNoTime(item.start);
     return itemDate.getTime() === target.getTime();
   });
 
@@ -233,6 +231,13 @@ function calculateStatsAtDate(itemsAll: Item[], date: () => Date) {
   });
 
   return entries;
+}
+
+function getDateNoTime(date: Date) {
+  const target = new Date(date);
+  target.setHours(0, 0, 0, 0);
+
+  return target;
 }
 
 function toPomodoro(minutes: number) {
