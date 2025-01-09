@@ -119,6 +119,7 @@ export function App() {
               <div class={sRow}>
                 <div class={sCell}>{entry.tag}</div>
                 <div class={sCell}>{entry.duration} minutes</div>
+                <div class={sCell}>{toPomodoro(entry.duration)}</div>
               </div>
             )}
           </For>
@@ -202,6 +203,10 @@ function calculateTodayStats(itemsAll: Item[], now: () => Date) {
   return entries;
 }
 
+function toPomodoro(minutes: number) {
+  return Math.round(minutes / 25 * 5) / 5;
+}
+
 // styles
 const sApp = css`
   display: flex;
@@ -233,7 +238,7 @@ const sTable = css`
 
 const sTableStats = css`
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto auto;
 `;
 
 const sRowSelected = css`
