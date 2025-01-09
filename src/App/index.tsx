@@ -31,6 +31,8 @@ export function App() {
     return () => clearInterval(intervalId);
   });
 
+  const [currentDate, setCurrentDate] = createSignal(new Date());
+
   const todayStats = createMemo(() => calculateStatsAtDate(store.items, now));
 
   function updateItem(item: Partial<Item>, id: number) {
@@ -79,6 +81,10 @@ export function App() {
         </div>
       </div>
 
+      <div class={sCurrentDate}>
+        {currentDate().toLocaleDateString()}
+      </div>
+
       Worklog
       <div class={sTable}>
         <For each={reversedItems()}>
@@ -87,9 +93,9 @@ export function App() {
               classList={{ [sRowSelected]: selectedItemId() === item.id }}
               onClick={() => setSelectedItemId(item.id)}
             >
-              <div class={sCell}>{formatTime(item.start)}</div>
+              <div class={sCell}>{toTimestamp(item.start)}</div>
               <div class={sCell}>{calculateDuration(item.start, item.end ?? now())}</div>
-              <div class={sCell}>{item.end ? formatTime(item.end) : ''}</div>
+              <div class={sCell}>{item.end ? toTimestamp(item.end) : ''}</div>
               <div
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
@@ -185,7 +191,7 @@ const defaultStore: Store = {
 };
 
 // methods
-function formatTime(date: Date) {
+function toTimestamp(date: Date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
