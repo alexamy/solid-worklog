@@ -35,14 +35,6 @@ export function App() {
 
   // selected
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
-  createEffect(() => {
-    const listener = () => {
-      setSelectedItemId(undefined);
-    };
-
-    document.body.addEventListener('click', listener);
-    return () => document.body.removeEventListener('click', listener);
-  });
 
   // items
   const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
@@ -119,16 +111,13 @@ export function App() {
           <button disabled={isInProgress()} onClick={() => addItem()}>Add</button>
           <button disabled={!isInProgress()} onClick={finishItem}>Finish</button>
           <button disabled={!isInProgress()} onClick={tapItem}>Tap</button>
-          <button disabled={!selectedItemId()} onDblClick={() => removeItem(selectedItemId()!)}>Remove</button>
-        </div>
-        <div class={sToolbarRight}>
-          <button onDblClick={persist.reset} title="Double click to reset">Reset</button>
+          <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
         </div>
       </div>
 
       Worklog
       <div class={sTable}>
-        <div class={sRow}>
+        <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
           <div class={sCell} classList={{ [sCellDuration]: true }}>Duration</div>
           <div class={sCell}>Tag</div>
           <div class={sCell}>Description</div>
@@ -182,6 +171,15 @@ export function App() {
           )}
         </For>
       </div>
+
+      Danger zone
+      <div class={sToolbar}>
+        <div class={sToolbarLeft}>
+          <button onClick={() => persist.save(backupKey)}>Save backup</button>
+          <button onClick={() => persist.load(backupKey, store)}>Load backup</button>
+          <button onDblClick={persist.reset} title="Double click to reset">Reset</button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -209,7 +207,7 @@ function persistStore(
     localStorage.setItem(key, devalue.stringify(store));
   }
 
-  function load(key = storageKey) {
+  function load(key = storageKey, backupStore = getDefaultStore()) {
     const items = localStorage.getItem(key);
     if (items) {
       try {
@@ -217,7 +215,7 @@ function persistStore(
       } catch (error) {
         console.error(error);
         localStorage.removeItem(key);
-        setStore(getDefaultStore());
+        setStore(backupStore);
       }
     }
   }
@@ -343,7 +341,7 @@ const sToolbar = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 5px 0;
 `;
 
 const sToolbarLeft = css`
