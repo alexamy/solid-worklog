@@ -15,6 +15,8 @@ interface Item {
   end: Date;
 }
 
+const STORAGE_KEY = 'solid-worklog-store';
+
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
@@ -23,31 +25,44 @@ export function App() {
     setStore('items', index, item);
   }
 
+  // createEffect(() => {
+  //   const items = localStorage.getItem(STORAGE_KEY);
+  //   if (items) {
+  //     setStore(JSON.parse(items));
+  //   }
+  // });
+
+  // createEffect(() => {
+  //   localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  // });
+
   return (
     <div>
-      <For each={store.items}>
-        {(item, index) => (
-          <div class={sTable}>
-            <div class={sCell}>{formatTime(item.start)}</div>
-            <div class={sCell}>{calculateDuration(item.start, item.end)}</div>
-            <div class={sCell}>{formatTime(item.end)}</div>
-            <div
-              class={sCell}
-              contentEditable
-              onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, index())}
-            >
-              {item.tag}
+      <div class={sTable}>
+        <For each={store.items}>
+          {(item, index) => (
+            <div class={sRow}>
+              <div class={sCell}>{formatTime(item.start)}</div>
+              <div class={sCell}>{calculateDuration(item.start, item.end)}</div>
+              <div class={sCell}>{formatTime(item.end)}</div>
+              <div
+                class={sCell}
+                contentEditable
+                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, index())}
+              >
+                {item.tag}
+              </div>
+              <div
+                class={sCell}
+                contentEditable
+                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, index())}
+              >
+                {item.description}
+              </div>
             </div>
-            <div
-              class={sCell}
-              contentEditable
-              onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, index())}
-            >
-              {item.description}
-            </div>
-          </div>
-        )}
-      </For>
+            )}
+          </For>
+        </div>
     </div>
   )
 }
@@ -73,6 +88,11 @@ function calculateDuration(start: Date, end: Date) {
 
 // styles
 const sTable = css`
+  display: flex;
+  flex-direction: column;
+`;
+
+const sRow = css`
   display: flex;
 `;
 
