@@ -2,6 +2,7 @@ import { createStore, unwrap } from 'solid-js/store'
 import { createEffect, For } from 'solid-js';
 import { css } from '@linaria/core';
 
+// types
 interface Store {
   items: Item[];
 }
@@ -14,6 +15,7 @@ interface Item {
   end: Date;
 }
 
+// component
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
 
