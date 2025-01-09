@@ -125,7 +125,11 @@ export function App() {
         <For each={reversedItems()}>
           {(item) => (
             <div class={sRow}
-              classList={{ [sRowSelectable]: true, [sRowSelected]: selectedItemId() === item.id }}
+              classList={{
+                [sRowSelectable]: true,
+                [sRowSelected]: selectedItemId() === item.id,
+                [sRowIdle]: item.tag === 'idle',
+              }}
               onClick={() => setSelectedItemId(item.id)}
             >
               <div class={sCell}>{toTimestamp(item.start)}</div>
@@ -379,6 +383,10 @@ const sRow = css`
   display: grid;
   grid-template-columns: subgrid;
   grid-column: 1 / -1;
+`;
+
+const sRowIdle = css`
+  color: #444;
 `;
 
 const sRowSelectable = css`
