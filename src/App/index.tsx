@@ -66,7 +66,7 @@ export function App() {
     <div>
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
-          <button disabled={isInProgress()} onClick={addItem}>Add</button>
+          <button disabled={isInProgress()} onClick={() => addItem()}>Add</button>
           <button disabled={!isInProgress()} onClick={finishItem}>Finish</button>
           <button disabled={!isInProgress()} onClick={tapItem}>Tap</button>
         </div>
