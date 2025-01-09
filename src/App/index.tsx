@@ -2,6 +2,7 @@ import { createStore, SetStoreFunction } from 'solid-js/store'
 import { createEffect, createMemo, createSignal, For } from 'solid-js';
 import { css } from '@linaria/core';
 import * as devalue from 'devalue';
+import pomodoroSvg from './pomodoro.svg';
 
 // types
 interface Store {
@@ -119,7 +120,7 @@ export function App() {
               <div class={sRow}>
                 <div class={sCell}>{entry.tag}</div>
                 <div class={sCell}>{entry.duration} minutes</div>
-                <div class={sCell}>{toPomodoro(entry.duration)}</div>
+                <div class={sCell}>{toPomodoro(entry.duration)} <PomodoroIcon /></div>
               </div>
             )}
           </For>
@@ -127,6 +128,10 @@ export function App() {
       </div>
     </div>
   )
+}
+
+function PomodoroIcon() {
+  return <img width={24} height={24} src={pomodoroSvg} alt="Pomodoro" />;
 }
 
 // api
@@ -260,13 +265,17 @@ const sCell = css`
   border: 1px solid #ccc;
   padding: 10px 15px;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: default;
   outline: none;
 `;
 
 const sCellEditable = css`
   min-width: 120px;
-  text-align: left;
+  justify-content: flex-start;
   cursor: text;
 `;
 
