@@ -104,6 +104,7 @@ function persistStore(
     localStorage.setItem(storageKey, devalue.stringify(store));
   });
 
+  // api
   function reset() {
     localStorage.removeItem(storageKey);
     setStore(defaultStore);
