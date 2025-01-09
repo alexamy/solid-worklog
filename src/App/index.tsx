@@ -1,6 +1,6 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
 import { createEffect, createMemo, For } from 'solid-js';
-import { css, cx } from '@linaria/core';
+import { css } from '@linaria/core';
 import * as devalue from 'devalue';
 
 // types
@@ -13,7 +13,7 @@ interface Item {
   description: string;
   tag: string;
   start: Date;
-  end: Date;
+  end: Date | undefined;
 }
 
 // component
@@ -30,7 +30,7 @@ export function App() {
       description: '',
       tag: '',
       start: new Date(),
-      end: new Date(),
+      end: undefined,
     }]);
   }
 
@@ -60,8 +60,8 @@ export function App() {
           {(item) => (
             <div class={sRow}>
               <div class={sCell}>{formatTime(item.start)}</div>
-              <div class={sCell}>{calculateDuration(item.start, item.end)}</div>
-              <div class={sCell}>{formatTime(item.end)}</div>
+              <div class={sCell}>{item.end ? calculateDuration(item.start, item.end) : ''}</div>
+              <div class={sCell}>{item.end ? formatTime(item.end) : ''}</div>
               <div
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
