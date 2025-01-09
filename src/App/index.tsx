@@ -65,6 +65,10 @@ export function App() {
     setStore('items', (items) => items.filter(item => item.id !== id));
   }
 
+  function moveDate(delta: number) {
+    setCurrentDate(new Date(currentDate().setDate(currentDate().getDate() + delta)));
+  }
+
   const { reset } = persistStore(store, setStore);
 
   return (
@@ -82,7 +86,9 @@ export function App() {
       </div>
 
       <div class={sCurrentDate}>
+        <button onClick={() => moveDate(-1)}>{'<'}</button>
         {currentDate().toLocaleDateString()}
+        <button onClick={() => moveDate(1)}>{'>'}</button>
       </div>
 
       Worklog
@@ -244,6 +250,13 @@ const sToolbarLeft = css`
 const sToolbarRight = css`
   display: flex;
   gap: 10px;
+`;
+
+const sCurrentDate = css`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const sTable = css`
