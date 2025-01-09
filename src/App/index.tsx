@@ -31,7 +31,7 @@ export function App() {
     return () => clearInterval(intervalId);
   });
 
-  const todayStats = createMemo(() => calculateTodayStats(store.items, now));
+  const todayStats = createMemo(() => calculateStatsAtDate(store.items, now));
 
   function updateItem(item: Partial<Item>, id: number) {
     setStore('items', item => item.id === id, item);
@@ -194,17 +194,18 @@ function calculateDuration(start: Date, end: Date) {
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60));
 }
 
-function calculateTodayStats(itemsAll: Item[], now: () => Date) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+function calculateStatsAtDate(itemsAll: Item[], date: () => Date) {
+  const target = new Date(date());
+  target.setHours(0, 0, 0, 0);
 
-  const itemsToday = itemsAll.filter(item => item.start >= today);
+  const itemsToday = itemsAll.filter(item => item.start >= target);
   const tags = [...new Set(itemsToday.map(item => item.tag))];
 
   const entries = tags.map(tag => {
+    const now = new Date();
     const items = itemsToday.filter(item => item.tag === tag);
     const duration = items
-      .reduce((acc, item) => acc + calculateDuration(item.start, item.end ?? now()), 0);
+      .reduce((acc, item) => acc + calculateDuration(item.start, item.end ?? now), 0);
 
     return { tag: tag || '*empty*', duration };
   });
