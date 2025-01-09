@@ -21,9 +21,20 @@ interface Item {
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
 
+  const [currentDate, setCurrentDate] = createSignal(new Date());
+  const isToday = createMemo(() => currentDate().toDateString() === new Date().toDateString());
+
+  function moveDate(delta: number) {
+    const next = new Date(currentDate());
+    next.setDate(next.getDate() + delta);
+    setCurrentDate(next);
+  }
+
   const [selectedItemId, setSelectedItemId] = createSignal<number | undefined>(undefined);
   const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
-  const reversedItems = createMemo(() => store.items.slice().reverse());
+
+  const itemsAtDate = createMemo(() => store.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
+  const reversedItems = createMemo(() => itemsAtDate().slice().reverse());
 
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
@@ -61,15 +72,6 @@ export function App() {
 
   function removeItem(id: number) {
     setStore('items', (items) => items.filter(item => item.id !== id));
-  }
-
-  const [currentDate, setCurrentDate] = createSignal(new Date());
-  const isToday = createMemo(() => currentDate().toDateString() === new Date().toDateString());
-
-  function moveDate(delta: number) {
-    const next = new Date(currentDate());
-    next.setDate(next.getDate() + delta);
-    setCurrentDate(next);
   }
 
   const { reset } = persistStore(store, setStore);
