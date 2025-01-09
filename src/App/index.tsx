@@ -82,17 +82,17 @@ export function App() {
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
                 contentEditable
-                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
               >
-                {item.tag}
+                {item.description}
               </div>
               <div
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
                 contentEditable
-                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
+                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
               >
-                {item.description}
+                {item.tag}
               </div>
             </div>
             )}
