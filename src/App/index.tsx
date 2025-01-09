@@ -47,9 +47,13 @@ export function App() {
   return (
     <div>
       <div class={sToolbar}>
-        <button onClick={addItem}>Add</button>
-        <button onClick={() => finishItem(store.items.length - 1)}>Finish</button>
-        <button onClick={reset}>Reset</button>
+        <div class={sToolbarLeft}>
+          <button onClick={addItem}>Add</button>
+          <button onClick={() => finishItem(store.items.length - 1)}>Finish</button>
+        </div>
+        <div class={sToolbarRight}>
+          <button onClick={reset}>Reset</button>
+        </div>
       </div>
       <div class={sTable}>
         <For each={reversedItems()}>
@@ -139,7 +143,18 @@ function calculateDuration(start: Date, end: Date) {
 // styles
 const sToolbar = css`
   display: flex;
+  justify-content: space-between;
   padding: 10px 15px;
+  gap: 10px;
+`;
+
+const sToolbarLeft = css`
+  display: flex;
+  gap: 10px;
+`;
+
+const sToolbarRight = css`
+  display: flex;
   gap: 10px;
 `;
 
