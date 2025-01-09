@@ -30,15 +30,17 @@ export function App() {
       <For each={store.items}>
         {(item, index) => (
           <div class={sTable}>
-            <div>{formatTime(item.start)}</div>
-            <div>{formatTime(item.end)}</div>
+            <div class={sCell}>{formatTime(item.start)}</div>
+            <div class={sCell}>{formatTime(item.end)}</div>
             <div
+              class={sCell}
               contentEditable
               onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, index())}
             >
               {item.description}
             </div>
             <div
+              class={sCell}
               contentEditable
               onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, index())}
             >
@@ -57,5 +59,10 @@ function formatTime(date: Date) {
 
 const sTable = css`
   display: flex;
-  gap: 10px;
+`;
+
+const sCell = css`
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
 `;
