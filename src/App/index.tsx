@@ -1,5 +1,5 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
-import { createEffect, For } from 'solid-js';
+import { createEffect, createMemo, For } from 'solid-js';
 import { css, cx } from '@linaria/core';
 import * as devalue from 'devalue';
 
@@ -42,7 +42,7 @@ export function App() {
 
   const { reset } = persistStore(store, setStore);
 
-  const reversedItems = () => store.items.slice().reverse();
+  const reversedItems = createMemo(() => store.items.slice().reverse());
 
   return (
     <div>
