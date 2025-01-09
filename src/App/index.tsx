@@ -38,7 +38,7 @@ export function App() {
 
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
-    const intervalId = setInterval(() => setNow(new Date()), 60000);
+    const intervalId = setInterval(() => setNow(new Date()), 1000); // TODO: 60000
     return () => clearInterval(intervalId);
   });
 
@@ -76,6 +76,23 @@ export function App() {
 
   const { reset } = persistStore(store, setStore);
 
+  function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+    const selection = window.getSelection();
+    const offset = selection?.focusOffset || 0;
+
+    e.preventDefault();
+    e.currentTarget.blur();
+    e.currentTarget.focus();
+
+    const range = document.createRange();
+    const textNode = e.currentTarget.firstChild || e.currentTarget;
+    range.setStart(textNode, offset);
+    range.setEnd(textNode, offset);
+
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  }
+
   return (
     <div class={sApp}>
       <div class={sToolbar}>
@@ -112,8 +129,8 @@ export function App() {
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
                 contentEditable
-                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                onKeyDown={(e) => e.key === 'Enter' && triggerNonDestructiveBlur(e)}
               >
                 {item.tag}
               </div>
@@ -121,8 +138,8 @@ export function App() {
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
                 contentEditable
-                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
                 onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
+                onKeyDown={(e) => e.key === 'Enter' && triggerNonDestructiveBlur(e)}
               >
                 {item.description}
               </div>
