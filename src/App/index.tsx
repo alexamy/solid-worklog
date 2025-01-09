@@ -1,5 +1,6 @@
 import { createStore } from 'solid-js/store'
 import { For } from 'solid-js';
+import { css } from '@linaria/core';
 
 export function App() {
   const [store, setStore] = createStore({
@@ -16,9 +17,9 @@ export function App() {
     <div>
       <For each={store.items}>
         {(item) => (
-          <div>
-            <div>{item.start.toLocaleString()}</div>
-            <div>{item.end.toLocaleString()}</div>
+          <div class={sTable}>
+            <div>{formatTime(item.start)}</div>
+            <div>{formatTime(item.end)}</div>
             <div>{item.description}</div>
             <div>{item.tag}</div>
           </div>
@@ -27,3 +28,12 @@ export function App() {
     </div>
   )
 }
+
+function formatTime(date: Date) {
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+const sTable = css`
+  display: flex;
+  gap: 10px;
+`;
