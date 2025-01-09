@@ -1,6 +1,6 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
 import { createEffect, For } from 'solid-js';
-import { css } from '@linaria/core';
+import { css, cx } from '@linaria/core';
 import * as devalue from 'devalue';
 
 // types
@@ -42,8 +42,6 @@ export function App() {
 
   const { reset } = persistStore(store, setStore);
 
-  const reversedItems = () => store.items.slice().reverse();
-
   return (
     <div>
       <div class={sToolbar}>
@@ -52,21 +50,21 @@ export function App() {
         <button onClick={reset}>Reset</button>
       </div>
       <div class={sTable}>
-        <For each={reversedItems()}>
+        <For each={store.items}>
           {(item, index) => (
             <div class={sRow}>
               <div class={sCell}>{formatTime(item.start)}</div>
               <div class={sCell}>{calculateDuration(item.start, item.end)}</div>
               <div class={sCell}>{formatTime(item.end)}</div>
               <div
-                class={sCell}
+                class={cx(sCell, sCellText)}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, index())}
               >
                 {item.tag}
               </div>
               <div
-                class={sCell}
+                class={cx(sCell, sCellText)}
                 contentEditable
                 onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, index())}
               >
@@ -139,19 +137,24 @@ function calculateDuration(start: Date, end: Date) {
 const sToolbar = css`
   display: flex;
   padding: 10px 15px;
+  gap: 10px;
 `;
 
 const sTable = css`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
 `;
 
 const sRow = css`
-  display: flex;
+  display: contents;
 `;
 
 const sCell = css`
   flex: 1;
   border: 1px solid #ccc;
   padding: 10px 15px;
+`;
+
+const sCellText = css`
+  text-align: left;
 `;
