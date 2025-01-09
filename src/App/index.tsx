@@ -34,8 +34,8 @@ export function App() {
     }]);
   }
 
-  function finishItem(index: number) {
-    setStore('items', index, {
+  function finishItem() {
+    setStore('items', store.items.length - 1, {
       end: new Date(),
     });
   }
@@ -49,7 +49,7 @@ export function App() {
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
           <button onClick={addItem}>Add</button>
-          <button onClick={() => finishItem(store.items.length - 1)}>Finish</button>
+          <button onClick={finishItem}>Finish</button>
         </div>
         <div class={sToolbarRight}>
           <button onClick={reset}>Reset</button>
