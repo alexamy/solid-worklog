@@ -95,6 +95,13 @@ export function App() {
 
   return (
     <div class={sApp}>
+      <div class={sCurrentDate}>
+        <button disabled={isToday()} onClick={() => setCurrentDate(new Date())}>Today</button>
+        <button onClick={() => moveDate(-1)}>{'<'}</button>
+        {currentDate().toLocaleDateString()}
+        <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
+      </div>
+
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
           <button disabled={isInProgress()} onClick={() => addItem()}>Add</button>
@@ -105,13 +112,6 @@ export function App() {
           <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
           <button onClick={reset}>Reset</button>
         </div>
-      </div>
-
-      <div class={sCurrentDate}>
-        <button onClick={() => moveDate(-1)}>{'<'}</button>
-        {currentDate().toLocaleDateString()}
-        <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
-        <button onClick={() => setCurrentDate(new Date())}>Today</button>
       </div>
 
       Worklog
@@ -154,7 +154,7 @@ export function App() {
           {(entry) => (
             <div class={sRow}>
               <div class={sCell}>{entry.tag}</div>
-              <div class={sCell}>{entry.duration} minutes</div>
+              <div class={sCell}>{entry.duration} min</div>
               <div class={sCell} classList={{ [sCellPomodoro]: true }}>
                 <For each={Array(Math.floor(toPomodoro(entry.duration))).fill(0)}>
                   {() => <PomodoroIcon />}
@@ -266,13 +266,13 @@ const sApp = css`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 500px;
 `;
 
 const sToolbar = css`
   display: flex;
   justify-content: space-between;
-  padding: 10px 15px;
-  gap: 10px;
+  padding: 10px 0;
 `;
 
 const sToolbarLeft = css`
@@ -289,7 +289,6 @@ const sCurrentDate = css`
   display: flex;
   gap: 10px;
   align-items: center;
-  justify-content: center;
 `;
 
 const sTable = css`
