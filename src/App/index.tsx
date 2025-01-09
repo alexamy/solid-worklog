@@ -41,6 +41,10 @@ export function App() {
     });
   }
 
+  function removeItem(id: number) {
+    setStore('items', (items) => items.filter(item => item.id !== id));
+  }
+
   const { reset } = persistStore(store, setStore);
 
   const reversedItems = createMemo(() => store.items.slice().reverse());
@@ -53,6 +57,7 @@ export function App() {
           <button onClick={finishItem}>Finish</button>
         </div>
         <div class={sToolbarRight}>
+          <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
           <button onClick={reset}>Reset</button>
         </div>
       </div>
