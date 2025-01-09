@@ -78,6 +78,7 @@ export function App() {
   )
 }
 
+// api
 function persistStore(
   store: Store,
   setStore: SetStoreFunction<Store>,
