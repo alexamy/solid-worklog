@@ -45,7 +45,10 @@ export function App() {
     return () => clearInterval(intervalId);
   });
 
-  const dayStats = createMemo(() => calculateStatsAtDate(store.items, currentDate));
+  const dayStats = createMemo(() => calculateStatsAtDate(
+    store.items,
+    () => isToday() ? now() : currentDate(),
+  ));
 
   const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
