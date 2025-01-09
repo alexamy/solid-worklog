@@ -42,6 +42,8 @@ export function App() {
 
   const { reset } = persistStore(store, setStore);
 
+  const reversedItems = () => store.items.slice().reverse();
+
   return (
     <div>
       <div class={sToolbar}>
@@ -50,7 +52,7 @@ export function App() {
         <button onClick={reset}>Reset</button>
       </div>
       <div class={sTable}>
-        <For each={store.items}>
+        <For each={reversedItems()}>
           {(item, index) => (
             <div class={sRow}>
               <div class={sCell}>{formatTime(item.start)}</div>
