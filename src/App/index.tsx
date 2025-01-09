@@ -119,9 +119,9 @@ export function App() {
           <button disabled={isInProgress()} onClick={() => addItem()}>Add</button>
           <button disabled={!isInProgress()} onClick={finishItem}>Finish</button>
           <button disabled={!isInProgress()} onClick={tapItem}>Tap</button>
+          <button disabled={!selectedItemId()} onDblClick={() => removeItem(selectedItemId()!)}>Remove</button>
         </div>
         <div class={sToolbarRight}>
-          <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
           <button onDblClick={persist.reset} title="Double click to reset">Reset</button>
         </div>
       </div>
