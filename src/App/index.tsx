@@ -29,7 +29,13 @@ export function App() {
   createEffect(() => {
     const items = localStorage.getItem(STORAGE_KEY);
     if (items) {
-      setStore(devalue.parse(items));
+      try {
+        setStore(devalue.parse(items));
+      } catch (error) {
+        console.error(error);
+        localStorage.removeItem(STORAGE_KEY);
+        setStore(defaultStore);
+      }
     }
   });
 
