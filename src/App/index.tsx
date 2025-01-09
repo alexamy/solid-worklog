@@ -24,11 +24,29 @@ export function App() {
     setStore('items', index, item);
   }
 
+  function addItem() {
+    setStore('items', (items) => [...items, {
+      id: items.length,
+      description: '',
+      tag: '',
+      start: new Date(),
+      end: new Date(),
+    }]);
+  }
+
+  function finishItem(index: number) {
+    setStore('items', index, {
+      end: new Date(),
+    });
+  }
+
   const { reset } = persistStore(store, setStore);
 
   return (
     <div>
       <div class={sToolbar}>
+        <button onClick={addItem}>Add</button>
+        <button onClick={() => finishItem(store.items.length - 1)}>Finish</button>
         <button onClick={reset}>Reset</button>
       </div>
       <div class={sTable}>
@@ -111,7 +129,7 @@ function formatTime(date: Date) {
 }
 
 function calculateDuration(start: Date, end: Date) {
-  return Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
+  return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60));
 }
 
 // styles
