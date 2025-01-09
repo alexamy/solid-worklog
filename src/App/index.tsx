@@ -31,8 +31,6 @@ export function App() {
     return () => clearInterval(intervalId);
   });
 
-  const [currentDate, setCurrentDate] = createSignal(new Date());
-
   const todayStats = createMemo(() => calculateStatsAtDate(store.items, now));
 
   function updateItem(item: Partial<Item>, id: number) {
@@ -65,8 +63,13 @@ export function App() {
     setStore('items', (items) => items.filter(item => item.id !== id));
   }
 
+  const [currentDate, setCurrentDate] = createSignal(new Date());
+  const isToday = createMemo(() => currentDate().toDateString() === new Date().toDateString());
+
   function moveDate(delta: number) {
-    setCurrentDate(new Date(currentDate().setDate(currentDate().getDate() + delta)));
+    const next = new Date(currentDate());
+    next.setDate(next.getDate() + delta);
+    setCurrentDate(next);
   }
 
   const { reset } = persistStore(store, setStore);
@@ -88,7 +91,8 @@ export function App() {
       <div class={sCurrentDate}>
         <button onClick={() => moveDate(-1)}>{'<'}</button>
         {currentDate().toLocaleDateString()}
-        <button onClick={() => moveDate(1)}>{'>'}</button>
+        <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
+        <button onClick={() => setCurrentDate(new Date())}>Today</button>
       </div>
 
       Worklog
