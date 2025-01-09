@@ -204,26 +204,26 @@ function persistStore(
   setStore: SetStoreFunction<Store>,
   storageKey = 'solid-worklog-store',
 ) {
-  // load from storage
-  createEffect(() => {
-    const items = localStorage.getItem(storageKey);
+  function save(key = storageKey) {
+    localStorage.setItem(key, devalue.stringify(store));
+  }
+
+  function load(key = storageKey) {
+    const items = localStorage.getItem(key);
     if (items) {
       try {
         setStore(devalue.parse(items));
       } catch (error) {
         console.error(error);
-        localStorage.removeItem(storageKey);
+        localStorage.removeItem(key);
         setStore(getDefaultStore());
       }
     }
-  });
+  }
 
-  // save to storage
-  createEffect(() => {
-    localStorage.setItem(storageKey, devalue.stringify(store));
-  });
+  createEffect(() => load());
+  createEffect(() => save());
 
-  // api
   function reset() {
     localStorage.removeItem(storageKey);
     setStore(getDefaultStore());
@@ -232,6 +232,8 @@ function persistStore(
 
   return {
     reset,
+    load,
+    save,
   };
 }
 
