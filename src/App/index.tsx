@@ -20,6 +20,7 @@ interface Item {
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
+  const { reset } = persistStore(store, setStore);
 
   // date
   const [currentDate, setCurrentDate] = createSignal(new Date());
@@ -46,6 +47,9 @@ export function App() {
 
   const dayStats = createMemo(() => calculateStatsAtDate(store.items, currentDate));
 
+  const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
+
+  // methods
   function updateItem(item: Partial<Item>, id: number) {
     setStore('items', item => item.id === id, item);
   }
@@ -75,8 +79,6 @@ export function App() {
   function removeItem(id: number) {
     setStore('items', (items) => items.filter(item => item.id !== id));
   }
-
-  const { reset } = persistStore(store, setStore);
 
   return (
     <div class={sApp}>
