@@ -1,5 +1,5 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
-import { createEffect, createMemo, For } from 'solid-js';
+import { createEffect, createMemo, createSignal, For } from 'solid-js';
 import { css } from '@linaria/core';
 import * as devalue from 'devalue';
 
@@ -19,6 +19,7 @@ interface Item {
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(defaultStore);
+  const [selectedItemId, setSelectedItemId] = createSignal<number | undefined>(undefined);
 
   function updateItem(item: Partial<Item>, id: number) {
     setStore('items', item => item.id === id, item);
@@ -58,7 +59,10 @@ export function App() {
       <div class={sTable}>
         <For each={reversedItems()}>
           {(item) => (
-            <div class={sRow}>
+            <div class={sRow}
+              classList={{ [sRowSelected]: selectedItemId() === item.id }}
+              onClick={() => setSelectedItemId(item.id)}
+            >
               <div class={sCell}>{formatTime(item.start)}</div>
               <div class={sCell}>{item.end ? calculateDuration(item.start, item.end) : ''}</div>
               <div class={sCell}>{item.end ? formatTime(item.end) : ''}</div>
@@ -165,8 +169,18 @@ const sTable = css`
   grid-template-columns: auto auto auto auto auto;
 `;
 
+const sRowSelected = css`
+  background-color: #161616;
+`;
+
 const sRow = css`
-  display: contents;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+
+  &:hover:not(.${sRowSelected}) {
+    background-color: #333;
+  }
 `;
 
 const sCell = css`
