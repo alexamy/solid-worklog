@@ -42,7 +42,7 @@ export function App() {
     return () => clearInterval(intervalId);
   });
 
-  const todayStats = createMemo(() => calculateStatsAtDate(store.items, now));
+  const dayStats = createMemo(() => calculateStatsAtDate(store.items, currentDate));
 
   function updateItem(item: Partial<Item>, id: number) {
     setStore('items', item => item.id === id, item);
@@ -133,7 +133,7 @@ export function App() {
 
       Stats
       <div class={sTableStats}>
-        <For each={todayStats()}>
+        <For each={dayStats()}>
           {(entry) => (
             <div class={sRow}>
               <div class={sCell}>{entry.tag}</div>
@@ -215,12 +215,17 @@ function calculateStatsAtDate(itemsAll: Item[], date: () => Date) {
   const target = new Date(date());
   target.setHours(0, 0, 0, 0);
 
-  const itemsToday = itemsAll.filter(item => item.start >= target);
-  const tags = [...new Set(itemsToday.map(item => item.tag))];
+  const itemsAtDate = itemsAll.filter(item => {
+    const itemDate = new Date(item.start);
+    itemDate.setHours(0, 0, 0, 0);
+    return itemDate.getTime() === target.getTime();
+  });
+
+  const tags = [...new Set(itemsAtDate.map(item => item.tag))];
 
   const entries = tags.map(tag => {
     const now = new Date();
-    const items = itemsToday.filter(item => item.tag === tag);
+    const items = itemsAtDate.filter(item => item.tag === tag);
     const duration = items
       .reduce((acc, item) => acc + calculateDuration(item.start, item.end ?? now), 0);
 
