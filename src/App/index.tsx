@@ -85,6 +85,12 @@ export function App() {
     setStore('items', (items) => items.filter(item => item.id !== id));
   }
 
+  function processCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+    if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
+    }
+  }
+
   return (
     <div class={sApp} onClick={(e) => e.currentTarget === e.target && setSelectedItemId(undefined)}>
       <div class={sCurrentDate}>
@@ -127,7 +133,7 @@ export function App() {
                 classList={{ [sCellEditable]: true }}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => e.key === 'Enter' && triggerNonDestructiveBlur(e)}
+                onKeyDown={(e) => processCellKeyDown(e)}
               >
                 {item.tag}
               </div>
@@ -136,7 +142,7 @@ export function App() {
                 classList={{ [sCellEditable]: true }}
                 contentEditable
                 onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => e.key === 'Enter' && triggerNonDestructiveBlur(e)}
+                onKeyDown={(e) => processCellKeyDown(e)}
               >
                 {item.description}
               </div>
