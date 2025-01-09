@@ -30,6 +30,8 @@ export function App() {
     return () => clearInterval(intervalId);
   });
 
+  const todayStats = createMemo(() => calculateTodayStats(store.items, now));
+
   function updateItem(item: Partial<Item>, id: number) {
     setStore('items', item => item.id === id, item);
   }
@@ -91,18 +93,18 @@ export function App() {
                 classList={{ [sCellEditable]: true }}
                 contentEditable
                 onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
-                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
+                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
               >
-                {item.description}
+                {item.tag}
               </div>
               <div
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
                 contentEditable
                 onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
-                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
               >
-                {item.tag}
+                {item.description}
               </div>
             </div>
           )}
@@ -111,6 +113,11 @@ export function App() {
 
       <div class={sSummary}>
         Today stats
+        <For each={todayStats()}>
+          {(entry) => (
+            <div>{entry[0]}: {entry[1]} minutes</div>
+          )}
+        </For>
       </div>
     </div>
   )
@@ -170,6 +177,23 @@ function formatTime(date: Date) {
 
 function calculateDuration(start: Date, end: Date) {
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60));
+}
+
+function calculateTodayStats(itemsAll: Item[], now: () => Date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const itemsToday = itemsAll.filter(item => item.start >= today);
+  const tags = [...new Set(itemsToday.map(item => item.tag))];
+
+  const entries = tags.map(tag => {
+    const items = itemsToday.filter(item => item.tag === tag);
+    const duration = items
+      .reduce((acc, item) => acc + calculateDuration(item.start, item.end ?? now()), 0);
+    return [tag, duration];
+  });
+
+  return entries;
 }
 
 // styles
