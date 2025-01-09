@@ -20,7 +20,8 @@ interface Item {
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(getDefaultStore());
-  const { reset } = persistStore(store, setStore);
+  const backupKey = 'solid-worklog-store-backup';
+  const persist = persistStore(store, setStore);
 
   // date
   const [currentDate, setCurrentDate] = createSignal(new Date());
@@ -121,7 +122,7 @@ export function App() {
         </div>
         <div class={sToolbarRight}>
           <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
-          <button onDblClick={reset} title="Double click to reset">Reset</button>
+          <button onDblClick={persist.reset} title="Double click to reset">Reset</button>
         </div>
       </div>
 
