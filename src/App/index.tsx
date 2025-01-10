@@ -174,13 +174,25 @@ export function App() {
               }}
               onClick={() => setSelectedItemId(item.id)}
             >
-              <div class={sCell}>
+              <div
+                class={sCell}
+                classList={{ [sCellEditable]: true }}
+                contentEditable
+                // onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                onKeyDown={(e) => processCellKeyDown(e)}
+              >
                 {toTimestamp(item.start)}
               </div>
               <div class={sCell}>
                 {calculateDuration(item.start, item.end ?? now())}
               </div>
-              <div class={sCell} classList={{ [sCellGrayed]: !item.end }}>
+              <div
+                class={sCell}
+                classList={{ [sCellGrayed]: !item.end }}
+                contentEditable={Boolean(item.end)}
+                // onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                onKeyDown={(e) => processCellKeyDown(e)}
+              >
                 {toTimestamp(item.end ?? now())}
               </div>
               <div
