@@ -247,11 +247,19 @@ export function App() {
     }));
   }
 
-  function processCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+  function processCellKey(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+    if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
+    }
+  }
+
+  // FIXME: offset by 1 symbol because of key down
+  function processTagCellKey(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
       toggleTagList('hide');
     } else {
+      console.log('processTagCellKey', e.currentTarget.textContent);
       updateAvailableTags(e.currentTarget.textContent!);
       toggleTagList('show');
     }
@@ -323,7 +331,7 @@ export function App() {
                 class={cx(sCell, sCellEditable)}
                 contentEditable
                 onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => processCellKeyDown(e)}
+                onKeyDown={(e) => processCellKey(e)}
               >
                 {toTimestamp(item.start)}
               </div>
@@ -335,7 +343,7 @@ export function App() {
                 classList={{ [sCellGrayed]: !item.end }}
                 contentEditable={Boolean(item.end)}
                 onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => processCellKeyDown(e)}
+                onKeyDown={(e) => processCellKey(e)}
               >
                 {toTimestamp(item.end ?? now())}
               </div>
@@ -344,7 +352,7 @@ export function App() {
                 class={cx(sCell, sCellEditable, sCellEditableText)}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => processCellKeyDown(e)}
+                onKeyDown={(e) => processTagCellKey(e)}
                 onClick={(e) => positionTagList(e)}
               >
                 {item.tag}
@@ -353,7 +361,7 @@ export function App() {
                 class={cx(sCell, sCellEditable, sCellEditableText)}
                 contentEditable
                 onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => processCellKeyDown(e)}
+                onKeyDown={(e) => processCellKey(e)}
               >
                 {item.description}
               </div>
