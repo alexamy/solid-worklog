@@ -49,13 +49,14 @@ export function App() {
   });
 
   // stats
-  const [statTime, setStatTime] = createSignal<'day' | 'month' | 'year' | 'all'>('day');
+  const [statTime, setStatTime] = createSignal<'day' | 'week' | 'month' | 'year' | 'all'>('day');
   const statTimeStartDate = createMemo(() => {
     const from = currentDate();
     const time = statTime();
 
     switch (time) {
       case 'day':   return from;
+      case 'week':  return getStartOfWeek(from);
       case 'month': return new Date(from.getFullYear(), from.getMonth(), 1);
       case 'year':  return new Date(from.getFullYear(), 0, 1);
       case 'all':   return new Date(0);
@@ -71,6 +72,9 @@ export function App() {
     switch (time) {
       case 'day':
         return itemDate.toDateString() === target.toDateString();
+      case 'week':
+        const itemWeekStart = getStartOfWeek(itemDate);
+        return itemWeekStart.toDateString() === target.toDateString();
       case 'month':
         return itemDate.getFullYear() === target.getFullYear()
           && itemDate.getMonth() === target.getMonth();
@@ -202,6 +206,13 @@ export function App() {
               checked={statTime() === 'day'}
             />
             Day
+          </label>
+          <label>
+            <input type="radio" name="timeRange" value="week"
+              onChange={() => setStatTime('week')}
+              checked={statTime() === 'week'}
+            />
+            Week
           </label>
           <label>
             <input type="radio" name="timeRange" value="month"
@@ -505,3 +516,12 @@ const sCellPomodoro = css`
 const sPomodoroGrayed = css`
   filter: grayscale(100%) brightness(120%);
 `;
+
+function getStartOfWeek(date: Date) {
+  const result = new Date(date);
+  const day = result.getDay();
+  const diff = day === 0 ? -6 : 1 - day; // Adjust to make Monday the first day
+  result.setDate(result.getDate() + diff);
+  result.setHours(0, 0, 0, 0);
+  return result;
+}
