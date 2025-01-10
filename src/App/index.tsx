@@ -129,13 +129,19 @@ export function App() {
     return { entries: stats, sumAll };
   });
 
-  const availableTags = createMemo(() => {
+  const allTags = createMemo(() => {
     const tags = store.items.map(item => item.tag);
     const uniqueTags = [...new Set(tags)];
     return uniqueTags;
   });
 
-  const fuzzySearch = createMemo(() => createFuzzySearch(availableTags()));
+  const fuzzySearch = createMemo(() => createFuzzySearch(allTags()));
+  const [availableTags, setAvailableTags] = createSignal<string[]>([]);
+
+  function updateAvailableTags(query: string) {
+    const results = fuzzySearch()(query);
+    setAvailableTags(results.map(result => result.item));
+  }
 
   let tagListElement!: HTMLDivElement;
   onMount(() => {
@@ -246,6 +252,7 @@ export function App() {
       triggerNonDestructiveBlur(e);
       toggleTagList('hide');
     } else {
+      updateAvailableTags(e.currentTarget.textContent!);
       toggleTagList('show');
     }
   }
@@ -257,15 +264,13 @@ export function App() {
 
   return (
     <div class={sApp}>
-      <Show when={availableTags().length > 0}>
-        <Portal>
-            <div ref={tagListElement} class={sTagList}>
-              <For each={availableTags()}>
-                {(tag) => <div class={sTag}>{tag}</div>}
-              </For>
-            </div>
-        </Portal>
-      </Show>
+      <Portal>
+        <div ref={tagListElement} class={sTagList}>
+          <For each={availableTags()}>
+            {(tag) => <div class={sTag}>{tag}</div>}
+          </For>
+        </div>
+      </Portal>
 
       <div class={sCurrentDate}>
         <div class={sToolbarLeft}>
