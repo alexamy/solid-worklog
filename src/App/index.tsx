@@ -294,7 +294,6 @@ function persistStore(
 ) {
   function save(key = storageKey) {
     localStorage.setItem(key, devalue.stringify(store));
-    downloadStore(store);
   }
 
   function load(key = storageKey, backupStore = getDefaultStore()) {
@@ -326,10 +325,32 @@ function persistStore(
   };
 }
 
-function downloadStore(store: Store) {
-  const data = devalue.stringify(store);
-  const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.json`;
-  downloadBlob(data, filename, 'application/json');
+async function uploadDevalue() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt';
+
+  input.onchange = async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const data = devalue.parse(text);
+      return data;
+    } catch (error) {
+      console.error('Failed to load from file:', error);
+      return {};
+    }
+  };
+
+  input.click();
+}
+
+function downloadDevalue(content: any) {
+  const data = devalue.stringify(content);
+  const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.txt`;
+  downloadBlob(data, filename, 'application/text');
 }
 
 function downloadBlob(content: string, filename: string, contentType: string) {
