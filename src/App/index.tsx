@@ -174,9 +174,15 @@ export function App() {
               }}
               onClick={() => setSelectedItemId(item.id)}
             >
-              <div class={sCell}>{toTimestamp(item.start)}</div>
-              <div class={sCell}>{calculateDuration(item.start, item.end ?? now())}</div>
-              <div class={sCell} classList={{ [sCellGrayed]: !item.end }}>{toTimestamp(item.end ?? now())}</div>
+              <div class={sCell}>
+                {toTimestamp(item.start)}
+              </div>
+              <div class={sCell}>
+                {calculateDuration(item.start, item.end ?? now())}
+              </div>
+              <div class={sCell} classList={{ [sCellGrayed]: !item.end }}>
+                {toTimestamp(item.end ?? now())}
+              </div>
               <div
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
