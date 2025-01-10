@@ -49,13 +49,17 @@ export function App() {
   });
 
   const [statTime, setStatTime] = createSignal<'today' | 'month' | 'year'>('today');
-  const
+  const statTimeStartDate = createMemo(() => {
+    const time = statTime();
+    switch (time) {
+      case 'today': return now();
+      case 'month': return new Date(now().getFullYear(), now().getMonth(), 1);
+      case 'year':  return new Date(now().getFullYear(), 0, 1);
+      default:      throw new Error(time satisfies never);
+    }
+  });
 
-  const dayStats = createMemo(() => calculateStatsAtDate(
-    store.items,
-    () => isToday() ? now() : currentDate(),
-  ));
-
+  const dayStats = createMemo(() => calculateStatsAtDate(store.items, statTimeStartDate));
 
   const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
