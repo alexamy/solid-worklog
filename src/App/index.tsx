@@ -109,9 +109,18 @@ export function App() {
     }));
 
     stats.sort((a, b) => {
+      const aVal = a[sortBy()];
+      const bVal = b[sortBy()];
+
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        return sortOrder() === 'asc'
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
+      }
+
       return sortOrder() === 'asc'
-        ? a[sortBy()] - b[sortBy()]
-        : b[sortBy()] - a[sortBy()];
+        ? Number(aVal) - Number(bVal)
+        : Number(bVal) - Number(aVal);
     });
 
     return stats;
