@@ -330,7 +330,7 @@ export function App() {
           )}
         </For>
         <div class={sRow}>
-          <div class={cx(sCell, sCellSpan3)}>{sortedStats().sumAll} min</div>
+          <div class={cx(sCell, sCellSpan3)}>{minutesToHoursMinutes(sortedStats().sumAll)}</div>
         </div>
       </div>
 
@@ -491,6 +491,12 @@ function toTimestamp(date: Date) {
 
 function calculateDuration(start: Date, end: Date) {
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60));
+}
+
+function minutesToHoursMinutes(minutes: number) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours} h ${remainingMinutes} min`;
 }
 
 function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
