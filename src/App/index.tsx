@@ -176,8 +176,13 @@ export function App() {
         <div class={sToolbarLeft}>
           <button disabled={isToday()} onClick={() => setCurrentDate(new Date())}>Today</button>
           <button onClick={() => moveDate(-1)}>{'<'}</button>
-          {currentDate().toLocaleDateString()}
-          <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
+          <input
+            type="date"
+            value={currentDate().toISOString().split('T')[0]}
+            max={new Date().toISOString().split('T')[0]}
+            onChange={(e) => setCurrentDate(new Date(e.target.value))}
+          />
+          <button onClick={() => moveDate(1)}>{'>'}</button>
         </div>
         <div class={sToolbarRight}>
           {toTimestamp(now())}
