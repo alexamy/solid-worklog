@@ -1,5 +1,5 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
-import { createEffect, createMemo, createSignal, For, Match, onCleanup, Switch } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, Match, onCleanup, Show, Switch } from 'solid-js';
 import { css, cx } from '@linaria/core';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
@@ -316,9 +316,9 @@ export function App() {
                     <For each={Array(Math.max(0, Math.floor(toPomodoro(entry.duration))))}>
                       {() => <PomodoroIcon />}
                     </For>
-                  </Match>
-                  <Match when={toPomodoro(entry.duration) % 1 !== 0}>
-                    <PomodoroIcon amount={toPomodoro(entry.duration) % 1} grayed={true} />
+                    <Show when={toPomodoro(entry.duration) % 1 !== 0}>
+                      <PomodoroIcon amount={toPomodoro(entry.duration) % 1} grayed={true} />
+                    </Show>
                   </Match>
                 </Switch>
               </div>
