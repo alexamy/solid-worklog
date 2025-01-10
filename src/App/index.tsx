@@ -176,7 +176,6 @@ export function App() {
             >
               <div
                 class={sCell}
-                classList={{ [sCellEditable]: true }}
                 contentEditable
                 onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
@@ -557,10 +556,11 @@ const sCell = css`
 
 const sCellDuration = css`
   grid-column: span 3;
+  cursor: text;
 `;
 
 const sCellEditable = css`
-  //min-width: 120px;
+  min-width: 120px;
   justify-content: flex-start;
   cursor: text;
 `;
