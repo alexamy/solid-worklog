@@ -130,7 +130,7 @@ export function App() {
   }
 
   async function uploadStore() {
-    const data = await uploadDevalue();
+    const data = await uploadJson();
     if (data) setStore(data);
   }
 
@@ -268,7 +268,7 @@ export function App() {
       Danger zone
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
-          <button onClick={() => downloadDevalue(store)}>Save backup</button>
+          <button onClick={() => downloadJson(store)}>Save backup</button>
           <button onClick={uploadStore}>Load backup</button>
           <button onDblClick={persist.reset} title="Double click to reset">Reset</button>
         </div>
@@ -327,10 +327,10 @@ function persistStore(
   };
 }
 
-async function uploadDevalue(): Promise<Store | undefined> {
+async function uploadJson(): Promise<Store | undefined> {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.txt';
+  input.accept = '.json';
   input.click();
 
   return new Promise((resolve, reject) => {
@@ -349,10 +349,10 @@ async function uploadDevalue(): Promise<Store | undefined> {
   });
 }
 
-function downloadDevalue(content: any) {
+function downloadJson(content: any) {
   const data = superjson.stringify(content);
-  const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.txt`;
-  downloadBlob(data, filename, 'application/text');
+  const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.json`;
+  downloadBlob(data, filename, 'application/json');
 }
 
 function downloadBlob(content: string, filename: string, contentType: string) {
