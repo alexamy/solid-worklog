@@ -183,7 +183,7 @@ export function App() {
             onChange={(e) => setCurrentDate(new Date(e.target.value))}
             style={{ width: '110px' }}
           />
-          <button onClick={() => moveDate(1)}>{'>'}</button>
+          <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
           {toTimestamp(now())}
         </div>
       </div>
@@ -426,8 +426,9 @@ async function uploadJson(): Promise<Store | undefined> {
   });
 }
 
-function downloadJson(content: any) {
-  const data = superjson.stringify(content);
+function downloadJson(content: unknown) {
+  const { json, meta } = superjson.serialize(content);
+  const data = JSON.stringify({ json, meta }, null, 2);
   const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.json`;
   downloadBlob(data, filename, 'application/json');
 }
