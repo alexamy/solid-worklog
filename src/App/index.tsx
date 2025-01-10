@@ -39,7 +39,6 @@ export function App() {
   const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
 
   const itemsAtDate = createMemo(() => store.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
-  const reversedItems = createMemo(() => itemsAtDate().slice().reverse());
 
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
@@ -143,14 +142,14 @@ export function App() {
   }
 
   function startItem(item: Partial<Item> = {}) {
-    setStore('items', (items) => [...items, {
+    setStore('items', (items) => [{
       id: randomId(),
       description: '',
       tag: '',
       start: new Date(),
       end: undefined,
       ...item,
-    }]);
+    }, ...items]);
   }
 
   function finishItem() {
@@ -224,8 +223,8 @@ export function App() {
         <div class={sToolbarRight}>
           Rows:
           <button onClick={() => addItem()}>+</button>
-          <button disabled={!selectedItemId()} onClick={() => moveDown()}>↑</button>
-          <button disabled={!selectedItemId()} onClick={() => moveUp()}>↓</button>
+          <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
+          <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
           <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>-</button>
         </div>
       </div>
@@ -237,7 +236,7 @@ export function App() {
           <div class={cx(sCell, sCellHeader)}>Tag</div>
           <div class={cx(sCell, sCellHeader)}>Description</div>
         </div>
-        <For each={reversedItems()}>
+        <For each={itemsAtDate()}>
           {(item) => (
             <div class={cx(sRow, sRowSelectable)}
               classList={{
