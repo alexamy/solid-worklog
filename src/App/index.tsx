@@ -3,6 +3,7 @@ import { createEffect, createMemo, createSignal, For, Match, onCleanup, Show, Sw
 import { css, cx } from '@linaria/core';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
+import { Portal } from 'solid-js/web';
 
 // types
 interface Store {
@@ -127,7 +128,7 @@ export function App() {
     return { entries: stats, sumAll };
   });
 
-  // const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
+  const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
   // methods
   function updateItem(item: Partial<Item>, id: string) {
@@ -211,6 +212,14 @@ export function App() {
 
   return (
     <div class={sApp}>
+      <Portal>
+        <div class={sTagList}>
+          <For each={availableTags()}>
+            {(tag) => <div class={sTag}>{tag}</div>}
+          </For>
+        </div>
+      </Portal>
+
       <div class={sCurrentDate}>
         <div class={sToolbarLeft}>
           <button disabled={isToday()} onClick={() => setCurrentDate(new Date())}>Today</button>
@@ -708,4 +717,18 @@ const sCellPomodoro = css`
 
 const sPomodoroGrayed = css`
   filter: grayscale(100%) brightness(120%);
+`;
+
+const sTagList = css`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+`;
+
+const sTag = css`
+  padding: 5px 10px;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
 `;
