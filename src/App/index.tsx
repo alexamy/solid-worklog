@@ -251,13 +251,15 @@ export function App() {
 
   return (
     <div class={sApp}>
-      <Portal>
-        <div ref={tagListElement} class={sTagList} style={{ display: 'none' }}>
-          <For each={availableTags()}>
-            {(tag) => <div class={sTag}>{tag}</div>}
-          </For>
-        </div>
-      </Portal>
+      <Show when={availableTags().length > 0}>
+        <Portal>
+            <div ref={tagListElement} class={sTagList} style={{ display: 'none' }}>
+              <For each={availableTags()}>
+                {(tag) => <div class={sTag}>{tag}</div>}
+              </For>
+            </div>
+        </Portal>
+      </Show>
 
       <div class={sCurrentDate}>
         <div class={sToolbarLeft}>
