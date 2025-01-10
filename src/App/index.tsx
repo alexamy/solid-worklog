@@ -135,7 +135,7 @@ export function App() {
     setStore('items', item => item.id === id, item);
   }
 
-  function addItem(item: Partial<Item> = {}) {
+  function startItem(item: Partial<Item> = {}) {
     setStore('items', (items) => [...items, {
       id: randomId(),
       description: '',
@@ -154,7 +154,7 @@ export function App() {
 
   function tapItem() {
     finishItem();
-    addItem();
+    startItem();
   }
 
   function removeItem(id: string) {
@@ -192,9 +192,9 @@ export function App() {
 
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
-          <button disabled={isInProgress()} onClick={() => addItem()}>Add</button>
-          <button disabled={!isInProgress()} onClick={finishItem}>Finish</button>
-          <button disabled={!isInProgress()} onClick={tapItem}>Tap</button>
+          <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
+          <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
+          <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
           <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
         </div>
       </div>
