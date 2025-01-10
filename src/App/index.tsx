@@ -560,7 +560,7 @@ const sCellDuration = css`
 `;
 
 const sCellEditable = css`
-  min-width: 120px;
+  //min-width: 120px;
   justify-content: flex-start;
   cursor: text;
 `;
