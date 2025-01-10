@@ -1,6 +1,6 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
 import { createEffect, createMemo, createSignal, For, Match, onCleanup, Switch } from 'solid-js';
-import { css } from '@linaria/core';
+import { css, cx } from '@linaria/core';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
 
@@ -196,15 +196,14 @@ export function App() {
       Worklog
       <div class={sTable}>
         <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
-          <div class={sCell} classList={{ [sCellDuration]: true }}>Duration</div>
-          <div class={sCell}>Tag</div>
-          <div class={sCell}>Description</div>
+          <div class={cx(sCell, sCellHeader, sCellDuration)}>Duration</div>
+          <div class={cx(sCell, sCellHeader)}>Tag</div>
+          <div class={cx(sCell, sCellHeader)}>Description</div>
         </div>
         <For each={reversedItems()}>
           {(item) => (
-            <div class={sRow}
+            <div class={cx(sRow, sRowSelectable)}
               classList={{
-                [sRowSelectable]: true,
                 [sRowSelected]: selectedItemId() === item.id,
                 [sRowIdle]: item.tag === 'idle',
               }}
@@ -231,8 +230,7 @@ export function App() {
                 {toTimestamp(item.end ?? now())}
               </div>
               <div
-                class={sCell}
-                classList={{ [sCellEditable]: true }}
+                class={cx(sCell, sCellEditable)}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
@@ -240,8 +238,7 @@ export function App() {
                 {item.tag}
               </div>
               <div
-                class={sCell}
-                classList={{ [sCellEditable]: true }}
+                class={cx(sCell, sCellEditable)}
                 contentEditable
                 onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
@@ -253,7 +250,7 @@ export function App() {
         </For>
       </div>
 
-      Stats
+      Statistics
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
           <label>
@@ -296,16 +293,16 @@ export function App() {
 
       <div class={sTableStats}>
         <div class={sRow}>
-          <div class={sCell} onClick={() => changeSorting('tag')}>Tag</div>
-          <div class={sCell} onClick={() => changeSorting('duration')}>Minutes</div>
-          <div class={sCell} onClick={() => changeSorting('pomodoros')}>Pomodoros</div>
+          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>Tag</div>
+          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Minutes</div>
+          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros</div>
         </div>
         <For each={sortedStats()}>
           {(entry) => (
             <div class={sRow}>
               <div class={sCell}>{entry.tag}</div>
               <div class={sCell}>{entry.duration} min</div>
-              <div class={sCell} classList={{ [sCellPomodoro]: true }}>
+              <div class={cx(sCell, sCellPomodoro)}>
                 <Switch>
                   <Match when={Math.floor(toPomodoro(entry.duration)) > 4}>
                     <PomodoroIcon /> x{Math.floor(toPomodoro(entry.duration))}
@@ -602,9 +599,12 @@ const sCell = css`
   outline: none;
 `;
 
+const sCellHeader = css`
+  cursor: pointer;
+`;
+
 const sCellDuration = css`
   grid-column: span 3;
-  cursor: text;
 `;
 
 const sCellEditable = css`
