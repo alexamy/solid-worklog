@@ -178,7 +178,7 @@ export function App() {
                 class={sCell}
                 classList={{ [sCellEditable]: true }}
                 contentEditable
-                // onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
               >
                 {toTimestamp(item.start)}
@@ -190,7 +190,7 @@ export function App() {
                 class={sCell}
                 classList={{ [sCellGrayed]: !item.end }}
                 contentEditable={Boolean(item.end)}
-                // onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
               >
                 {toTimestamp(item.end ?? now())}
@@ -293,6 +293,13 @@ export function App() {
       </div>
     </div>
   )
+}
+
+function updateTimestamp(date: Date, timestamp: string) {
+  const [hours, minutes] = timestamp.split(':').map(Number);
+  const newDate = new Date(date);
+  newDate.setHours(hours, minutes, 0);
+  return newDate;
 }
 
 function PomodoroIcon(props: { amount?: number, grayed?: boolean }) {
