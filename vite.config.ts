@@ -4,5 +4,8 @@ import wyw from '@wyw-in-js/vite';
 
 export default defineConfig({
   base: '/solid-worklog/',
-  plugins: [wyw({ displayName: true, preprocessor: 'none' }), solid()],
+  plugins: [
+    solid(),
+    wyw({ displayName: true, preprocessor: 'none' }),
+  ],
 })
