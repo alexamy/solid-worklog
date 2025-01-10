@@ -148,6 +148,19 @@ export function App() {
     }
   }
 
+  createEffect(() => {
+    function onClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+
+      if (!target.dataset.tag) {
+        toggleTagList('hide');
+      }
+    }
+
+    document.body.addEventListener('click', onClick);
+    onCleanup(() => document.body.removeEventListener('click', onClick));
+  });
+
   // methods
   function updateItem(item: Partial<Item>, id: string) {
     setStore('items', item => item.id === id, item);
@@ -309,6 +322,7 @@ export function App() {
                 {toTimestamp(item.end ?? now())}
               </div>
               <div
+                data-tag={true}
                 class={cx(sCell, sCellEditable, sCellEditableText)}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
