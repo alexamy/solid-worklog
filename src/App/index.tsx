@@ -395,7 +395,7 @@ export function App() {
               onChange={() => setStatTime('day')}
               checked={statTime() === 'day'}
             />
-            Day
+            Day ({currentDate().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
           </label>
           <label>
             <input type="radio" name="timeRange" value="week"
@@ -409,14 +409,14 @@ export function App() {
               onChange={() => setStatTime('month')}
               checked={statTime() === 'month'}
             />
-            Month
+            Month ({currentDate().toLocaleDateString('en-US', { month: 'long' })})
           </label>
           <label>
             <input type="radio" name="timeRange" value="year"
               onChange={() => setStatTime('year')}
               checked={statTime() === 'year'}
             />
-            Year
+            Year ({currentDate().toLocaleDateString('en-US', { year: 'numeric' })})
           </label>
           <label>
             <input type="radio" name="timeRange" value="all"
