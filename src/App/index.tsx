@@ -1,5 +1,5 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
-import { createEffect, createMemo, createSignal, For } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
 import { css } from '@linaria/core';
 import * as devalue from 'devalue';
 import pomodoroSvg from './pomodoro.svg';
@@ -166,10 +166,17 @@ export function App() {
               <div class={sCell}>{entry.tag}</div>
               <div class={sCell}>{entry.duration} min</div>
               <div class={sCell} classList={{ [sCellPomodoro]: true }}>
-                <For each={Array(Math.floor(toPomodoro(entry.duration))).fill(0)}>
+                <For each={Array(Math.min(4, Math.floor(toPomodoro(entry.duration)))).fill(0)}>
                   {() => <PomodoroIcon />}
                 </For>
-                <PomodoroIcon amount={toPomodoro(entry.duration) % 1} grayed={true} />
+                <Switch>
+                  <Match when={Array(Math.floor(toPomodoro(entry.duration))).length > 4}>
+                    x{Array(Math.floor(toPomodoro(entry.duration))).length}
+                  </Match>
+                  <Match when={toPomodoro(entry.duration) % 1 !== 0}>
+                    <PomodoroIcon amount={toPomodoro(entry.duration) % 1} grayed={true} />
+                  </Match>
+                </Switch>
               </div>
             </div>
           )}
