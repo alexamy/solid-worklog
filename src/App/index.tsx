@@ -43,7 +43,7 @@ export function App() {
 
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
-    const intervalId = setInterval(() => setNow(new Date()), 60000);
+    const intervalId = setInterval(() => setNow(new Date()), 30000);
     onCleanup(() => clearInterval(intervalId));
   });
 
