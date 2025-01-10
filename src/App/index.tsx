@@ -130,6 +130,11 @@ export function App() {
     }
   }
 
+  async function uploadStore() {
+    const data = await uploadDevalue();
+    if (data) setStore(data);
+  }
+
   return (
     <div class={sApp}>
       <div class={sCurrentDate}>
@@ -264,8 +269,8 @@ export function App() {
       Danger zone
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
-          <button onClick={() => persist.save(backupKey)}>Save backup</button>
-          <button onClick={() => persist.load(backupKey, store)}>Load backup</button>
+          <button onClick={() => downloadDevalue(store)}>Save backup</button>
+          <button onClick={uploadStore}>Load backup</button>
           <button onDblClick={persist.reset} title="Double click to reset">Reset</button>
         </div>
       </div>
@@ -320,31 +325,29 @@ function persistStore(
 
   return {
     reset,
-    load,
-    save,
   };
 }
 
-async function uploadDevalue() {
+async function uploadDevalue(): Promise<Store | undefined> {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.txt';
-
-  input.onchange = async (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-
-    try {
-      const text = await file.text();
-      const data = devalue.parse(text);
-      return data;
-    } catch (error) {
-      console.error('Failed to load from file:', error);
-      return {};
-    }
-  };
-
   input.click();
+
+  return new Promise((resolve, reject) => {
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const data = devalue.parse(text);
+        resolve(data);
+      } catch (error) {
+        reject(error);
+      }
+    };
+  });
 }
 
 function downloadDevalue(content: any) {
