@@ -29,6 +29,7 @@ export function App() {
   const isToday = createMemo(() => currentDate().toDateString() === new Date().toDateString());
 
   function moveDate(delta: number) {
+    setSelectedItemId(undefined);
     const next = new Date(currentDate());
     next.setDate(next.getDate() + delta);
     setCurrentDate(next);
