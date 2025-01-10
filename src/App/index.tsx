@@ -39,7 +39,6 @@ export function App() {
 
   // items
   const isInProgress = createMemo(() => store.items[0].end === undefined);
-
   const itemsAtDate = createMemo(() => store.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
 
   const [now, setNow] = createSignal(new Date());
@@ -309,10 +308,10 @@ export function App() {
         </div>
         <div class={sToolbarRight}>
           Rows:
-          <button onClick={() => addItem()}>+</button>
-          <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
-          <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
-          <button disabled={!selectedItemId() || store.items.length <= 1} onClick={() => removeItem()}>-</button>
+          <button disabled={isInProgress()} onClick={() => addItem()}>+</button>
+          <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveUp()}>↑</button>
+          <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveDown()}>↓</button>
+          <button disabled={!selectedItemId() || isInProgress() || store.items.length <= 1} onClick={() => removeItem()}>-</button>
         </div>
       </div>
 
