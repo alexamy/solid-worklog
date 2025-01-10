@@ -170,8 +170,8 @@ export function App() {
                   {() => <PomodoroIcon />}
                 </For>
                 <Switch>
-                  <Match when={Array(Math.floor(toPomodoro(entry.duration))).length > 4}>
-                    x{Array(Math.floor(toPomodoro(entry.duration))).length}
+                  <Match when={Math.floor(toPomodoro(entry.duration)) > 4}>
+                    x{Math.floor(toPomodoro(entry.duration))}
                   </Match>
                   <Match when={toPomodoro(entry.duration) % 1 !== 0}>
                     <PomodoroIcon amount={toPomodoro(entry.duration) % 1} grayed={true} />
