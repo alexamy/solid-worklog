@@ -73,11 +73,10 @@ export function App() {
       case 'day':
         return itemDate.toDateString() === target.toDateString();
       case 'week':
-        const itemWeekStart = getStartOfWeek(itemDate);
-        return itemWeekStart.toDateString() === target.toDateString();
+        return getStartOfWeek(itemDate).toDateString() === target.toDateString();
       case 'month':
         return itemDate.getFullYear() === target.getFullYear()
-          && itemDate.getMonth() === target.getMonth();
+            && itemDate.getMonth() === target.getMonth();
       case 'year':
         return itemDate.getFullYear() === target.getFullYear();
       case 'all':
