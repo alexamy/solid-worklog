@@ -163,8 +163,19 @@ export function App() {
     startItem();
   }
 
-  function removeItem(id: string) {
-    setStore('items', (items) => items.filter(item => item.id !== id));
+  function removeItem() {
+    const selected = selectedItemId()!;
+
+    const index = store.items.findIndex(item => item.id === selected);
+    if(index > 0) {
+      const item = store.items[index + 1];
+      setSelectedItemId(item?.id);
+    }
+
+    const filtered = store.items.filter(item => item.id !== selected);
+    if(filtered.length > 0) {
+      setStore('items', filtered);
+    }
   }
 
   function moveUp() {
@@ -225,7 +236,7 @@ export function App() {
           <button onClick={() => addItem()}>+</button>
           <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
           <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
-          <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>-</button>
+          <button disabled={!selectedItemId() || store.items.length <= 1} onClick={() => removeItem()}>-</button>
         </div>
       </div>
 
