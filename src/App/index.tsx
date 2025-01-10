@@ -293,6 +293,12 @@ export function App() {
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  tagListElement.style.left = `${rect.left}px`;
+                  tagListElement.style.top = `${rect.top + rect.height - 1}px`;
+                  tagListElement.style.width = `${rect.width}px`;
+                }}
               >
                 {item.tag}
               </div>
