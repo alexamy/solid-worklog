@@ -48,10 +48,14 @@ export function App() {
     return () => clearInterval(intervalId);
   });
 
+  const [statTime, setStatTime] = createSignal<'today' | 'month' | 'year'>('today');
+  const
+
   const dayStats = createMemo(() => calculateStatsAtDate(
     store.items,
     () => isToday() ? now() : currentDate(),
   ));
+
 
   const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
@@ -162,15 +166,24 @@ export function App() {
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
           <label>
-            <input type="radio" name="timeRange" value="today" checked={true} />
+            <input type="radio" name="timeRange" value="today"
+              onChange={() => setStatTime('today')}
+              checked={statTime() === 'today'}
+            />
             Today
           </label>
           <label>
-            <input type="radio" name="timeRange" value="month" />
+            <input type="radio" name="timeRange" value="month"
+              onChange={() => setStatTime('month')}
+              checked={statTime() === 'month'}
+            />
             Month
           </label>
           <label>
-            <input type="radio" name="timeRange" value="year" />
+            <input type="radio" name="timeRange" value="year"
+              onChange={() => setStatTime('year')}
+              checked={statTime() === 'year'}
+            />
             Year
           </label>
         </div>
