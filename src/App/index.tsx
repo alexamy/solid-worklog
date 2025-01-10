@@ -49,13 +49,13 @@ export function App() {
   });
 
   // stats
-  const [statTime, setStatTime] = createSignal<'today' | 'month' | 'year' | 'all'>('today');
+  const [statTime, setStatTime] = createSignal<'day' | 'month' | 'year' | 'all'>('day');
   const statTimeStartDate = createMemo(() => {
     const from = currentDate();
     const time = statTime();
 
     switch (time) {
-      case 'today': return from;
+      case 'day':   return from;
       case 'month': return new Date(from.getFullYear(), from.getMonth(), 1);
       case 'year':  return new Date(from.getFullYear(), 0, 1);
       case 'all':   return new Date(0);
@@ -69,7 +69,7 @@ export function App() {
     const time = statTime();
 
     switch (time) {
-      case 'today':
+      case 'day':
         return itemDate.toDateString() === target.toDateString();
       case 'month':
         return itemDate.getFullYear() === target.getFullYear()
@@ -197,11 +197,11 @@ export function App() {
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
           <label>
-            <input type="radio" name="timeRange" value="today"
-              onChange={() => setStatTime('today')}
-              checked={statTime() === 'today'}
+            <input type="radio" name="timeRange" value="day"
+              onChange={() => setStatTime('day')}
+              checked={statTime() === 'day'}
             />
-            Today
+            Day
           </label>
           <label>
             <input type="radio" name="timeRange" value="month"
