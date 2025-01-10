@@ -184,8 +184,6 @@ export function App() {
             style={{ width: '110px' }}
           />
           <button onClick={() => moveDate(1)}>{'>'}</button>
-        </div>
-        <div class={sToolbarRight}>
           {toTimestamp(now())}
         </div>
       </div>
