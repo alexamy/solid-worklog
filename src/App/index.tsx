@@ -308,19 +308,21 @@ export function App() {
               <div class={sCell}>{entry.tag}</div>
               <div class={sCell}>{entry.duration} min</div>
               <div class={cx(sCell, sCellPomodoro)}>
-                <Switch>
-                  <Match when={Math.floor(entry.pomodoros) > 4}>
-                    <PomodoroIcon /> x{Math.floor(entry.pomodoros)}
-                  </Match>
-                  <Match when={Math.floor(entry.pomodoros) <= 4}>
-                    <For each={Array(Math.max(0, Math.floor(entry.pomodoros)))}>
-                      {() => <PomodoroIcon />}
-                    </For>
-                    <Show when={entry.pomodoros % 1 !== 0}>
-                      <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
-                    </Show>
-                  </Match>
-                </Switch>
+                <Show when={entry.pomodoros > 0}>
+                  <Switch>
+                    <Match when={Math.floor(entry.pomodoros) > 4}>
+                      <PomodoroIcon /> x{Math.floor(entry.pomodoros)}
+                    </Match>
+                    <Match when={Math.floor(entry.pomodoros) <= 4}>
+                      <For each={Array(Math.floor(entry.pomodoros))}>
+                        {() => <PomodoroIcon />}
+                      </For>
+                      <Show when={entry.pomodoros % 1 !== 0}>
+                        <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
+                      </Show>
+                    </Match>
+                  </Switch>
+                </Show>
               </div>
             </div>
           )}
