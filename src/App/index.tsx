@@ -103,7 +103,9 @@ export function App() {
   ));
 
   const sortedStats = createMemo(() => {
-    const stats = dayStats().map(item => ({
+    const { entries, sumAll } = dayStats();
+
+    const stats = entries.map(item => ({
       ...item,
       pomodoros: toPomodoro(item.duration),
     }));
@@ -123,7 +125,7 @@ export function App() {
         : Number(bVal) - Number(aVal);
     });
 
-    return stats;
+    return { entries: stats, sumAll };
   });
 
   // const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
@@ -200,7 +202,7 @@ export function App() {
       Worklog
       <div class={sTable}>
         <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
-          <div class={cx(sCell, sCellHeader, sCellDuration)}>Duration</div>
+          <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
           <div class={cx(sCell, sCellHeader)}>Tag</div>
           <div class={cx(sCell, sCellHeader)}>Description</div>
         </div>
@@ -302,7 +304,7 @@ export function App() {
           <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Minutes</div>
           <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros</div>
         </div>
-        <For each={sortedStats()}>
+        <For each={sortedStats().entries}>
           {(entry) => (
             <div class={sRow}>
               <div class={sCell}>{entry.tag}</div>
@@ -327,6 +329,9 @@ export function App() {
             </div>
           )}
         </For>
+        <div class={sRow}>
+          <div class={cx(sCell, sCellSpan3)}>{sortedStats().sumAll} min</div>
+        </div>
       </div>
 
       <br />
@@ -502,7 +507,9 @@ function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean)
     return { tag: tag || '*empty*', duration };
   });
 
-  return entries;
+  const sumAll = entries.reduce((sum, entry) => sum + entry.duration, 0);
+
+  return { entries, sumAll };
 }
 
 function getDateNoTime(date: Date) {
@@ -514,6 +521,15 @@ function getDateNoTime(date: Date) {
 
 function toPomodoro(minutes: number) {
   return minutes / 25;
+}
+
+function getStartOfWeek(date: Date) {
+  const result = new Date(date);
+  const day = result.getDay();
+  const diff = day === 0 ? -6 : 1 - day; // Adjust to make Monday the first day
+  result.setDate(result.getDate() + diff);
+  result.setHours(0, 0, 0, 0);
+  return result;
 }
 
 function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
@@ -614,7 +630,7 @@ const sCellHeader = css`
   cursor: pointer;
 `;
 
-const sCellDuration = css`
+const sCellSpan3 = css`
   grid-column: span 3;
 `;
 
@@ -644,12 +660,3 @@ const sCellPomodoro = css`
 const sPomodoroGrayed = css`
   filter: grayscale(100%) brightness(120%);
 `;
-
-function getStartOfWeek(date: Date) {
-  const result = new Date(date);
-  const day = result.getDay();
-  const diff = day === 0 ? -6 : 1 - day; // Adjust to make Monday the first day
-  result.setDate(result.getDate() + diff);
-  result.setHours(0, 0, 0, 0);
-  return result;
-}
