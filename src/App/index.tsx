@@ -254,6 +254,7 @@ export function App() {
         </For>
       </div>
 
+      <br />
       Statistics
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
@@ -326,6 +327,7 @@ export function App() {
         </For>
       </div>
 
+      <br />
       Danger zone
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
