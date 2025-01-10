@@ -265,12 +265,14 @@ export function App() {
               <div class={sCell}>{entry.tag}</div>
               <div class={sCell}>{entry.duration} min</div>
               <div class={sCell} classList={{ [sCellPomodoro]: true }}>
-                <For each={Array(Math.max(0, Math.min(4, Math.floor(toPomodoro(entry.duration)))))}>
-                  {() => <PomodoroIcon />}
-                </For>
                 <Switch>
                   <Match when={Math.floor(toPomodoro(entry.duration)) > 4}>
-                    x{Math.floor(toPomodoro(entry.duration))}
+                    <PomodoroIcon /> x{Math.floor(toPomodoro(entry.duration))}
+                  </Match>
+                  <Match when={Math.floor(toPomodoro(entry.duration)) <= 4}>
+                    <For each={Array(Math.max(0, Math.floor(toPomodoro(entry.duration))))}>
+                      {() => <PomodoroIcon />}
+                    </For>
                   </Match>
                   <Match when={toPomodoro(entry.duration) % 1 !== 0}>
                     <PomodoroIcon amount={toPomodoro(entry.duration) % 1} grayed={true} />
