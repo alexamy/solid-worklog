@@ -247,28 +247,23 @@ export function App() {
     }));
   }
 
-  const [currentEnteredValue, setCurrentEnteredValue] = createSignal('');
-
-  function onCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
-    setCurrentEnteredValue(e.currentTarget.textContent!);
-  }
-
   function onCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
     }
   }
 
-  // FIXME: offset by 1 symbol because of key down
   function onTagCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
       toggleTagList('hide');
-    } else {
-      console.log('processTagCellKey', currentEnteredValue());
-      updateAvailableTags(currentEnteredValue());
-      toggleTagList('show');
     }
+  }
+
+  function onTagCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+    if (e.key === 'Enter') return;
+    updateAvailableTags(e.currentTarget.textContent!);
+    toggleTagList('show');
   }
 
   async function uploadStore() {
@@ -358,8 +353,9 @@ export function App() {
                 class={cx(sCell, sCellEditable, sCellEditableText)}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => onTagCellKeyDown(e)}
                 onClick={(e) => positionTagList(e)}
+                onKeyDown={(e) => onTagCellKeyDown(e)}
+                onKeyUp={(e) => onTagCellKeyUp(e)}
               >
                 {item.tag}
               </div>
