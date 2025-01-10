@@ -497,7 +497,7 @@ function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean)
     const now = new Date();
     const items = itemsAtDate.filter(item => item.tag === tag);
     const duration = items
-      .reduce((acc, item) => acc + calculateDuration(item.start, item.end ?? now), 0);
+      .reduce((sum, item) => sum + calculateDuration(item.start, item.end ?? now), 0);
 
     return { tag: tag || '*empty*', duration };
   });
