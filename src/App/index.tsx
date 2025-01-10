@@ -48,18 +48,28 @@ export function App() {
     return () => clearInterval(intervalId);
   });
 
+  // stats
   const [statTime, setStatTime] = createSignal<'today' | 'month' | 'year'>('today');
   const statTimeStartDate = createMemo(() => {
+    const from = currentDate();
     const time = statTime();
+
     switch (time) {
-      case 'today': return now();
-      case 'month': return new Date(now().getFullYear(), now().getMonth(), 1);
-      case 'year':  return new Date(now().getFullYear(), 0, 1);
+      case 'today': return from;
+      case 'month': return new Date(from.getFullYear(), from.getMonth(), 1);
+      case 'year':  return new Date(from.getFullYear(), 0, 1);
       default:      throw new Error(time satisfies never);
     }
   });
 
-  const dayStats = createMemo(() => calculateStatsAtDate(store.items, statTimeStartDate));
+  const dayStats = createMemo(() => calculateStatsAtDate(
+    store.items,
+    item => {
+      const target = statTimeStartDate();
+      const itemDate = getDateNoTime(item.start);
+      return itemDate.getTime() >= target.getTime();
+    }
+  ));
 
   const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
@@ -324,13 +334,8 @@ function calculateDuration(start: Date, end: Date) {
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60));
 }
 
-function calculateStatsAtDate(itemsAll: Item[], date: () => Date) {
-  const target = getDateNoTime(date());
-
-  const itemsAtDate = itemsAll.filter(item => {
-    const itemDate = getDateNoTime(item.start);
-    return itemDate.getTime() === target.getTime();
-  });
+function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
+  const itemsAtDate = itemsAll.filter(filter);
 
   const tags = [...new Set(itemsAtDate.map(item => item.tag))];
 
