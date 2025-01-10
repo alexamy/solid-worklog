@@ -131,6 +131,23 @@ export function App() {
   let tagListElement!: HTMLDivElement;
   const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
+  function positionTagList(e: MouseEvent & { currentTarget: HTMLDivElement }) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    tagListElement.style.left = `${rect.left}px`;
+    tagListElement.style.top = `${rect.top + rect.height - 1}px`;
+    tagListElement.style.width = `${rect.width}px`;
+  }
+
+  function toggleTagList(type?: 'show' | 'hide') {
+    if (type === 'show') {
+      tagListElement.style.display = 'block';
+    } else if (type === 'hide') {
+      tagListElement.style.display = 'none';
+    } else {
+      tagListElement.style.display = tagListElement.style.display === 'block' ? 'none' : 'block';
+    }
+  }
+
   // methods
   function updateItem(item: Partial<Item>, id: string) {
     setStore('items', item => item.id === id, item);
@@ -203,6 +220,9 @@ export function App() {
   function processCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
+      toggleTagList('hide');
+    } else {
+      toggleTagList('show');
     }
   }
 
@@ -214,7 +234,7 @@ export function App() {
   return (
     <div class={sApp}>
       <Portal>
-        <div ref={tagListElement} class={sTagList}>
+        <div ref={tagListElement} class={sTagList} style={{ display: 'none' }}>
           <For each={availableTags()}>
             {(tag) => <div class={sTag}>{tag}</div>}
           </For>
@@ -293,12 +313,7 @@ export function App() {
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  tagListElement.style.left = `${rect.left}px`;
-                  tagListElement.style.top = `${rect.top + rect.height - 1}px`;
-                  tagListElement.style.width = `${rect.width}px`;
-                }}
+                onClick={(e) => positionTagList(e)}
               >
                 {item.tag}
               </div>
