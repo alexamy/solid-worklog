@@ -1,5 +1,5 @@
 import { createStore, produce, SetStoreFunction } from 'solid-js/store'
-import { createEffect, createMemo, createSignal, For, Match, onCleanup, Show, Switch } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 import { css, cx } from '@linaria/core';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
@@ -128,12 +128,16 @@ export function App() {
     return { entries: stats, sumAll };
   });
 
-  let tagListElement!: HTMLDivElement;
   const availableTags = createMemo(() => {
     const tags = store.items.map(item => item.tag);
     const uniqueTags = [...new Set(tags)];
 
     return uniqueTags;
+  });
+
+  let tagListElement!: HTMLDivElement;
+  onMount(() => {
+    tagListElement.style.display = 'none';
   });
 
   function positionTagList(e: MouseEvent & { currentTarget: HTMLDivElement }) {
@@ -253,7 +257,7 @@ export function App() {
     <div class={sApp}>
       <Show when={availableTags().length > 0}>
         <Portal>
-            <div ref={tagListElement} class={sTagList} style={{ display: 'none' }}>
+            <div ref={tagListElement} class={sTagList}>
               <For each={availableTags()}>
                 {(tag) => <div class={sTag}>{tag}</div>}
               </For>
