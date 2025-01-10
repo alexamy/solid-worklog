@@ -468,6 +468,10 @@ export function App() {
 
 function updateTimestamp(date: Date, timestamp: string) {
   const [hours, minutes] = timestamp.split(':').map(Number);
+  if (isNaN(hours) || isNaN(minutes)) {
+    return date;
+  }
+
   const newDate = new Date(date);
   newDate.setHours(hours, minutes, 0);
 
