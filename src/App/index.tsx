@@ -210,7 +210,7 @@ export function App() {
               onClick={() => setSelectedItemId(item.id)}
             >
               <div
-                class={sCell}
+                class={cx(sCell, sCellEditable)}
                 contentEditable
                 onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
@@ -221,7 +221,7 @@ export function App() {
                 {calculateDuration(item.start, item.end ?? now())}
               </div>
               <div
-                class={sCell}
+                class={cx(sCell, sCellEditable)}
                 classList={{ [sCellGrayed]: !item.end }}
                 contentEditable={Boolean(item.end)}
                 onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
@@ -230,7 +230,7 @@ export function App() {
                 {toTimestamp(item.end ?? now())}
               </div>
               <div
-                class={cx(sCell, sCellEditable)}
+                class={cx(sCell, sCellEditable, sCellEditableText)}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
@@ -238,7 +238,7 @@ export function App() {
                 {item.tag}
               </div>
               <div
-                class={cx(sCell, sCellEditable)}
+                class={cx(sCell, sCellEditable, sCellEditableText)}
                 contentEditable
                 onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
                 onKeyDown={(e) => processCellKeyDown(e)}
@@ -608,9 +608,12 @@ const sCellDuration = css`
 `;
 
 const sCellEditable = css`
+  cursor: text;
+`;
+
+const sCellEditableText = css`
   min-width: 120px;
   justify-content: flex-start;
-  cursor: text;
 `;
 
 const sCellGrayed = css`
