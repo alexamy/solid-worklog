@@ -128,6 +128,7 @@ export function App() {
     return { entries: stats, sumAll };
   });
 
+  let tagListElement!: HTMLDivElement;
   const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
   // methods
@@ -213,7 +214,7 @@ export function App() {
   return (
     <div class={sApp}>
       <Portal>
-        <div class={sTagList}>
+        <div ref={tagListElement} class={sTagList}>
           <For each={availableTags()}>
             {(tag) => <div class={sTag}>{tag}</div>}
           </For>
