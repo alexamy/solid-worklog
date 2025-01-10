@@ -36,7 +36,7 @@ export function App() {
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
 
   // items
-  const isInProgress = createMemo(() => store.items[store.items.length - 1].end === undefined);
+  const isInProgress = createMemo(() => store.items[0].end === undefined);
 
   const itemsAtDate = createMemo(() => store.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
 
@@ -153,7 +153,7 @@ export function App() {
   }
 
   function finishItem() {
-    setStore('items', store.items.length - 1, {
+    setStore('items', 0, {
       end: new Date(),
     });
   }
