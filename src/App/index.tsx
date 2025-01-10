@@ -159,6 +159,23 @@ export function App() {
       </div>
 
       Stats
+      <div class={sToolbar}>
+        <div class={sToolbarLeft}>
+          <label>
+            <input type="radio" name="timeRange" value="today" checked={true} />
+            Today
+          </label>
+          <label>
+            <input type="radio" name="timeRange" value="month" />
+            Month
+          </label>
+          <label>
+            <input type="radio" name="timeRange" value="year" />
+            Year
+          </label>
+        </div>
+      </div>
+
       <div class={sTableStats}>
         <For each={dayStats()}>
           {(entry) => (
