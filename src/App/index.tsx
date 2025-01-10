@@ -65,7 +65,19 @@ export function App() {
   function dateFilter(item: Item) {
     const target = statTimeStartDate();
     const itemDate = getDateNoTime(item.start);
-    return itemDate.getTime() >= target.getTime();
+    const time = statTime();
+
+    switch (time) {
+      case 'today':
+        return itemDate.toDateString() === target.toDateString();
+      case 'month':
+        return itemDate.getFullYear() === target.getFullYear()
+          && itemDate.getMonth() === target.getMonth();
+      case 'year':
+        return itemDate.getFullYear() === target.getFullYear();
+      default:
+        throw new Error(time satisfies never);
+    }
   }
 
   const dayStats = createMemo(() => calculateStatsAtDate(
