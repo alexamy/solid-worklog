@@ -1,4 +1,4 @@
-import { createStore, produce, SetStoreFunction } from 'solid-js/store'
+import { createStore, produce, SetStoreFunction, unwrap } from 'solid-js/store'
 import { createEffect, createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 import { css, cx } from '@linaria/core';
 import superjson from 'superjson';
@@ -204,6 +204,22 @@ export function App() {
   function startItem(item: Partial<Item> = {}) {
     setCurrentDate(now());
 
+    const lastItem = store.items[0];
+    if(!lastItem || !lastItem.end) {
+      throw new Error('No last item or end time');
+    }
+
+    // if from last item the time is between 20 minutes and 2 hours, then add entry with idle tag
+    const duration = calculateDuration(lastItem.end, now());
+    if(duration >= 20 && duration <= 2 * 60) {
+      createItem({
+        start: lastItem.end,
+        end: new Date(),
+        tag: 'idle',
+      });
+    }
+
+    // start new item
     createItem({
       start: new Date(),
       end: undefined,
