@@ -281,6 +281,17 @@ export function App() {
     if (data) setStore(data);
   }
 
+  function getWeekInterval(date: Date) {
+    const start = getStartOfWeek(date);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+
+    const startStr = start.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+    const endStr = end.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+
+    return `${startStr} - ${endStr}`;
+  }
+
   return (
     <div class={sApp}>
       <Portal>
@@ -402,7 +413,7 @@ export function App() {
               onChange={() => setStatTime('week')}
               checked={statTime() === 'week'}
             />
-            Week
+            Week ({getWeekInterval(currentDate())})
           </label>
           <label>
             <input type="radio" name="timeRange" value="month"
