@@ -166,12 +166,14 @@ export function App() {
   function removeItem() {
     const selected = selectedItemId()!;
 
+    // select next item
     const index = store.items.findIndex(item => item.id === selected);
     if(index >= 0) {
       const item = store.items[index + 1];
       setSelectedItemId(item?.id);
     }
 
+    // remove item
     const filtered = store.items.filter(item => item.id !== selected);
     if(filtered.length > 0) {
       setStore('items', filtered);
