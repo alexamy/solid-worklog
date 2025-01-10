@@ -1,5 +1,5 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
-import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, Match, Switch } from 'solid-js';
 import { css } from '@linaria/core';
 import * as devalue from 'devalue';
 import pomodoroSvg from './pomodoro.svg';
@@ -20,7 +20,6 @@ interface Item {
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(getDefaultStore());
-  const backupKey = 'solid-worklog-store-backup';
   const persist = persistStore(store, setStore);
 
   // date
@@ -91,7 +90,7 @@ export function App() {
     dateFilter,
   ));
 
-  const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
+  // const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
   // methods
   function updateItem(item: Partial<Item>, id: string) {
