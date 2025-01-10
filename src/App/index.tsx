@@ -1,5 +1,5 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
-import { createEffect, createMemo, createSignal, For, Match, Switch } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, Match, onCleanup, Switch } from 'solid-js';
 import { css } from '@linaria/core';
 import * as devalue from 'devalue';
 import pomodoroSvg from './pomodoro.svg';
@@ -44,7 +44,7 @@ export function App() {
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
     const intervalId = setInterval(() => setNow(new Date()), 60000);
-    return () => clearInterval(intervalId);
+    onCleanup(() => clearInterval(intervalId));
   });
 
   // stats
