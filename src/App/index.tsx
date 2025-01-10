@@ -734,9 +734,9 @@ const sRowIdle = css`
 `;
 
 const sRowSelectable = css`
-  &:hover:not(.${sRowSelected}) {
+  /* &:hover:not(.${sRowSelected}) {
     background-color: #333;
-  }
+  } */
 `;
 
 const sCell = css`
