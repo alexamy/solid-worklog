@@ -167,7 +167,7 @@ export function App() {
     const selected = selectedItemId()!;
 
     const index = store.items.findIndex(item => item.id === selected);
-    if(index > 0) {
+    if(index >= 0) {
       const item = store.items[index + 1];
       setSelectedItemId(item?.id);
     }
