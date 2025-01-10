@@ -294,6 +294,7 @@ function persistStore(
 ) {
   function save(key = storageKey) {
     localStorage.setItem(key, devalue.stringify(store));
+    downloadStore(store);
   }
 
   function load(key = storageKey, backupStore = getDefaultStore()) {
@@ -323,6 +324,24 @@ function persistStore(
     load,
     save,
   };
+}
+
+function downloadStore(store: Store) {
+  const data = devalue.stringify(store);
+  const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.json`;
+  downloadBlob(data, filename, 'application/json');
+}
+
+function downloadBlob(content: string, filename: string, contentType: string) {
+  const blob = new Blob([content], { type: contentType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function getDefaultStore(): Store {
