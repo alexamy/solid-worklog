@@ -85,10 +85,37 @@ export function App() {
     }
   }
 
+  const [sortBy, setSortBy] = createSignal<'tag' | 'duration' | 'pomodoros'>('tag');
+  const [sortOrder, setSortOrder] = createSignal<'asc' | 'desc'>('asc');
+
+  function changeSorting(by: 'tag' | 'duration' | 'pomodoros') {
+    if (sortBy() === by) {
+      setSortOrder(sortOrder() === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(by);
+      setSortOrder('asc');
+    }
+  }
+
   const dayStats = createMemo(() => calculateStatsAtDate(
     store.items,
     dateFilter,
   ));
+
+  const sortedStats = createMemo(() => {
+    const stats = dayStats().map(item => ({
+      ...item,
+      pomodoros: toPomodoro(item.duration),
+    }));
+
+    stats.sort((a, b) => {
+      return sortOrder() === 'asc'
+        ? a[sortBy()] - b[sortBy()]
+        : b[sortBy()] - a[sortBy()];
+    });
+
+    return stats;
+  });
 
   // const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
 
@@ -260,11 +287,11 @@ export function App() {
 
       <div class={sTableStats}>
         <div class={sRow}>
-          <div class={sCell}>Tag</div>
-          <div class={sCell}>Minutes</div>
-          <div class={sCell}>Pomodoros</div>
+          <div class={sCell} onClick={() => changeSorting('tag')}>Tag</div>
+          <div class={sCell} onClick={() => changeSorting('duration')}>Minutes</div>
+          <div class={sCell} onClick={() => changeSorting('pomodoros')}>Pomodoros</div>
         </div>
-        <For each={dayStats()}>
+        <For each={sortedStats()}>
           {(entry) => (
             <div class={sRow}>
               <div class={sCell}>{entry.tag}</div>
