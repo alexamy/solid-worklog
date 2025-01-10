@@ -4,6 +4,7 @@ import { css, cx } from '@linaria/core';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
 import { Portal } from 'solid-js/web';
+import createFuzzySearch from '@nozbe/microfuzz';
 
 // types
 interface Store {
@@ -131,9 +132,10 @@ export function App() {
   const availableTags = createMemo(() => {
     const tags = store.items.map(item => item.tag);
     const uniqueTags = [...new Set(tags)];
-
     return uniqueTags;
   });
+
+  const fuzzySearch = createMemo(() => createFuzzySearch(availableTags()));
 
   let tagListElement!: HTMLDivElement;
   onMount(() => {
