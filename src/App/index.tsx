@@ -179,18 +179,7 @@ export function App() {
   });
 
   // methods
-  function updateItem(item: Partial<Item>, id: string) {
-    setStore('items', item => item.id === id, item);
-  }
-
-  function addItem() {
-    startItem({
-      start: new Date(currentDate().setHours(12, 0, 0, 0)),
-      end: new Date(currentDate().setHours(12, 5, 0, 0)),
-    });
-  }
-
-  function startItem(item: Partial<Item> = {}) {
+  function createItem(item: Partial<Item>) {
     setStore('items', (items) => [{
       id: randomId(),
       description: '',
@@ -199,6 +188,27 @@ export function App() {
       end: undefined,
       ...item,
     }, ...items]);
+  }
+
+  function updateItem(item: Partial<Item>, id: string) {
+    setStore('items', item => item.id === id, item);
+  }
+
+  function addItem() {
+    createItem({
+      start: new Date(currentDate().setHours(12, 0, 0, 0)),
+      end: new Date(currentDate().setHours(12, 5, 0, 0)),
+    });
+  }
+
+  function startItem(item: Partial<Item> = {}) {
+    setCurrentDate(now());
+
+    createItem({
+      start: new Date(),
+      end: undefined,
+      ...item,
+    });
   }
 
   function finishItem() {
