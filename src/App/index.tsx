@@ -259,6 +259,11 @@ export function App() {
       </div>
 
       <div class={sTableStats}>
+        <div class={sRow}>
+          <div class={sCell}>Tag</div>
+          <div class={sCell}>Minutes</div>
+          <div class={sCell}>Pomodoros</div>
+        </div>
         <For each={dayStats()}>
           {(entry) => (
             <div class={sRow}>
