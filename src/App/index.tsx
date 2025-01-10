@@ -365,12 +365,12 @@ export function App() {
       </div>
 
       <br />
-      Danger zone
+      Utilities
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
           <button onClick={() => downloadJson(store)}>Save backup</button>
           <button onClick={uploadStore}>Load backup</button>
-          <button onDblClick={persist.reset} title="Double click to reset">Reset</button>
+          <button onDblClick={persist.reset}>Reset (double click)</button>
         </div>
       </div>
     </div>
