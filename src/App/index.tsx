@@ -62,13 +62,15 @@ export function App() {
     }
   });
 
+  function dateFilter(item: Item) {
+    const target = statTimeStartDate();
+    const itemDate = getDateNoTime(item.start);
+    return itemDate.getTime() >= target.getTime();
+  }
+
   const dayStats = createMemo(() => calculateStatsAtDate(
     store.items,
-    item => {
-      const target = statTimeStartDate();
-      const itemDate = getDateNoTime(item.start);
-      return itemDate.getTime() >= target.getTime();
-    }
+    dateFilter,
   ));
 
   const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
