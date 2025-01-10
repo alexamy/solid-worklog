@@ -1,7 +1,7 @@
 import { createStore, SetStoreFunction } from 'solid-js/store'
 import { createEffect, createMemo, createSignal, For, Match, onCleanup, Switch } from 'solid-js';
 import { css } from '@linaria/core';
-import * as devalue from 'devalue';
+import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
 
 // types
@@ -297,14 +297,14 @@ function persistStore(
   storageKey = 'solid-worklog-store',
 ) {
   function save(key = storageKey) {
-    localStorage.setItem(key, devalue.stringify(store));
+    localStorage.setItem(key, superjson.stringify(store));
   }
 
   function load(key = storageKey, backupStore = getDefaultStore()) {
     const items = localStorage.getItem(key);
     if (items) {
       try {
-        setStore(devalue.parse(items));
+        setStore(superjson.parse(items));
       } catch (error) {
         console.error(error);
         localStorage.removeItem(key);
@@ -340,7 +340,7 @@ async function uploadDevalue(): Promise<Store | undefined> {
 
       try {
         const text = await file.text();
-        const data = devalue.parse(text);
+        const data = superjson.parse(text) as Store;
         resolve(data);
       } catch (error) {
         reject(error);
@@ -350,7 +350,7 @@ async function uploadDevalue(): Promise<Store | undefined> {
 }
 
 function downloadDevalue(content: any) {
-  const data = devalue.stringify(content);
+  const data = superjson.stringify(content);
   const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.txt`;
   downloadBlob(data, filename, 'application/text');
 }
