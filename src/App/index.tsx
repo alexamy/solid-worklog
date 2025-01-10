@@ -181,6 +181,7 @@ export function App() {
             value={currentDate().toISOString().split('T')[0]}
             max={new Date().toISOString().split('T')[0]}
             onChange={(e) => setCurrentDate(new Date(e.target.value))}
+            style={{ width: '110px' }}
           />
           <button onClick={() => moveDate(1)}>{'>'}</button>
         </div>
