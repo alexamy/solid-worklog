@@ -276,7 +276,11 @@ export function App() {
       <Portal>
         <div ref={tagListElement} class={sTagList}>
           <For each={availableTags()}>
-            {(tag) => <div class={sTag}>{tag}</div>}
+            {(tag) =>
+              <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
+                {tag}
+              </div>
+            }
           </For>
         </div>
       </Portal>
