@@ -49,7 +49,7 @@ export function App() {
   });
 
   // stats
-  const [statTime, setStatTime] = createSignal<'today' | 'month' | 'year'>('today');
+  const [statTime, setStatTime] = createSignal<'today' | 'month' | 'year' | 'all'>('today');
   const statTimeStartDate = createMemo(() => {
     const from = currentDate();
     const time = statTime();
@@ -58,6 +58,7 @@ export function App() {
       case 'today': return from;
       case 'month': return new Date(from.getFullYear(), from.getMonth(), 1);
       case 'year':  return new Date(from.getFullYear(), 0, 1);
+      case 'all':   return new Date(0);
       default:      throw new Error(time satisfies never);
     }
   });
@@ -75,6 +76,8 @@ export function App() {
           && itemDate.getMonth() === target.getMonth();
       case 'year':
         return itemDate.getFullYear() === target.getFullYear();
+      case 'all':
+        return true;
       default:
         throw new Error(time satisfies never);
     }
@@ -213,6 +216,13 @@ export function App() {
               checked={statTime() === 'year'}
             />
             Year
+          </label>
+          <label>
+            <input type="radio" name="timeRange" value="all"
+              onChange={() => setStatTime('all')}
+              checked={statTime() === 'all'}
+            />
+            All time
           </label>
         </div>
       </div>
