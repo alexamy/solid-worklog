@@ -265,7 +265,7 @@ export function App() {
               <div class={sCell}>{entry.tag}</div>
               <div class={sCell}>{entry.duration} min</div>
               <div class={sCell} classList={{ [sCellPomodoro]: true }}>
-                <For each={Array(Math.min(4, Math.floor(toPomodoro(entry.duration)))).fill(0)}>
+                <For each={Array(Math.max(0, Math.min(4, Math.floor(toPomodoro(entry.duration)))))}>
                   {() => <PomodoroIcon />}
                 </For>
                 <Switch>
@@ -298,6 +298,11 @@ function updateTimestamp(date: Date, timestamp: string) {
   const [hours, minutes] = timestamp.split(':').map(Number);
   const newDate = new Date(date);
   newDate.setHours(hours, minutes, 0);
+
+  if (isNaN(newDate.getTime())) {
+    return date;
+  }
+
   return newDate;
 }
 
