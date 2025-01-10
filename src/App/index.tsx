@@ -129,7 +129,12 @@ export function App() {
   });
 
   let tagListElement!: HTMLDivElement;
-  const availableTags = createMemo(() => [...new Set(store.items.map(item => item.tag))]);
+  const availableTags = createMemo(() => {
+    const tags = store.items.map(item => item.tag);
+    const uniqueTags = [...new Set(tags)];
+
+    return uniqueTags;
+  });
 
   function positionTagList(e: MouseEvent & { currentTarget: HTMLDivElement }) {
     const rect = e.currentTarget.getBoundingClientRect();
