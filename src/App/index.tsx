@@ -1,4 +1,4 @@
-import { createStore, SetStoreFunction } from 'solid-js/store'
+import { createStore, produce, SetStoreFunction } from 'solid-js/store'
 import { createEffect, createMemo, createSignal, For, Match, onCleanup, Show, Switch } from 'solid-js';
 import { css, cx } from '@linaria/core';
 import superjson from 'superjson';
@@ -135,6 +135,13 @@ export function App() {
     setStore('items', item => item.id === id, item);
   }
 
+  function addItem() {
+    startItem({
+      start: new Date(currentDate().setHours(12, 0, 0, 0)),
+      end: new Date(currentDate().setHours(12, 5, 0, 0)),
+    });
+  }
+
   function startItem(item: Partial<Item> = {}) {
     setStore('items', (items) => [...items, {
       id: randomId(),
@@ -159,6 +166,24 @@ export function App() {
 
   function removeItem(id: string) {
     setStore('items', (items) => items.filter(item => item.id !== id));
+  }
+
+  function moveUp() {
+    setStore('items', produce((items) => {
+      const index = items.findIndex(item => item.id === selectedItemId());
+      if (index > 0) {
+        [items[index], items[index - 1]] = [items[index - 1], items[index]];
+      }
+    }));
+  }
+
+  function moveDown() {
+    setStore('items', produce((items) => {
+      const index = items.findIndex(item => item.id === selectedItemId());
+      if (index < items.length - 1) {
+        [items[index], items[index + 1]] = [items[index + 1], items[index]];
+      }
+    }));
   }
 
   function processCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
@@ -195,7 +220,13 @@ export function App() {
           <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
           <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
           <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
-          <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>Remove</button>
+        </div>
+        <div class={sToolbarRight}>
+          Rows:
+          <button onClick={() => addItem()}>+</button>
+          <button disabled={!selectedItemId()} onClick={() => moveDown()}>↑</button>
+          <button disabled={!selectedItemId()} onClick={() => moveUp()}>↓</button>
+          <button disabled={!selectedItemId()} onClick={() => removeItem(selectedItemId()!)}>-</button>
         </div>
       </div>
 
@@ -576,11 +607,11 @@ const sToolbarLeft = css`
   align-items: center;
 `;
 
-// const sToolbarRight = css`
-//   display: flex;
-//   gap: 10px;
-//   align-items: center;
-// `;
+const sToolbarRight = css`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`;
 
 const sCurrentDate = css`
   display: flex;
