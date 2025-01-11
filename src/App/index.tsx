@@ -655,13 +655,16 @@ function calculateDuration(start: Date, end: Date) {
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60));
 }
 
-function minutesToHoursMinutes(minutes: number) {
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
+function minutesToHoursMinutes(minutesAmount: number) {
+  const hours = Math.floor(minutesAmount / 60);
+  const minutes = minutesAmount % 60;
   if (hours > 0) {
-    return `${hours} h ${remainingMinutes} min`;
+    return `${hours} h ${minutes} min`;
   }
-  return `${remainingMinutes} min`;
+  if(minutes > 0) {
+    return `${minutes} min`;
+  }
+  return '0 min';
 }
 
 function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
