@@ -190,7 +190,8 @@ export function App() {
   }
 
   function startItem(item: Partial<Item> = {}) {
-    setCurrentDate(now());
+    const now = new Date();
+    setCurrentDate(now);
 
     const lastItem = dataStore.items[0];
     if(!lastItem || !lastItem.end) {
@@ -198,7 +199,7 @@ export function App() {
     }
 
     // if from last item the time is between 20 minutes and 2 hours, then add entry with idle tag
-    const duration = calculateDuration(lastItem.end, now());
+    const duration = calculateDuration(lastItem.end, now);
     if(duration >= 20 && duration <= 2 * 60) {
       createItem({
         start: lastItem.end,
