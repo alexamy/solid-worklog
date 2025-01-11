@@ -266,7 +266,7 @@ export function App() {
             </div>
             <For each={itemsAtDate()}>
               {(item) => (
-                <div class={cx(sRow, sRowSelectable)}
+                <div class={cx(sRow)}
                   classList={{
                     [sRowSelected]: selectedItemId() === item.id,
                     [sRowIdle]: item.tag === 'idle',
@@ -515,11 +515,6 @@ const sRowIdle = css`
   color: #999;
 `;
 
-const sRowSelectable = css`
-  /* &:hover:not(.${sRowSelected}) {
-    background-color: #333;
-  } */
-`;
 
 const sCell = css`
   flex: 1;
