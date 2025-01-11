@@ -93,6 +93,14 @@ function Toolbar(props: {
   statTime: StatTime;
   setStatTime: (time: StatTime) => void;
 }) {
+  const intervals = createMemo(() => ({
+    day: props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }),
+    week: getWeekInterval(props.selectedDate),
+    month: props.selectedDate.toLocaleDateString('en-US', { month: 'long' }),
+    year: props.selectedDate.toLocaleDateString('en-US', { year: 'numeric' }),
+    all: '',
+  } satisfies Record<StatTime, string>));
+
   return (
     <div class={sToolbar}>
       <div class={sToolbarLeft}>
@@ -101,7 +109,7 @@ function Toolbar(props: {
             onChange={() => props.setStatTime('day')}
             checked={props.statTime === 'day'}
           />
-          Day ({props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
+          Day ({intervals().day})
         </label>
 
         <label>
@@ -109,7 +117,7 @@ function Toolbar(props: {
             onChange={() => props.setStatTime('week')}
             checked={props.statTime === 'week'}
           />
-          Week ({getWeekInterval(props.selectedDate)})
+          Week ({intervals().week})
         </label>
 
         <label>
@@ -117,7 +125,7 @@ function Toolbar(props: {
             onChange={() => props.setStatTime('month')}
             checked={props.statTime === 'month'}
           />
-          Month ({props.selectedDate.toLocaleDateString('en-US', { month: 'long' })})
+          Month ({intervals().month})
         </label>
 
         <label>
@@ -125,7 +133,7 @@ function Toolbar(props: {
             onChange={() => props.setStatTime('year')}
             checked={props.statTime === 'year'}
           />
-          Year ({props.selectedDate.toLocaleDateString('en-US', { year: 'numeric' })})
+          Year ({intervals().year})
         </label>
 
         <label>
