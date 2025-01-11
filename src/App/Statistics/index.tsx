@@ -25,7 +25,7 @@ export function Statistics() {
   const [appStore] = useAppContext();
   const [dataStore] = useDataContext();
   const selectedDate = () => appStore.selectedDate;
-  const now = () => appStore.now;
+  const now = () => appStore.sync;
 
   // sorting
   const [sortBy, setSortBy] = createSignal<SortBy>('tag');

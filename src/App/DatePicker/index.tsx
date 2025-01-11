@@ -7,7 +7,7 @@ import { css } from '@linaria/core';
 export function DatePicker() {
   const [appStore, setAppStore] = useAppContext();
 
-  const now = () => appStore.now;
+  const now = () => appStore.sync;
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
 

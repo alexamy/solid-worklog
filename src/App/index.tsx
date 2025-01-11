@@ -32,14 +32,14 @@ export function App() {
 
   // update now timestamp every 30 seconds
   createEffect(() => {
-    const intervalId = setInterval(() => setAppStore('now', new Date()), 30000);
+    const intervalId = setInterval(() => setAppStore('sync', new Date()), 30000);
     onCleanup(() => clearInterval(intervalId));
   });
 
   // store
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
-  const now = () => appStore.now;
+  const now = () => appStore.sync;
 
   // tags and fuzzy search
   const allTags = createMemo(() => {
