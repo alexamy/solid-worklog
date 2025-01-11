@@ -169,7 +169,7 @@ function ItemRow(props: StatEntry) {
               <For each={Array(wholePomodoros())}>
                 {() => <PomodoroIcon />}
               </For>
-              <PomodoroIcon amount={restPomodoros()} grayed={true} />
+              <PomodoroIcon amount={restPomodoros()} />
             </Match>
           </Switch>
         </Show>
@@ -178,8 +178,9 @@ function ItemRow(props: StatEntry) {
   );
 }
 
-function PomodoroIcon(props: { amount?: number, grayed?: boolean }) {
-  const targetWidth = () => 24 * (props.amount ?? 1);
+function PomodoroIcon(props: { amount?: number }) {
+  const amount = () => props.amount ?? 1;
+  const targetWidth = () => 24 * amount();
   const width = () => targetWidth() >= 10 ? targetWidth() : 0;
 
   return <img
@@ -187,7 +188,7 @@ function PomodoroIcon(props: { amount?: number, grayed?: boolean }) {
     height={24}
     src={pomodoroSvg}
     alt="Pomodoro"
-    classList={{ [sPomodoroGrayed]: props.grayed }}
+    classList={{ [sPomodoroGrayed]: amount() < 1 }}
   />;
 }
 
