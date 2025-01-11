@@ -1,5 +1,9 @@
 export interface AppStore {
-  currentDate: Date;
-  selectedItemId: string;
-  now: Date;
+  selectedDate: Date;
+}
+
+export function getDefaultAppStore(): AppStore {
+  return {
+    selectedDate: new Date(),
+  }
 }
