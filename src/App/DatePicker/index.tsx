@@ -1,4 +1,4 @@
-import { createMemo } from 'solid-js';
+import { createEffect, createMemo, createSignal, on, Show } from 'solid-js';
 import { toTimestamp } from '../time';
 import { useAppContext } from '../store/app';
 import { sToolbarLeft } from '../styles';
@@ -35,14 +35,19 @@ export function DatePicker() {
         />
         <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
         {toTimestamp(now())}
-        <Lamp />
+        <Lamp now={now} />
       </div>
     </div>
   );
 }
 
-function Lamp() {
-  return <div class={sLamp} />;
+// TODO: flicker on every now update
+function Lamp(props: { now: () => Date }) {
+  let element!: HTMLDivElement;
+
+  return (
+    <div ref={element} class={sLamp} />
+  );
 }
 
 // styles
@@ -59,5 +64,6 @@ const sLamp = css`
   background-color: #c23616;
   border-radius: 50%;
   box-shadow: 0 0 8px #c23616;
-  animation: lamp-fade 2s infinite ease-in-out;
+  animation: lamp-fade 2s 1 ease-in-out;
+  animation-fill-mode: forwards;
 `;
