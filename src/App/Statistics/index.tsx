@@ -141,6 +141,9 @@ function Toolbar(props: {
 }
 
 function ItemRow(props: { entry: StatEntry }) {
+  const wholePomodoros = () => Math.floor(props.entry.pomodoros);
+  const restPomodoros = () => props.entry.pomodoros - wholePomodoros();
+
   return (
     <div class={sRow}>
       <div class={sCell}>{props.entry.tag}</div>
@@ -151,14 +154,14 @@ function ItemRow(props: { entry: StatEntry }) {
             <Match when={props.entry.tag === 'idle'}>
               <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
             </Match>
-            <Match when={Math.floor(props.entry.pomodoros) > 4}>
-              <PomodoroIcon /> x{Math.floor(props.entry.pomodoros)}
+            <Match when={wholePomodoros() > 4}>
+              <PomodoroIcon /> x{wholePomodoros()}
             </Match>
-            <Match when={Math.floor(props.entry.pomodoros) <= 4}>
-              <For each={Array(Math.floor(props.entry.pomodoros))}>
+            <Match when={wholePomodoros() <= 4}>
+              <For each={Array(wholePomodoros())}>
                 {() => <PomodoroIcon />}
               </For>
-              <PomodoroIcon amount={props.entry.pomodoros % 1} grayed={true} />
+              <PomodoroIcon amount={restPomodoros()} grayed={true} />
             </Match>
           </Switch>
         </Show>
