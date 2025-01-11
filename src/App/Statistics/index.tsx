@@ -194,7 +194,6 @@ function PomodoroIcon(props: { amount?: number }) {
 }
 
 // methods
-// sort strings or numbers
 function getSortedEntries<T extends object>(
   entries: T[],
   sortBy: keyof T,
@@ -216,7 +215,6 @@ function getSortedEntries<T extends object>(
   });
 }
 
-// aggregate durations by tag
 function aggregateByTag(items: Item[]): StatResult {
   const tags = [...new Set(items.map(item => item.tag))];
 
@@ -234,6 +232,7 @@ function aggregateByTag(items: Item[]): StatResult {
   return { entries, sumAll };
 }
 
+// stat range
 function getStartOfStatRange(selectedDate: Date, statRange: StatRange) {
   const from = selectedDate;
   const time = statRange;
@@ -269,6 +268,7 @@ function isItemInRange(item: Item, statRange: StatRange, target: Date) {
   }
 }
 
+// helpers
 function getStartOfWeek(date: Date) {
   const result = new Date(date);
   const day = result.getDay();
