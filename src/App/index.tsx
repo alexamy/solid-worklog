@@ -5,11 +5,13 @@ import { createStore, produce, SetStoreFunction } from 'solid-js/store';
 import { Portal } from 'solid-js/web';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
-import { getDefaultDataStore, Item, DataStore } from './store/data';
+import { getDefaultDataStore, Item, DataStore, DataContext } from './store/data';
+import { AppContext, getDefaultAppStore } from './store/app';
 
 // component
 export function App() {
-  const [dataStore, setDataStore] = createStore<DataStore>(getDefaultDataStore());
+  const [appStore, setAppStore] = createStore(getDefaultAppStore());
+  const [dataStore, setDataStore] = createStore(getDefaultDataStore());
   const persist = persistStore(dataStore, setDataStore);
 
   // date
@@ -298,202 +300,206 @@ export function App() {
   }
 
   return (
-    <div class={sApp}>
-      <Portal>
-        <div ref={tagListElement} class={sTagList}>
-          <For each={availableTags()}>
-            {(tag) =>
-              <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
-                {tag}
-              </div>
-            }
-          </For>
-        </div>
-      </Portal>
-
-      <div class={sCurrentDate}>
-        <div class={sToolbarLeft}>
-          <button disabled={isToday()} onClick={() => setSelectedDate(new Date())}>Today</button>
-          <button onClick={() => moveDate(-1)}>{'<'}</button>
-          <input
-            type="date"
-            value={selectedDate().toISOString().split('T')[0]}
-            max={new Date().toISOString().split('T')[0]}
-            onChange={(e) => setSelectedDate(new Date(e.target.value))}
-            style={{ width: '110px' }}
-          />
-          <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
-          {toTimestamp(now())}
-        </div>
-      </div>
-
-      Worklog
-      <div class={sToolbar}>
-        <div class={sToolbarLeft}>
-          <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
-          <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
-          <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
-        </div>
-        <div class={sToolbarRight}>
-          Rows:
-          <button disabled={isInProgress()} onClick={() => addItem()}>+</button>
-          <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveUp()}>↑</button>
-          <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveDown()}>↓</button>
-          <button disabled={!selectedItemId() || isInProgress() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
-        </div>
-      </div>
-
-
-      <div class={sTable}>
-        <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
-          <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
-          <div class={cx(sCell, sCellHeader)}>Tag</div>
-          <div class={cx(sCell, sCellHeader)}>Description</div>
-        </div>
-        <For each={itemsAtDate()}>
-          {(item) => (
-            <div class={cx(sRow, sRowSelectable)}
-              classList={{
-                [sRowSelected]: selectedItemId() === item.id,
-                [sRowIdle]: item.tag === 'idle',
-              }}
-              onClick={() => setSelectedItemId(item.id)}
-            >
-              <div
-                class={cx(sCell, sCellEditable)}
-                contentEditable
-                onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {toTimestamp(item.start)}
-              </div>
-              <div class={sCell}>
-                {calculateDuration(item.start, item.end ?? now())}
-              </div>
-              <div
-                class={cx(sCell, sCellEditable)}
-                classList={{ [sCellGrayed]: !item.end }}
-                contentEditable={Boolean(item.end)}
-                onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {toTimestamp(item.end ?? now())}
-              </div>
-              <div
-                data-tag={true}
-                class={cx(sCell, sCellEditable, sCellEditableText)}
-                contentEditable
-                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onClick={(e) => positionTagList(e)}
-                onKeyDown={(e) => onTagCellKeyDown(e)}
-                onKeyUp={(e) => onTagCellKeyUp(e)}
-              >
-                {item.tag}
-              </div>
-              <div
-                class={cx(sCell, sCellEditable, sCellEditableText)}
-                contentEditable
-                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {item.description}
-              </div>
+    <AppContext.Provider value={[appStore, setAppStore]}>
+      <DataContext.Provider value={[dataStore, setDataStore]}>
+        <div class={sApp}>
+          <Portal>
+            <div ref={tagListElement} class={sTagList}>
+              <For each={availableTags()}>
+                {(tag) =>
+                  <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
+                    {tag}
+                  </div>
+                }
+              </For>
             </div>
-          )}
-        </For>
-      </div>
+          </Portal>
 
-      <br />
-      Statistics
-      <div class={sToolbar}>
-        <div class={sToolbarLeft}>
-          <label>
-            <input type="radio" name="timeRange" value="day"
-              onChange={() => setStatTime('day')}
-              checked={statTime() === 'day'}
-            />
-            Day ({selectedDate().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
-          </label>
-          <label>
-            <input type="radio" name="timeRange" value="week"
-              onChange={() => setStatTime('week')}
-              checked={statTime() === 'week'}
-            />
-            Week ({getWeekInterval(selectedDate())})
-          </label>
-          <label>
-            <input type="radio" name="timeRange" value="month"
-              onChange={() => setStatTime('month')}
-              checked={statTime() === 'month'}
-            />
-            Month ({selectedDate().toLocaleDateString('en-US', { month: 'long' })})
-          </label>
-          <label>
-            <input type="radio" name="timeRange" value="year"
-              onChange={() => setStatTime('year')}
-              checked={statTime() === 'year'}
-            />
-            Year ({selectedDate().toLocaleDateString('en-US', { year: 'numeric' })})
-          </label>
-          <label>
-            <input type="radio" name="timeRange" value="all"
-              onChange={() => setStatTime('all')}
-              checked={statTime() === 'all'}
-            />
-            All time
-          </label>
-        </div>
-      </div>
+          <div class={sCurrentDate}>
+            <div class={sToolbarLeft}>
+              <button disabled={isToday()} onClick={() => setSelectedDate(new Date())}>Today</button>
+              <button onClick={() => moveDate(-1)}>{'<'}</button>
+              <input
+                type="date"
+                value={selectedDate().toISOString().split('T')[0]}
+                max={new Date().toISOString().split('T')[0]}
+                onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                style={{ width: '110px' }}
+              />
+              <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
+              {toTimestamp(now())}
+            </div>
+          </div>
 
-      <div class={sTableStats}>
-        <div class={sRow}>
-          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>Tag</div>
-          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Duration</div>
-          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros (30 min)</div>
-        </div>
-        <For each={sortedStats().entries}>
-          {(entry) => (
+          Worklog
+          <div class={sToolbar}>
+            <div class={sToolbarLeft}>
+              <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
+              <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
+              <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
+            </div>
+            <div class={sToolbarRight}>
+              Rows:
+              <button disabled={isInProgress()} onClick={() => addItem()}>+</button>
+              <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveUp()}>↑</button>
+              <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveDown()}>↓</button>
+              <button disabled={!selectedItemId() || isInProgress() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
+            </div>
+          </div>
+
+
+          <div class={sTable}>
+            <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
+              <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
+              <div class={cx(sCell, sCellHeader)}>Tag</div>
+              <div class={cx(sCell, sCellHeader)}>Description</div>
+            </div>
+            <For each={itemsAtDate()}>
+              {(item) => (
+                <div class={cx(sRow, sRowSelectable)}
+                  classList={{
+                    [sRowSelected]: selectedItemId() === item.id,
+                    [sRowIdle]: item.tag === 'idle',
+                  }}
+                  onClick={() => setSelectedItemId(item.id)}
+                >
+                  <div
+                    class={cx(sCell, sCellEditable)}
+                    contentEditable
+                    onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
+                    onKeyDown={(e) => onCellKeyDown(e)}
+                  >
+                    {toTimestamp(item.start)}
+                  </div>
+                  <div class={sCell}>
+                    {calculateDuration(item.start, item.end ?? now())}
+                  </div>
+                  <div
+                    class={cx(sCell, sCellEditable)}
+                    classList={{ [sCellGrayed]: !item.end }}
+                    contentEditable={Boolean(item.end)}
+                    onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
+                    onKeyDown={(e) => onCellKeyDown(e)}
+                  >
+                    {toTimestamp(item.end ?? now())}
+                  </div>
+                  <div
+                    data-tag={true}
+                    class={cx(sCell, sCellEditable, sCellEditableText)}
+                    contentEditable
+                    onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                    onClick={(e) => positionTagList(e)}
+                    onKeyDown={(e) => onTagCellKeyDown(e)}
+                    onKeyUp={(e) => onTagCellKeyUp(e)}
+                  >
+                    {item.tag}
+                  </div>
+                  <div
+                    class={cx(sCell, sCellEditable, sCellEditableText)}
+                    contentEditable
+                    onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
+                    onKeyDown={(e) => onCellKeyDown(e)}
+                  >
+                    {item.description}
+                  </div>
+                </div>
+              )}
+            </For>
+          </div>
+
+          <br />
+          Statistics
+          <div class={sToolbar}>
+            <div class={sToolbarLeft}>
+              <label>
+                <input type="radio" name="timeRange" value="day"
+                  onChange={() => setStatTime('day')}
+                  checked={statTime() === 'day'}
+                />
+                Day ({selectedDate().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
+              </label>
+              <label>
+                <input type="radio" name="timeRange" value="week"
+                  onChange={() => setStatTime('week')}
+                  checked={statTime() === 'week'}
+                />
+                Week ({getWeekInterval(selectedDate())})
+              </label>
+              <label>
+                <input type="radio" name="timeRange" value="month"
+                  onChange={() => setStatTime('month')}
+                  checked={statTime() === 'month'}
+                />
+                Month ({selectedDate().toLocaleDateString('en-US', { month: 'long' })})
+              </label>
+              <label>
+                <input type="radio" name="timeRange" value="year"
+                  onChange={() => setStatTime('year')}
+                  checked={statTime() === 'year'}
+                />
+                Year ({selectedDate().toLocaleDateString('en-US', { year: 'numeric' })})
+              </label>
+              <label>
+                <input type="radio" name="timeRange" value="all"
+                  onChange={() => setStatTime('all')}
+                  checked={statTime() === 'all'}
+                />
+                All time
+              </label>
+            </div>
+          </div>
+
+          <div class={sTableStats}>
             <div class={sRow}>
-              <div class={sCell}>{entry.tag}</div>
-              <div class={sCell}>{minutesToHoursMinutes(entry.duration)}</div>
-              <div class={cx(sCell, sCellPomodoro)}>
-                <Show when={entry.pomodoros > 0}>
-                  <Switch>
-                    <Match when={entry.tag === 'idle'}>
-                      <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
-                    </Match>
-                    <Match when={Math.floor(entry.pomodoros) > 4}>
-                      <PomodoroIcon /> x{Math.floor(entry.pomodoros)}
-                    </Match>
-                    <Match when={Math.floor(entry.pomodoros) <= 4}>
-                      <For each={Array(Math.floor(entry.pomodoros))}>
-                        {() => <PomodoroIcon />}
-                      </For>
-                      <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
-                    </Match>
-                  </Switch>
-                </Show>
-              </div>
+              <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>Tag</div>
+              <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Duration</div>
+              <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros (30 min)</div>
             </div>
-          )}
-        </For>
-        <div class={sRow}>
-          <div class={cx(sCell)}></div>
-          <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
-          <div class={cx(sCell)}></div>
-        </div>
-      </div>
+            <For each={sortedStats().entries}>
+              {(entry) => (
+                <div class={sRow}>
+                  <div class={sCell}>{entry.tag}</div>
+                  <div class={sCell}>{minutesToHoursMinutes(entry.duration)}</div>
+                  <div class={cx(sCell, sCellPomodoro)}>
+                    <Show when={entry.pomodoros > 0}>
+                      <Switch>
+                        <Match when={entry.tag === 'idle'}>
+                          <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
+                        </Match>
+                        <Match when={Math.floor(entry.pomodoros) > 4}>
+                          <PomodoroIcon /> x{Math.floor(entry.pomodoros)}
+                        </Match>
+                        <Match when={Math.floor(entry.pomodoros) <= 4}>
+                          <For each={Array(Math.floor(entry.pomodoros))}>
+                            {() => <PomodoroIcon />}
+                          </For>
+                          <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
+                        </Match>
+                      </Switch>
+                    </Show>
+                  </div>
+                </div>
+              )}
+            </For>
+            <div class={sRow}>
+              <div class={cx(sCell)}></div>
+              <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
+              <div class={cx(sCell)}></div>
+            </div>
+          </div>
 
-      <br />
-      Utilities
-      <div class={sToolbar}>
-        <div class={sToolbarLeft}>
-          <button onClick={() => downloadJson(dataStore)}>Save backup</button>
-          <button onClick={uploadStore}>Load backup</button>
-          <button onDblClick={persist.reset}>Reset (double click)</button>
+          <br />
+          Utilities
+          <div class={sToolbar}>
+            <div class={sToolbarLeft}>
+              <button onClick={() => downloadJson(dataStore)}>Save backup</button>
+              <button onClick={uploadStore}>Load backup</button>
+              <button onDblClick={persist.reset}>Reset (double click)</button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </DataContext.Provider>
+    </AppContext.Provider>
   )
 }
 
