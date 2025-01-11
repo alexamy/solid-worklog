@@ -11,26 +11,14 @@ export function useNowContext() {
   return context;
 }
 
-export function createTicker(interval: number) {
+export function createTicker(duration: number) {
   const [now, setNow] = createSignal(new Date());
-  function tick() {
-    setNow(new Date());
-  }
+  const tick = () => setNow(new Date());
 
+  tick();
   createEffect(() => {
-    const at = new Date();
-    const msUntilNextMinute = 60000 - (at.getSeconds() * 1000 + at.getMilliseconds());
-
-    let intervalId: number;
-    const timeoutId = setTimeout(() => {
-      tick();
-      intervalId = setInterval(tick, interval);
-    }, msUntilNextMinute);
-
-    onCleanup(() => {
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
-    });
+    const intervalId = setInterval(tick, duration);
+    onCleanup(() => clearInterval(intervalId));
   });
 
   return now;
