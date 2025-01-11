@@ -32,11 +32,14 @@ export function Statistics() {
     }
   }
 
-  // stats
   const dayStats = createMemo(() => calculateStatsAtDate(
     dataStore.items,
-    (item) => isItemInRange(item, statTime(), statTimeStartDate()),
+    isItemInStatRange,
   ));
+
+  function isItemInStatRange(item: Item) {
+    return isItemInRange(item, statTime(), statTimeStartDate())
+  }
 
   const sortedStats = createMemo(() => getSortedStats(
     dayStats(),
