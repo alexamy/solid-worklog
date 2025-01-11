@@ -8,6 +8,7 @@ import { Statistics } from './Statistics';
 import { AppContext, getDefaultAppStore } from './store/app';
 import { DataContext, DataStore, getDefaultDataStore, Item } from './store/data';
 import { createTicker } from './time';
+import { DatePicker } from './DatePicker';
 
 // component
 export function App() {
@@ -18,14 +19,7 @@ export function App() {
   // date
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
-  const isToday = createMemo(() => selectedDate().toDateString() === new Date().toDateString());
 
-  function moveDate(delta: number) {
-    setSelectedItemId(undefined);
-    const next = new Date(selectedDate());
-    next.setDate(next.getDate() + delta);
-    setSelectedDate(next);
-  }
 
   // selected
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
@@ -221,21 +215,7 @@ export function App() {
             </div>
           </Portal>
 
-          <div class={sCurrentDate}>
-            <div class={sToolbarLeft}>
-              <button disabled={isToday()} onClick={() => setSelectedDate(new Date())}>Today</button>
-              <button onClick={() => moveDate(-1)}>{'<'}</button>
-              <input
-                type="date"
-                value={selectedDate().toISOString().split('T')[0]}
-                max={new Date().toISOString().split('T')[0]}
-                onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                style={{ width: '110px' }}
-              />
-              <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
-              {toTimestamp(now())}
-            </div>
-          </div>
+          <DatePicker />
 
           Worklog
           <div class={sToolbar}>
@@ -484,13 +464,7 @@ const sToolbarRight = css`
   align-items: center;
 `;
 
-// ...
-const sCurrentDate = css`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-`;
+
 
 const sTable = css`
   display: grid;
