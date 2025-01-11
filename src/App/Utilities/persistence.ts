@@ -5,7 +5,7 @@ export function persistData<T extends object>(
   store: T,
   setStore: (store: T) => void,
   getDefaultStore: () => T,
-  storageKey = 'solid-worklog-store',
+  storageKey: string,
 ) {
   createEffect(load);
   createEffect(save);

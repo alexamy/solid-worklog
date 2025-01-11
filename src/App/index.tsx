@@ -9,11 +9,14 @@ import { DataContext, getDefaultDataStore, Item } from './store/data';
 import { DatePicker } from './DatePicker';
 import { sCell, sCellHeader, sRow } from './styles';
 import { Utilities } from './Utilities';
+import { persistData } from './Utilities/persistence';
 
 // component
 export function App() {
   const [appStore, setAppStore] = createStore(getDefaultAppStore());
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
+
+  const persist = persistData(dataStore, setDataStore, getDefaultDataStore, 'solid-worklog-store');
 
   // update now timestamp every 30 seconds
   createEffect(() => {
@@ -296,7 +299,7 @@ export function App() {
 
           <br />
           Utilities
-          <Utilities />
+          <Utilities reset={persist.reset} />
         </div>
       </DataContext.Provider>
     </AppContext.Provider>

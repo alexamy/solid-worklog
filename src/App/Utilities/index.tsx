@@ -1,14 +1,10 @@
 import superjson from 'superjson';
-import { DataStore, getDefaultDataStore } from '../store/data';
+import { DataStore } from '../store/data';
 import { sToolbar, sToolbarLeft } from '../styles';
 import { useDataContext } from '../store/data';
-import { persistData } from './persistence';
 
-export function Utilities() {
+export function Utilities(props: { reset: () => void }) {
   const [dataStore, setDataStore] = useDataContext();
-
-  // TODO: move to app, now there because reset is used in this component
-  const persist = persistData(dataStore, setDataStore, getDefaultDataStore);
 
   async function uploadStore() {
     const data = await uploadJson();
@@ -20,7 +16,7 @@ export function Utilities() {
       <div class={sToolbarLeft}>
         <button onClick={() => downloadJson(dataStore)}>Save backup</button>
         <button onClick={uploadStore}>Load backup</button>
-        <button onDblClick={persist.reset}>Reset (double click)</button>
+        <button onDblClick={() => props.reset()}>Reset (double click)</button>
       </div>
     </div>
   )
