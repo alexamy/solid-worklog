@@ -43,6 +43,7 @@ export function Statistics() {
     }
   }
 
+  // stats
   const stats = createMemo(() => aggregateByTag(
     dataStore.items.filter(item => isItemInRange(item, range(), startDate())),
   ));
