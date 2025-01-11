@@ -19,6 +19,8 @@ interface Item {
   end: Date | undefined;
 }
 
+
+
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(getDefaultStore());
@@ -338,6 +340,7 @@ export function App() {
         </div>
       </div>
 
+      Worklog
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
           <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
@@ -353,7 +356,7 @@ export function App() {
         </div>
       </div>
 
-      Worklog
+
       <div class={sTable}>
         <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
           <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
