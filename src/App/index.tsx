@@ -1,12 +1,12 @@
 import { css, cx } from '@linaria/core';
 import createFuzzySearch from '@nozbe/microfuzz';
-import { createEffect, createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
 import { createStore, produce, SetStoreFunction } from 'solid-js/store';
 import { Portal } from 'solid-js/web';
 import superjson from 'superjson';
-import { getDefaultDataStore, Item, DataStore, DataContext } from './store/data';
-import { AppContext, getDefaultAppStore } from './store/app';
 import { Statistics } from './Statistics';
+import { AppContext, getDefaultAppStore } from './store/app';
+import { DataContext, DataStore, getDefaultDataStore, Item } from './store/data';
 
 // component
 export function App() {
@@ -498,11 +498,6 @@ const sCurrentDate = css`
 const sTable = css`
   display: grid;
   grid-template-columns: auto auto auto auto auto;
-`;
-
-const sTableStats = css`
-  display: grid;
-  grid-template-columns: auto auto auto;
 `;
 
 const sRowSelected = css`
