@@ -6,6 +6,17 @@ import pomodoroSvg from './pomodoro.svg';
 import { css, cx } from '@linaria/core';
 import { calculateDuration } from '../time';
 
+interface StatEntry {
+  tag: string;
+  duration: number;
+  pomodoros: number;
+}
+
+interface StatResult {
+  entries: StatEntry[];
+  sumAll: number;
+}
+
 type StatTime = 'day' | 'week' | 'month' | 'year' | 'all';
 type SortBy = 'tag' | 'duration' | 'pomodoros';
 type SortOrder = 'asc' | 'desc';
@@ -126,34 +137,34 @@ function Toolbar(props: {
   );
 }
 
-function StatTable(props: { sortedStats: ReturnType<typeof getSortedStats> }) {
+function StatTable(props: { sortedStats: StatResult }) {
   return (
     <For each={props.sortedStats.entries}>
       {(entry) => (
         <div class={sRow}>
           <div class={sCell}>{entry.tag}</div>
-      <div class={sCell}>{minutesToHoursMinutes(entry.duration)}</div>
-      <div class={cx(sCell, sCellPomodoro)}>
-        <Show when={entry.pomodoros > 0}>
-          <Switch>
-            <Match when={entry.tag === 'idle'}>
-              <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
-            </Match>
-            <Match when={Math.floor(entry.pomodoros) > 4}>
-              <PomodoroIcon /> x{Math.floor(entry.pomodoros)}
-            </Match>
-            <Match when={Math.floor(entry.pomodoros) <= 4}>
-              <For each={Array(Math.floor(entry.pomodoros))}>
-                {() => <PomodoroIcon />}
-              </For>
-              <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
-            </Match>
-            </Switch>
-          </Show>
+          <div class={sCell}>{minutesToHoursMinutes(entry.duration)}</div>
+          <div class={cx(sCell, sCellPomodoro)}>
+          <Show when={entry.pomodoros > 0}>
+            <Switch>
+              <Match when={entry.tag === 'idle'}>
+                <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
+              </Match>
+              <Match when={Math.floor(entry.pomodoros) > 4}>
+                <PomodoroIcon /> x{Math.floor(entry.pomodoros)}
+              </Match>
+              <Match when={Math.floor(entry.pomodoros) <= 4}>
+                <For each={Array(Math.floor(entry.pomodoros))}>
+                  {() => <PomodoroIcon />}
+                </For>
+                <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
+                </Match>
+              </Switch>
+            </Show>
+          </div>
         </div>
-      </div>
-    )}
-  </For>
+      )}
+    </For>
   );
 }
 
@@ -206,15 +217,10 @@ function isItemInRange(item: Item, statTime: StatTime, target: Date) {
   }
 }
 
-function getSortedStats(dayStats: ReturnType<typeof calculateStatsAtDate>, sortBy: SortBy, sortOrder: SortOrder) {
+function getSortedStats(dayStats: StatResult, sortBy: SortBy, sortOrder: SortOrder): StatResult {
   const { entries, sumAll } = dayStats;
 
-  const stats = entries.map(item => ({
-    ...item,
-    pomodoros: item.duration / 30,
-  }));
-
-  stats.sort((a, b) => {
+  const stats = entries.sort((a, b) => {
     const aVal = a[sortBy];
     const bVal = b[sortBy];
 
@@ -232,7 +238,7 @@ function getSortedStats(dayStats: ReturnType<typeof calculateStatsAtDate>, sortB
   return { entries: stats, sumAll };
 }
 
-function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
+function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean): StatResult {
   const itemsAtDate = itemsAll.filter(filter);
 
   const tags = [...new Set(itemsAtDate.map(item => item.tag))];
@@ -242,8 +248,9 @@ function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean)
     const items = itemsAtDate.filter(item => item.tag === tag);
     const duration = items
       .reduce((sum, item) => sum + calculateDuration(item.start, item.end ?? now), 0);
+    const pomodoros = duration / 30;
 
-    return { tag: tag || '*empty*', duration };
+    return { tag: tag || '*empty*', duration, pomodoros };
   });
 
   const sumAll = entries.reduce((sum, entry) => sum + entry.duration, 0);
