@@ -8,7 +8,7 @@ import { AppContext, getDefaultAppStore } from './store/app';
 import { DataContext, DataStore, getDefaultDataStore, Item } from './store/data';
 import { DatePicker } from './DatePicker';
 import { sCell, sCellHeader, sRow } from './styles';
-import { persistData } from './data/persistence';
+import { persistData } from './store/persistence';
 import superjson from 'superjson';
 
 // component
