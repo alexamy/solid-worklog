@@ -1,10 +1,10 @@
-import { createStore, produce, SetStoreFunction } from 'solid-js/store'
-import { createEffect, createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 import { css, cx } from '@linaria/core';
+import createFuzzySearch from '@nozbe/microfuzz';
+import { createEffect, createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
+import { createStore, produce, SetStoreFunction } from 'solid-js/store';
+import { Portal } from 'solid-js/web';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
-import { Portal } from 'solid-js/web';
-import createFuzzySearch from '@nozbe/microfuzz';
 
 // types
 interface Store {
