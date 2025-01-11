@@ -5,11 +5,11 @@ import { createStore, produce, SetStoreFunction } from 'solid-js/store';
 import { Portal } from 'solid-js/web';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
-import { getDefaultStore, Item, Store } from './store';
+import { getDefaultDataStore, Item, DataStore } from './store/data';
 
 // component
 export function App() {
-  const [store, setStore] = createStore<Store>(getDefaultStore());
+  const [store, setStore] = createStore<DataStore>(getDefaultDataStore());
   const persist = persistStore(store, setStore);
 
   // date
@@ -527,15 +527,15 @@ function PomodoroIcon(props: { amount?: number, grayed?: boolean }) {
 
 // api
 function persistStore(
-  store: Store,
-  setStore: SetStoreFunction<Store>,
+  store: DataStore,
+  setStore: SetStoreFunction<DataStore>,
   storageKey = 'solid-worklog-store',
 ) {
   function save(key = storageKey) {
     localStorage.setItem(key, superjson.stringify(store));
   }
 
-  function load(key = storageKey, backupStore = getDefaultStore()) {
+  function load(key = storageKey, backupStore = getDefaultDataStore()) {
     const items = localStorage.getItem(key);
     if (items) {
       try {
@@ -553,7 +553,7 @@ function persistStore(
 
   function reset() {
     localStorage.removeItem(storageKey);
-    setStore(getDefaultStore());
+    setStore(getDefaultDataStore());
     window.location.reload();
   }
 
@@ -562,7 +562,7 @@ function persistStore(
   };
 }
 
-async function uploadJson(): Promise<Store | undefined> {
+async function uploadJson(): Promise<DataStore | undefined> {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
@@ -575,7 +575,7 @@ async function uploadJson(): Promise<Store | undefined> {
 
       try {
         const text = await file.text();
-        const data = superjson.parse(text) as Store;
+        const data = superjson.parse(text) as DataStore;
         resolve(data);
       } catch (error) {
         reject(error);

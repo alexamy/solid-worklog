@@ -1,4 +1,4 @@
-export interface Store {
+export interface DataStore {
   items: Item[];
 }
 
@@ -10,7 +10,7 @@ export interface Item {
   end: Date | undefined;
 }
 
-export function getDefaultStore(): Store {
+export function getDefaultDataStore(): DataStore {
   const now = new Date();
 
   function at(hour: number, minute: number) {
