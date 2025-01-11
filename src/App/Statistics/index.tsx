@@ -18,7 +18,7 @@ interface StatResult {
 }
 
 type StatRange = 'day' | 'week' | 'month' | 'year' | 'all';
-type SortBy = 'tag' | 'duration' | 'pomodoros';
+type SortBy = 'tag' | 'duration';
 type SortOrder = 'asc' | 'desc';
 
 export function Statistics() {
@@ -191,6 +191,7 @@ function PomodoroIcon(props: { amount?: number, grayed?: boolean }) {
 }
 
 // methods
+// sort strings or numbers
 function getSortedStats(dayStats: StatResult, sortBy: SortBy, sortOrder: SortOrder): StatResult {
   const { entries, sumAll } = dayStats;
 
@@ -212,6 +213,7 @@ function getSortedStats(dayStats: StatResult, sortBy: SortBy, sortOrder: SortOrd
   return { entries: stats, sumAll };
 }
 
+// aggregate durations by tag
 function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean): StatResult {
   const itemsAtDate = itemsAll.filter(filter);
 
