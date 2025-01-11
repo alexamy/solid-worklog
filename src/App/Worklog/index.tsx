@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from 'solid-js';
 import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft, sToolbarRight } from '../styles';
 import { toTimestamp } from '../time';
 import { css, cx } from '@linaria/core';
@@ -195,13 +195,14 @@ export function Worklog() {
           <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
           <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
         </div>
-        <div class={sToolbarRight}>
-          Rows:
-          <button disabled={isInProgress()} onClick={() => addItem()}>+</button>
-          <button disabled={isInProgress() || !selectedItemId()} onClick={() => moveUp()}>↑</button>
-          <button disabled={isInProgress() || !selectedItemId()} onClick={() => moveDown()}>↓</button>
-          <button disabled={isInProgress() || !selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
-        </div>
+        <Show when={!isInProgress()}>
+          <div class={sToolbarRight}>
+            <button onClick={() => addItem()}>+</button>
+            <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
+            <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
+            <button disabled={!selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
+          </div>
+        </Show>
       </div>
 
       <Portal>

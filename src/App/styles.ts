@@ -30,6 +30,7 @@ export const sToolbar = css`
   justify-content: space-between;
   align-items: center;
   padding: 5px 0;
+  line-height: 1.5;
 `;
 
 export const sToolbarLeft = css`
