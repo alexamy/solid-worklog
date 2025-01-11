@@ -13,14 +13,14 @@ export function App() {
   const persist = persistStore(dataStore, setDataStore);
 
   // date
-  const [currentDate, setCurrentDate] = createSignal(new Date());
-  const isToday = createMemo(() => currentDate().toDateString() === new Date().toDateString());
+  const [selectedDate, setSelectedDate] = createSignal(new Date());
+  const isToday = createMemo(() => selectedDate().toDateString() === new Date().toDateString());
 
   function moveDate(delta: number) {
     setSelectedItemId(undefined);
-    const next = new Date(currentDate());
+    const next = new Date(selectedDate());
     next.setDate(next.getDate() + delta);
-    setCurrentDate(next);
+    setSelectedDate(next);
   }
 
   // selected
@@ -28,7 +28,7 @@ export function App() {
 
   // items
   const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
-  const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
+  const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === selectedDate().toDateString()));
 
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
@@ -39,7 +39,7 @@ export function App() {
   // stats
   const [statTime, setStatTime] = createSignal<'day' | 'week' | 'month' | 'year' | 'all'>('day');
   const statTimeStartDate = createMemo(() => {
-    const from = currentDate();
+    const from = selectedDate();
     const time = statTime();
 
     switch (time) {
@@ -184,14 +184,14 @@ export function App() {
 
   function addItem() {
     createItem({
-      start: new Date(currentDate().setHours(12, 0, 0, 0)),
-      end: new Date(currentDate().setHours(12, 5, 0, 0)),
+      start: new Date(selectedDate().setHours(12, 0, 0, 0)),
+      end: new Date(selectedDate().setHours(12, 5, 0, 0)),
     });
   }
 
   function startItem(item: Partial<Item> = {}) {
     const now = new Date();
-    setCurrentDate(now);
+    setSelectedDate(now);
 
     const lastItem = dataStore.items[0];
     if(!lastItem || !lastItem.end) {
@@ -313,13 +313,13 @@ export function App() {
 
       <div class={sCurrentDate}>
         <div class={sToolbarLeft}>
-          <button disabled={isToday()} onClick={() => setCurrentDate(new Date())}>Today</button>
+          <button disabled={isToday()} onClick={() => setSelectedDate(new Date())}>Today</button>
           <button onClick={() => moveDate(-1)}>{'<'}</button>
           <input
             type="date"
-            value={currentDate().toISOString().split('T')[0]}
+            value={selectedDate().toISOString().split('T')[0]}
             max={new Date().toISOString().split('T')[0]}
-            onChange={(e) => setCurrentDate(new Date(e.target.value))}
+            onChange={(e) => setSelectedDate(new Date(e.target.value))}
             style={{ width: '110px' }}
           />
           <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
@@ -412,28 +412,28 @@ export function App() {
               onChange={() => setStatTime('day')}
               checked={statTime() === 'day'}
             />
-            Day ({currentDate().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
+            Day ({selectedDate().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
           </label>
           <label>
             <input type="radio" name="timeRange" value="week"
               onChange={() => setStatTime('week')}
               checked={statTime() === 'week'}
             />
-            Week ({getWeekInterval(currentDate())})
+            Week ({getWeekInterval(selectedDate())})
           </label>
           <label>
             <input type="radio" name="timeRange" value="month"
               onChange={() => setStatTime('month')}
               checked={statTime() === 'month'}
             />
-            Month ({currentDate().toLocaleDateString('en-US', { month: 'long' })})
+            Month ({selectedDate().toLocaleDateString('en-US', { month: 'long' })})
           </label>
           <label>
             <input type="radio" name="timeRange" value="year"
               onChange={() => setStatTime('year')}
               checked={statTime() === 'year'}
             />
-            Year ({currentDate().toLocaleDateString('en-US', { year: 'numeric' })})
+            Year ({selectedDate().toLocaleDateString('en-US', { year: 'numeric' })})
           </label>
           <label>
             <input type="radio" name="timeRange" value="all"
