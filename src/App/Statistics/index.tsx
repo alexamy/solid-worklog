@@ -180,8 +180,8 @@ function ItemRow(props: StatEntry) {
 
 function PomodoroIcon(props: { amount?: number }) {
   const amount = () => props.amount ?? 1;
-  const targetWidth = () => 24 * amount();
-  const width = () => targetWidth() >= 10 ? targetWidth() : 0;
+  const fullWidth = () => amount() * 24;
+  const width = () => fullWidth() >= 10 ? fullWidth() : 0;
 
   return <img
     width={width().toFixed(2)}
