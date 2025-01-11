@@ -5,19 +5,7 @@ import { createStore, produce, SetStoreFunction } from 'solid-js/store';
 import { Portal } from 'solid-js/web';
 import superjson from 'superjson';
 import pomodoroSvg from './pomodoro.svg';
-
-// types
-interface Store {
-  items: Item[];
-}
-
-interface Item {
-  id: string;
-  description: string;
-  tag: string;
-  start: Date;
-  end: Date | undefined;
-}
+import { getDefaultStore, Item, Store } from './store';
 
 // component
 export function App() {
@@ -309,7 +297,7 @@ export function App() {
   }
 
   return (
-    <div>
+    <div class={sApp}>
       <Portal>
         <div ref={tagListElement} class={sTagList}>
           <For each={availableTags()}>
@@ -615,36 +603,6 @@ function downloadBlob(content: string, filename: string, contentType: string) {
   URL.revokeObjectURL(url);
 }
 
-function getDefaultStore(): Store {
-  const now = new Date();
-
-  function at(hour: number, minute: number) {
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0);
-  }
-
-  return {
-    items: [{
-      id: '1',
-      description: 'dinner',
-      tag: 'idle',
-      start: at(13, 20),
-      end: at(14, 0),
-  }, {
-      id: '2',
-      description: 'dev',
-      tag: 'task 1',
-      start: at(14, 5),
-      end: at(15, 0),
-    }, {
-      id: '3',
-      description: 'dev',
-      tag: 'task 2',
-      start: at(15, 15),
-      end: at(15, 35),
-    }],
-  };
-}
-
 // methods
 function randomId() {
   return Math.random().toString(16).substring(2, 8);
@@ -726,6 +684,13 @@ function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivEl
 }
 
 // styles
+const sApp = css`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 500px;
+`;
+
 const sToolbar = css`
   display: flex;
   justify-content: space-between;
