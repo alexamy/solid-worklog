@@ -223,9 +223,9 @@ export function App() {
             <div class={sToolbarRight}>
               Rows:
               <button disabled={isInProgress()} onClick={() => addItem()}>+</button>
-              <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveUp()}>↑</button>
-              <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveDown()}>↓</button>
-              <button disabled={!selectedItemId() || isInProgress() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
+              <button disabled={isInProgress() || !selectedItemId()} onClick={() => moveUp()}>↑</button>
+              <button disabled={isInProgress() || !selectedItemId()} onClick={() => moveDown()}>↓</button>
+              <button disabled={isInProgress() || !selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
             </div>
           </div>
 
