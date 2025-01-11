@@ -18,6 +18,7 @@ export function Settings() {
         style={{ padding: '4px 8px' }}
         size={60}
         value={appStore.jiraHost}
+        // @ts-expect-error fix lib types
         onInput={(e) => setJiraHost(e.target.value)}
       />
     </div>
