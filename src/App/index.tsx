@@ -213,18 +213,6 @@ export function App() {
       <AppContext.Provider value={[appStore, setAppStore]}>
         <DataContext.Provider value={[dataStore, setDataStore]}>
           <div class={sApp}>
-            <Portal>
-              <div ref={tagListElement} class={sTagList}>
-                <For each={availableTags()}>
-                  {(tag) =>
-                    <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
-                      {tag}
-                    </div>
-                  }
-                </For>
-              </div>
-            </Portal>
-
             <DatePicker />
 
             Worklog
@@ -243,6 +231,17 @@ export function App() {
               </div>
             </div>
 
+            <Portal>
+              <div ref={tagListElement} class={sTagList}>
+                <For each={availableTags()}>
+                  {(tag) =>
+                    <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
+                      {tag}
+                    </div>
+                  }
+                </For>
+              </div>
+            </Portal>
 
             <div class={sTable}>
               <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
