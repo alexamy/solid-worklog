@@ -47,9 +47,10 @@ export function Statistics() {
     dataStore.items.filter(item => isItemInRange(item, range(), startDate())),
   ));
 
-  const sortedStats = createMemo(() =>
-    getSortedStats(stats(), sortBy(), sortOrder())
-  );
+  const sortedStats = createMemo(() => ({
+    entries: getSortedEntries(stats().entries, sortBy(), sortOrder()),
+    sumAll: stats().sumAll,
+  }));
 
   return (
     <>
@@ -194,10 +195,12 @@ function PomodoroIcon(props: { amount?: number }) {
 
 // methods
 // sort strings or numbers
-function getSortedStats(dayStats: StatResult, sortBy: SortBy, sortOrder: SortOrder): StatResult {
-  const { entries, sumAll } = dayStats;
-
-  const stats = entries.sort((a, b) => {
+function getSortedEntries<T extends object>(
+  entries: T[],
+  sortBy: keyof T,
+  sortOrder: 'asc' | 'desc'
+): T[] {
+  return entries.sort((a, b) => {
     const aVal = a[sortBy];
     const bVal = b[sortBy];
 
@@ -211,8 +214,6 @@ function getSortedStats(dayStats: StatResult, sortBy: SortBy, sortOrder: SortOrd
       ? Number(aVal) - Number(bVal)
       : Number(bVal) - Number(aVal);
   });
-
-  return { entries: stats, sumAll };
 }
 
 // aggregate durations by tag
