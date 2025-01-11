@@ -459,7 +459,7 @@ export function App() {
         <div class={sRow}>
           <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>Tag</div>
           <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Minutes</div>
-          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros</div>
+          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros (30 min)</div>
         </div>
         <For each={sortedStats().entries}>
           {(entry) => (
@@ -479,9 +479,7 @@ export function App() {
                       <For each={Array(Math.floor(entry.pomodoros))}>
                         {() => <PomodoroIcon />}
                       </For>
-                      <Show when={entry.pomodoros % 1 !== 0}>
-                        <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
-                      </Show>
+                      <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
                     </Match>
                   </Switch>
                 </Show>
@@ -690,7 +688,7 @@ function getDateNoTime(date: Date) {
 }
 
 function toPomodoro(minutes: number) {
-  return minutes / 25;
+  return minutes / 30;
 }
 
 function getStartOfWeek(date: Date) {
