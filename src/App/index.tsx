@@ -23,7 +23,6 @@ export function App() {
   // date
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
-
   const now = () => appStore.now;
 
   // selected
