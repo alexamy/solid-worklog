@@ -45,18 +45,11 @@ export function Statistics() {
 
   const dayStats = createMemo(() => calculateStatsAtDate(
     dataStore.items,
-    isItemInStatRange,
+    // eslint-disable-next-line solid/reactivity
+    (item) => isItemInRange(item, statRange(), statStartDate()),
   ));
 
-  function isItemInStatRange(item: Item) {
-    return isItemInRange(item, statRange(), statStartDate())
-  }
-
-  const sortedStats = createMemo(() => getSortedStats(
-    dayStats(),
-    sortBy(),
-    sortOrder(),
-  ));
+  const sortedStats = createMemo(() => getSortedStats(dayStats(), sortBy(), sortOrder()));
 
   return (
     <>
