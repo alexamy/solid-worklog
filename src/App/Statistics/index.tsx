@@ -43,13 +43,13 @@ export function Statistics() {
     }
   }
 
-  const dayStats = createMemo(() => calculateStatsAtDate(
-    dataStore.items,
-    // eslint-disable-next-line solid/reactivity
-    (item) => isItemInRange(item, statRange(), statStartDate()),
+  const dayStats = createMemo(() => aggregateByTag(
+    dataStore.items.filter(item => isItemInRange(item, statRange(), statStartDate())),
   ));
 
-  const sortedStats = createMemo(() => getSortedStats(dayStats(), sortBy(), sortOrder()));
+  const sortedStats = createMemo(() =>
+    getSortedStats(dayStats(), sortBy(), sortOrder())
+  );
 
   return (
     <>
@@ -214,15 +214,13 @@ function getSortedStats(dayStats: StatResult, sortBy: SortBy, sortOrder: SortOrd
 }
 
 // aggregate durations by tag
-function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean): StatResult {
-  const itemsAtDate = itemsAll.filter(filter);
-
-  const tags = [...new Set(itemsAtDate.map(item => item.tag))];
+function aggregateByTag(items: Item[]): StatResult {
+  const tags = [...new Set(items.map(item => item.tag))];
 
   const entries = tags.map(tag => {
     const now = new Date();
-    const items = itemsAtDate.filter(item => item.tag === tag);
-    const duration = items
+    const itemsWithTag = items.filter(item => item.tag === tag);
+    const duration = itemsWithTag
       .reduce((sum, item) => sum + calculateDuration(item.start, item.end ?? now), 0);
     const pomodoros = duration / 30;
 
