@@ -161,6 +161,7 @@ function Toolbar(props: {
         />
         Day ({props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
       </label>
+
       <label>
         <input type="radio" name="timeRange" value="week"
           onChange={() => props.setStatTime('week')}
@@ -168,6 +169,7 @@ function Toolbar(props: {
         />
         Week ({getWeekInterval(props.selectedDate)})
       </label>
+
       <label>
         <input type="radio" name="timeRange" value="month"
           onChange={() => props.setStatTime('month')}
@@ -175,6 +177,7 @@ function Toolbar(props: {
         />
         Month ({props.selectedDate.toLocaleDateString('en-US', { month: 'long' })})
       </label>
+
       <label>
         <input type="radio" name="timeRange" value="year"
           onChange={() => props.setStatTime('year')}
@@ -182,6 +185,7 @@ function Toolbar(props: {
         />
         Year ({props.selectedDate.toLocaleDateString('en-US', { year: 'numeric' })})
       </label>
+
       <label>
         <input type="radio" name="timeRange" value="all"
           onChange={() => props.setStatTime('all')}
