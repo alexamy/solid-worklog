@@ -9,7 +9,7 @@ import { DataContext, getDefaultDataStore, Item } from './store/data';
 import { DatePicker } from './DatePicker';
 import { sCell, sCellHeader, sRow } from './styles';
 import { Utilities } from './Utilities';
-import { persistObject } from './Utilities/persistence';
+import { persistObject } from './store/persistence';
 
 // component
 export function App() {
