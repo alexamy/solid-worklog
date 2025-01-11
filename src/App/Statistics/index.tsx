@@ -224,10 +224,10 @@ function aggregateByTag(items: Item[]): StatResult {
     const now = new Date();
     const itemsWithTag = items.filter(item => item.tag === tag);
     const duration = itemsWithTag
-      .reduce((sum, item) => sum + calculateDuration(item.start, item.end ?? now), 0);
-    const pomodoros = duration / 30;
+      .map(item => calculateDuration(item.start, item.end ?? now))
+      .reduce((a, b) => a + b, 0);
 
-    return { tag: tag || '*empty*', duration, pomodoros };
+    return { tag: tag || '*empty*', duration, pomodoros: duration / 30 };
   });
 
   const sumAll = entries.reduce((sum, entry) => sum + entry.duration, 0);
