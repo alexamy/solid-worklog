@@ -74,7 +74,7 @@ export function Statistics() {
 
       <For each={sortedStats().entries}>
         {(entry) => (
-          <ItemRow entry={entry} />
+          <ItemRow {...entry} />
         )}
       </For>
 
@@ -148,18 +148,18 @@ function Toolbar(props: {
   );
 }
 
-function ItemRow(props: { entry: StatEntry }) {
-  const wholePomodoros = () => Math.floor(props.entry.pomodoros);
-  const restPomodoros = () => props.entry.pomodoros - wholePomodoros();
+function ItemRow(props: StatEntry) {
+  const wholePomodoros = () => Math.floor(props.pomodoros);
+  const restPomodoros = () => props.pomodoros - wholePomodoros();
 
   return (
     <div class={sRow}>
-      <div class={sCell}>{props.entry.tag}</div>
-      <div class={sCell}>{minutesToHoursMinutes(props.entry.duration)}</div>
+      <div class={sCell}>{props.tag}</div>
+      <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
       <div class={cx(sCell, sCellPomodoro)}>
-        <Show when={props.entry.pomodoros > 0}>
+        <Show when={props.pomodoros > 0}>
           <Switch>
-            <Match when={props.entry.tag === 'idle'}>
+            <Match when={props.tag === 'idle'}>
               <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
             </Match>
             <Match when={wholePomodoros() > 4}>
