@@ -16,7 +16,7 @@ export interface Item {
 export const DataContext = createContext<[DataStore, SetStoreFunction<DataStore>]>();
 
 export function useDataContext() {
-  const context = useContext(DataContext)
+  const context = useContext(DataContext);
   if (!context) {
     throw new Error("Can't find DataContext");
   }
