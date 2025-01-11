@@ -3,7 +3,7 @@ import { SetStoreFunction } from 'solid-js/store';
 
 export interface AppStore {
   selectedDate: Date;
-  sync: Date;
+  now: Date;
 }
 
 export const AppContext = createContext<[AppStore, SetStoreFunction<AppStore>]>();
@@ -20,6 +20,6 @@ export function useAppContext() {
 export function getDefaultAppStore(): AppStore {
   return {
     selectedDate: new Date(),
-    sync: new Date(),
+    now: new Date(),
   };
 }
