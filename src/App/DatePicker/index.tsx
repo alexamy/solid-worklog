@@ -3,11 +3,12 @@ import { toTimestamp } from '../time';
 import { useAppContext } from '../store/app';
 import { sToolbarLeft } from '../styles';
 import { css } from '@linaria/core';
+import { useNowContext } from '../store/now';
 
 export function DatePicker() {
   const [appStore, setAppStore] = useAppContext();
+  const now = useNowContext();
 
-  const now = () => appStore.now;
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
 

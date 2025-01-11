@@ -5,6 +5,7 @@ import { Item, useDataContext } from '../store/data';
 import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft } from '../styles';
 import { calculateDuration } from '../time';
 import pomodoroSvg from './pomodoro.svg';
+import { useNowContext } from '../store/now';
 
 interface StatEntry {
   tag: string;
@@ -24,8 +25,9 @@ type SortOrder = 'asc' | 'desc';
 export function Statistics() {
   const [appStore] = useAppContext();
   const [dataStore] = useDataContext();
+  const now = useNowContext();
+
   const selectedDate = () => appStore.selectedDate;
-  const now = () => appStore.now;
 
   // sorting
   const [sortBy, setSortBy] = createSignal<SortBy>('tag');
