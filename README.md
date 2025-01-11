@@ -1,19 +1,38 @@
-## Usage
+# Solid Worklog
+A time management application for monitoring time spent on tasks, with tracking of total time spent.
 
+### https://alexamy.github.io/solid-worklog/
+
+## Core functionality
+- Task entries with auto-calculated duration (start/end timestamps)
+- Task tagging + descriptions (with special *idle* tag)
+- Tag autocomplete
+- Editable entries table
+- Time aggregation by tags with period filtering
+- Automatic app state sync to localStorage
+- State import/export via JSON
+
+## Inspired by
+- [Toggl Track](https://toggl.com/)
+- [Marinara Pomodoro](https://chromewebstore.google.com/detail/marinara-pomodoro%C2%AE-assist/lojgmehidjdhhbmpjfamhpkpodfcodef)
+
+## Local development
 ```bash
-$ npm install # or pnpm install or yarn install
+$ npm install
+$ npm run dev
+# open http://localhost:5173/solid-worklog/
 ```
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+## Solid 🥰
+Learn more on the [Solid Website](https://docs.solidjs.com/quick-start) and come chat on [Discord](https://discord.com/invite/solidjs).
 
-## Available Scripts
-
+## Available scripts
 In the project directory, you can run:
 
 ### `npm run dev`
 
 Runs the app in the development mode.<br>
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+Open [http://localhost:5173/solid-worklog/](http://localhost:5173/solid-worklog/) to view it in the browser.
 
 ### `npm run build`
 
@@ -21,8 +40,4 @@ Builds the app for production to the `dist` folder.<br>
 It correctly bundles Solid in production mode and optimizes the build for the best performance.
 
 The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-Learn more about deploying your application with the [documentations](https://vite.dev/guide/static-deploy.html)
+The app is ready to be deployed!
