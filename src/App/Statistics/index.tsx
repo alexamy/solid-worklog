@@ -73,7 +73,10 @@ export function Statistics() {
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros (30 min)</div>
       </div>
 
-      <StatTable sortedStats={sortedStats()} />
+      <For each={sortedStats().entries}>{(entry) => (
+        <ItemRow entry={entry} />
+      )}
+      </For>
 
       <div class={sRow}>
         <div class={cx(sCell)}></div>
@@ -137,34 +140,30 @@ function Toolbar(props: {
   );
 }
 
-function StatTable(props: { sortedStats: StatResult }) {
+function ItemRow(props: { entry: StatEntry }) {
   return (
-    <For each={props.sortedStats.entries}>
-      {(entry) => (
-        <div class={sRow}>
-          <div class={sCell}>{entry.tag}</div>
-          <div class={sCell}>{minutesToHoursMinutes(entry.duration)}</div>
-          <div class={cx(sCell, sCellPomodoro)}>
-          <Show when={entry.pomodoros > 0}>
-            <Switch>
-              <Match when={entry.tag === 'idle'}>
-                <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
-              </Match>
-              <Match when={Math.floor(entry.pomodoros) > 4}>
-                <PomodoroIcon /> x{Math.floor(entry.pomodoros)}
-              </Match>
-              <Match when={Math.floor(entry.pomodoros) <= 4}>
-                <For each={Array(Math.floor(entry.pomodoros))}>
-                  {() => <PomodoroIcon />}
-                </For>
-                <PomodoroIcon amount={entry.pomodoros % 1} grayed={true} />
-                </Match>
-              </Switch>
-            </Show>
-          </div>
-        </div>
-      )}
-    </For>
+    <div class={sRow}>
+      <div class={sCell}>{props.entry.tag}</div>
+      <div class={sCell}>{minutesToHoursMinutes(props.entry.duration)}</div>
+      <div class={cx(sCell, sCellPomodoro)}>
+        <Show when={props.entry.pomodoros > 0}>
+          <Switch>
+            <Match when={props.entry.tag === 'idle'}>
+              <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
+            </Match>
+            <Match when={Math.floor(props.entry.pomodoros) > 4}>
+              <PomodoroIcon /> x{Math.floor(props.entry.pomodoros)}
+            </Match>
+            <Match when={Math.floor(props.entry.pomodoros) <= 4}>
+              <For each={Array(Math.floor(props.entry.pomodoros))}>
+                {() => <PomodoroIcon />}
+              </For>
+              <PomodoroIcon amount={props.entry.pomodoros % 1} grayed={true} />
+            </Match>
+          </Switch>
+        </Show>
+      </div>
+    </div>
   );
 }
 
