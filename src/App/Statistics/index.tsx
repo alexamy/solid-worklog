@@ -68,9 +68,15 @@ export function Statistics() {
 
       <div class={sTableStats}>
         <div class={sRow}>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>Tag</div>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Duration</div>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros (30 min)</div>
+        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>
+          Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+        </div>
+        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
+          Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+        </div>
+        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
+          Pomodoros (30 min)
+        </div>
       </div>
 
       <For each={sortedStats().entries}>{(entry) => (
