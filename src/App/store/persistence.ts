@@ -1,18 +1,17 @@
-import { SetStoreFunction } from 'solid-js/store';
-import { DataStore, getDefaultDataStore } from './data';
 import superjson from 'superjson';
 import { createEffect } from 'solid-js';
 
-export function persistStore(
-  store: DataStore,
-  setStore: SetStoreFunction<DataStore>,
+export function persistData<T extends object>(
+  store: T,
+  setStore: (store: T) => void,
+  getDefaultStore: () => T,
   storageKey = 'solid-worklog-store',
 ) {
   function save(key = storageKey) {
     localStorage.setItem(key, superjson.stringify(store));
   }
 
-  function load(key = storageKey, backupStore = getDefaultDataStore()) {
+  function load(key = storageKey) {
     const items = localStorage.getItem(key);
     if (items) {
       try {
@@ -20,7 +19,7 @@ export function persistStore(
       } catch (error) {
         console.error(error);
         localStorage.removeItem(key);
-        setStore(backupStore);
+        setStore(getDefaultStore());
       }
     }
   }
@@ -30,7 +29,7 @@ export function persistStore(
 
   function reset() {
     localStorage.removeItem(storageKey);
-    setStore(getDefaultDataStore());
+    setStore(getDefaultStore());
     window.location.reload();
   }
 

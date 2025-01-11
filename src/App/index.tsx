@@ -8,14 +8,14 @@ import { AppContext, getDefaultAppStore } from './store/app';
 import { DataContext, DataStore, getDefaultDataStore, Item } from './store/data';
 import { DatePicker } from './DatePicker';
 import { sCell, sCellHeader, sRow } from './styles';
-import { persistStore } from './store/persistence';
+import { persistData } from './store/persistence';
 import superjson from 'superjson';
 
 // component
 export function App() {
   const [appStore, setAppStore] = createStore(getDefaultAppStore());
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
-  const persist = persistStore(dataStore, setDataStore);
+  const persist = persistData(dataStore, setDataStore, getDefaultDataStore);
 
   createEffect(() => {
     const intervalId = setInterval(() => setAppStore('now', new Date()), 30000);
