@@ -1,5 +1,5 @@
 import { css, cx } from '@linaria/core';
-import { createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
 import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft } from '../styles';
@@ -154,12 +154,13 @@ function Toolbar(props: {
 }
 
 function ItemRow(props: StatEntry) {
+  const [appStore] = useAppContext();
   const wholePomodoros = () => Math.floor(props.pomodoros);
   const restPomodoros = () => props.pomodoros - wholePomodoros();
 
   return (
     <div class={sRow}>
-      <div class={sCell}>{props.tag}</div>
+      <div class={sCell}><TagView tag={props.tag} jiraHost={appStore.jiraHost} /></div>
       <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
       <div class={cx(sCell, sCellPomodoro)}>
         <Show when={props.pomodoros > 0}>
@@ -198,6 +199,21 @@ function PomodoroIcon(props: { amount?: number }) {
 }
 
 // methods
+function TagView(props: { tag: string, jiraHost: string }) {
+  const jiraRegex = /([A-Z0-9]+-[0-9]+)/;
+
+  return (
+    <span>
+      <For each={props.tag.split(jiraRegex)}>
+        {(part) => part.match(jiraRegex)
+          ? <a href={`${props.jiraHost}browse/${part}`}>{part}</a>
+          : part
+        }
+      </For>
+    </span>
+  );
+}
+
 function getSortedEntries<T extends object>(
   entries: T[],
   sortBy: keyof T,
