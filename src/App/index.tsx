@@ -67,7 +67,7 @@ export function App() {
     function onClick(e: MouseEvent) {
       const target = e.target as HTMLElement;
 
-      if (!target.dataset.tag) {
+      if (!target.dataset.tag || target.dataset.itemId !== selectedItemId()) {
         toggleTagList('hide');
       }
     }
@@ -266,6 +266,7 @@ export function App() {
                     {toTimestamp(item.end ?? now())}
                   </div>
                   <div
+                    data-item-id={item.id}
                     data-tag={true}
                     class={cx(sCell, sCellEditable, sCellEditableText)}
                     contentEditable
