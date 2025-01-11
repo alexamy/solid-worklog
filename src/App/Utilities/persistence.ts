@@ -1,7 +1,7 @@
 import superjson from 'superjson';
 import { createEffect } from 'solid-js';
 
-export function persistData<T extends object>(
+export function persistObject<T extends object>(
   store: T,
   setStore: (store: T) => void,
   getDefaultStore: () => T,
