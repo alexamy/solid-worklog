@@ -488,7 +488,9 @@ export function App() {
           )}
         </For>
         <div class={sRow}>
-          <div class={cx(sCell, sCellSpan3)}>{minutesToHoursMinutes(sortedStats().sumAll)}</div>
+          <div class={cx(sCell)}><b>Total</b></div>
+          <div class={cx(sCell)}>{minutesToHoursMinutes(sortedStats().sumAll)}</div>
+          <div class={cx(sCell)}></div>
         </div>
       </div>
 
@@ -659,7 +661,11 @@ function minutesToHoursMinutes(minutesAmount: number) {
   const hours = Math.floor(minutesAmount / 60);
   const minutes = minutesAmount % 60;
 
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  if (hours > 0) {
+    return `${hours} h ${minutes} min`;
+  }
+
+  return `${minutes} min`;
 }
 
 function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
