@@ -5,17 +5,15 @@ import { createStore, produce } from 'solid-js/store';
 import { Portal } from 'solid-js/web';
 import { Statistics } from './Statistics';
 import { AppContext, getDefaultAppStore } from './store/app';
-import { DataContext, DataStore, getDefaultDataStore, Item } from './store/data';
+import { DataContext, getDefaultDataStore, Item } from './store/data';
 import { DatePicker } from './DatePicker';
 import { sCell, sCellHeader, sRow } from './styles';
-import { persistData } from './store/persistence';
-import superjson from 'superjson';
+import { Utilities } from './Utilities';
 
 // component
 export function App() {
   const [appStore, setAppStore] = createStore(getDefaultAppStore());
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
-  const persist = persistData(dataStore, setDataStore, getDefaultDataStore);
 
   createEffect(() => {
     const intervalId = setInterval(() => setAppStore('now', new Date()), 30000);
@@ -198,10 +196,7 @@ export function App() {
     toggleTagList('show');
   }
 
-  async function uploadStore() {
-    const data = await uploadJson();
-    if (data) setDataStore(data);
-  }
+
 
   return (
     <AppContext.Provider value={[appStore, setAppStore]}>
@@ -303,13 +298,7 @@ export function App() {
 
           <br />
           Utilities
-          <div class={sToolbar}>
-            <div class={sToolbarLeft}>
-              <button onClick={() => downloadJson(dataStore)}>Save backup</button>
-              <button onClick={uploadStore}>Load backup</button>
-              <button onDblClick={persist.reset}>Reset (double click)</button>
-            </div>
-          </div>
+          <Utilities />
         </div>
       </DataContext.Provider>
     </AppContext.Provider>
@@ -330,48 +319,6 @@ function updateTimestamp(date: Date, timestamp: string) {
   }
 
   return newDate;
-}
-
-// api
-async function uploadJson(): Promise<DataStore | undefined> {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.click();
-
-  return new Promise((resolve, reject) => {
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      try {
-        const text = await file.text();
-        const data = superjson.parse(text) as DataStore;
-        resolve(data);
-      } catch (error) {
-        reject(error);
-      }
-    };
-  });
-}
-
-function downloadJson(content: unknown) {
-  const { json, meta } = superjson.serialize(content);
-  const data = JSON.stringify({ json, meta }, null, 2);
-  const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.json`;
-  downloadBlob(data, filename, 'application/json');
-}
-
-function downloadBlob(content: string, filename: string, contentType: string) {
-  const blob = new Blob([content], { type: contentType });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }
 
 // methods
