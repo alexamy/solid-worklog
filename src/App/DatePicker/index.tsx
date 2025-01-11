@@ -54,4 +54,5 @@ const sLamp = css`
   background-color: #c23616;
   border-radius: 50%;
   box-shadow: 0 0 8px #c23616;
+  animation: lamp-fade 2s infinite ease-in-out;
 `;
