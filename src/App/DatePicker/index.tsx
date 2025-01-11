@@ -1,5 +1,5 @@
 import { createMemo } from 'solid-js';
-import { createTicker, toTimestamp } from '../time';
+import { toTimestamp } from '../time';
 import { useAppContext } from '../store/app';
 import { sToolbarLeft } from '../styles';
 import { css } from '@linaria/core';
@@ -8,8 +8,8 @@ export function DatePicker() {
   const [appStore, setAppStore] = useAppContext();
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
+  const now = () => appStore.now;
 
-  const now = createTicker(30000);
   const isToday = createMemo(() => selectedDate().toDateString() === new Date().toDateString());
 
   function moveDate(delta: number) {

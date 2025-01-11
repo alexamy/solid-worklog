@@ -7,7 +7,6 @@ import superjson from 'superjson';
 import { Statistics } from './Statistics';
 import { AppContext, getDefaultAppStore } from './store/app';
 import { DataContext, DataStore, getDefaultDataStore, Item } from './store/data';
-import { createTicker } from './time';
 import { DatePicker } from './DatePicker';
 
 // component
@@ -16,10 +15,16 @@ export function App() {
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
   const persist = persistStore(dataStore, setDataStore);
 
+  createEffect(() => {
+    const intervalId = setInterval(() => setAppStore('now', new Date()), 30000);
+    onCleanup(() => clearInterval(intervalId));
+  });
+
   // date
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
 
+  const now = () => appStore.now;
 
   // selected
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
@@ -27,8 +32,6 @@ export function App() {
   // items
   const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
   const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === selectedDate().toDateString()));
-
-  const now = createTicker(30000);
 
   const allTags = createMemo(() => {
     const tags = dataStore.items.map(item => item.tag);
