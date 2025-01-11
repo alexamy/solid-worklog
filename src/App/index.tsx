@@ -779,12 +779,8 @@ const sCellEditableText = css`
 `;
 
 const sCellGrayed = css`
-  color: #242424;
+  color: #555;
   font-style: italic;
-
-  &:hover {
-    color: #555;
-  }
 `;
 
 const sCellPomodoro = css`
