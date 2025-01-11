@@ -6,12 +6,16 @@ import pomodoroSvg from './pomodoro.svg';
 import { css, cx } from '@linaria/core';
 import { calculateDuration } from '../time';
 
+type StatTime = 'day' | 'week' | 'month' | 'year' | 'all';
+type SortBy = 'tag' | 'duration' | 'pomodoros';
+type SortOrder = 'asc' | 'desc';
+
 export function Statistics() {
   const [appStore] = useAppContext();
   const [dataStore] = useDataContext();
   const selectedDate = () => appStore.selectedDate;
 
-  const [statTime, setStatTime] = createSignal<'day' | 'week' | 'month' | 'year' | 'all'>('day');
+  const [statTime, setStatTime] = createSignal<StatTime>('day');
 
   const statTimeStartDate = createMemo(() => {
     const from = selectedDate();
@@ -49,10 +53,10 @@ export function Statistics() {
     }
   }
 
-  const [sortBy, setSortBy] = createSignal<'tag' | 'duration' | 'pomodoros'>('tag');
-  const [sortOrder, setSortOrder] = createSignal<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = createSignal<SortBy>('tag');
+  const [sortOrder, setSortOrder] = createSignal<SortOrder>('asc');
 
-  function changeSorting(by: 'tag' | 'duration' | 'pomodoros') {
+  function changeSorting(by: SortBy) {
     if (sortBy() === by) {
       setSortOrder(sortOrder() === 'asc' ? 'desc' : 'asc');
     } else {
@@ -94,48 +98,14 @@ export function Statistics() {
 
   return (
     <>
-    <div class={sToolbar}>
-      <div class={sToolbarLeft}>
-        <label>
-          <input type="radio" name="timeRange" value="day"
-            onChange={() => setStatTime('day')}
-            checked={statTime() === 'day'}
-          />
-          Day ({selectedDate().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
-        </label>
-        <label>
-          <input type="radio" name="timeRange" value="week"
-            onChange={() => setStatTime('week')}
-            checked={statTime() === 'week'}
-          />
-          Week ({getWeekInterval(selectedDate())})
-        </label>
-        <label>
-          <input type="radio" name="timeRange" value="month"
-            onChange={() => setStatTime('month')}
-            checked={statTime() === 'month'}
-          />
-          Month ({selectedDate().toLocaleDateString('en-US', { month: 'long' })})
-        </label>
-        <label>
-          <input type="radio" name="timeRange" value="year"
-            onChange={() => setStatTime('year')}
-            checked={statTime() === 'year'}
-          />
-          Year ({selectedDate().toLocaleDateString('en-US', { year: 'numeric' })})
-        </label>
-        <label>
-          <input type="radio" name="timeRange" value="all"
-            onChange={() => setStatTime('all')}
-            checked={statTime() === 'all'}
-          />
-          All time
-        </label>
-      </div>
-    </div>
+      <Toolbar
+        selectedDate={selectedDate()}
+        statTime={statTime()}
+        setStatTime={setStatTime}
+      />
 
-    <div class={sTableStats}>
-      <div class={sRow}>
+      <div class={sTableStats}>
+        <div class={sRow}>
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>Tag</div>
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Duration</div>
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros (30 min)</div>
@@ -173,6 +143,54 @@ export function Statistics() {
       </div>
     </div>
     </>
+  );
+}
+
+function Toolbar(props: {
+  selectedDate: Date;
+  statTime: 'day' | 'week' | 'month' | 'year' | 'all';
+  setStatTime: (time: 'day' | 'week' | 'month' | 'year' | 'all') => void;
+}) {
+  return (
+    <div class={sToolbar}>
+    <div class={sToolbarLeft}>
+      <label>
+        <input type="radio" name="timeRange" value="day"
+          onChange={() => props.setStatTime('day')}
+          checked={props.statTime === 'day'}
+        />
+        Day ({props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })})
+      </label>
+      <label>
+        <input type="radio" name="timeRange" value="week"
+          onChange={() => props.setStatTime('week')}
+          checked={props.statTime === 'week'}
+        />
+        Week ({getWeekInterval(props.selectedDate)})
+      </label>
+      <label>
+        <input type="radio" name="timeRange" value="month"
+          onChange={() => props.setStatTime('month')}
+          checked={props.statTime === 'month'}
+        />
+        Month ({props.selectedDate.toLocaleDateString('en-US', { month: 'long' })})
+      </label>
+      <label>
+        <input type="radio" name="timeRange" value="year"
+          onChange={() => props.setStatTime('year')}
+          checked={props.statTime === 'year'}
+        />
+        Year ({props.selectedDate.toLocaleDateString('en-US', { year: 'numeric' })})
+      </label>
+      <label>
+        <input type="radio" name="timeRange" value="all"
+          onChange={() => props.setStatTime('all')}
+          checked={props.statTime === 'all'}
+        />
+        All time
+      </label>
+    </div>
+  </div>
   );
 }
 
