@@ -8,6 +8,7 @@ import { Statistics } from './Statistics';
 import { AppContext, getDefaultAppStore } from './store/app';
 import { DataContext, DataStore, getDefaultDataStore, Item } from './store/data';
 import { DatePicker } from './DatePicker';
+import { sCell, sCellHeader, sRow } from './styles';
 
 // component
 export function App() {
@@ -477,32 +478,8 @@ const sRowSelected = css`
   background-color: #161616;
 `;
 
-const sRow = css`
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-column: 1 / -1;
-`;
-
 const sRowIdle = css`
   color: #999;
-`;
-
-
-const sCell = css`
-  flex: 1;
-  border: 1px solid #ccc;
-  padding: 10px 15px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: default;
-  outline: none;
-`;
-
-const sCellHeader = css`
-  cursor: pointer;
 `;
 
 const sCellSpan3 = css`
