@@ -16,6 +16,13 @@ export function App() {
   const [appStore, setAppStore] = createStore(getDefaultAppStore());
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
 
+  const persistApp = persistObject(
+    appStore,
+    setAppStore,
+    getDefaultAppStore,
+    'solid-worklog-app',
+  );
+
   const persistData = persistObject(
     dataStore,
     setDataStore,
