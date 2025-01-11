@@ -35,6 +35,7 @@ export function DatePicker() {
         />
         <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
         {toTimestamp(now())}
+        <div class={sLamp} />
       </div>
     </div>
   );
@@ -45,4 +46,12 @@ const sCurrentDate = css`
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+`;
+
+const sLamp = css`
+  width: 8px;
+  height: 8px;
+  background-color: #c23616;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #c23616;
 `;
