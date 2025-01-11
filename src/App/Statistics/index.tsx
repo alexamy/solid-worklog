@@ -1,10 +1,10 @@
+import { css, cx } from '@linaria/core';
 import { createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
 import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft } from '../styles';
-import pomodoroSvg from './pomodoro.svg';
-import { css, cx } from '@linaria/core';
 import { calculateDuration } from '../time';
+import pomodoroSvg from './pomodoro.svg';
 
 interface StatEntry {
   tag: string;
@@ -17,7 +17,7 @@ interface StatResult {
   sumAll: number;
 }
 
-type StatTime = 'day' | 'week' | 'month' | 'year' | 'all';
+type StatRange = 'day' | 'week' | 'month' | 'year' | 'all';
 type SortBy = 'tag' | 'duration' | 'pomodoros';
 type SortOrder = 'asc' | 'desc';
 
@@ -26,9 +26,9 @@ export function Statistics() {
   const [dataStore] = useDataContext();
   const selectedDate = () => appStore.selectedDate;
 
-  // start time
-  const [statTime, setStatTime] = createSignal<StatTime>('day');
-  const statTimeStartDate = createMemo(() => getStartOfStatTime(selectedDate(), statTime()));
+  // range
+  const [statRange, setStatRange] = createSignal<StatRange>('day');
+  const statStartDate = createMemo(() => getStartOfStatRange(selectedDate(), statRange()));
 
   // sorting
   const [sortBy, setSortBy] = createSignal<SortBy>('tag');
@@ -49,7 +49,7 @@ export function Statistics() {
   ));
 
   function isItemInStatRange(item: Item) {
-    return isItemInRange(item, statTime(), statTimeStartDate())
+    return isItemInRange(item, statRange(), statStartDate())
   }
 
   const sortedStats = createMemo(() => getSortedStats(
@@ -62,8 +62,8 @@ export function Statistics() {
     <>
       <Toolbar
         selectedDate={selectedDate()}
-        statTime={statTime()}
-        setStatTime={setStatTime}
+        statRange={statRange()}
+        setStatRange={setStatRange}
       />
 
       <div class={sTableStats}>
@@ -90,8 +90,8 @@ export function Statistics() {
 
 function Toolbar(props: {
   selectedDate: Date;
-  statTime: StatTime;
-  setStatTime: (time: StatTime) => void;
+  statRange: StatRange;
+  setStatRange: (time: StatRange) => void;
 }) {
   const intervals = createMemo(() => ({
     day: props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }),
@@ -99,47 +99,47 @@ function Toolbar(props: {
     month: props.selectedDate.toLocaleDateString('en-US', { month: 'long' }),
     year: props.selectedDate.toLocaleDateString('en-US', { year: 'numeric' }),
     all: '',
-  } satisfies Record<StatTime, string>));
+  } satisfies Record<StatRange, string>));
 
   return (
     <div class={sToolbar}>
       <div class={sToolbarLeft}>
         <label>
           <input type="radio" name="timeRange" value="day"
-            onChange={() => props.setStatTime('day')}
-            checked={props.statTime === 'day'}
+            onChange={() => props.setStatRange('day')}
+            checked={props.statRange === 'day'}
           />
           Day ({intervals().day})
         </label>
 
         <label>
           <input type="radio" name="timeRange" value="week"
-            onChange={() => props.setStatTime('week')}
-            checked={props.statTime === 'week'}
+            onChange={() => props.setStatRange('week')}
+            checked={props.statRange === 'week'}
           />
           Week ({intervals().week})
         </label>
 
         <label>
           <input type="radio" name="timeRange" value="month"
-            onChange={() => props.setStatTime('month')}
-            checked={props.statTime === 'month'}
+            onChange={() => props.setStatRange('month')}
+            checked={props.statRange === 'month'}
           />
           Month ({intervals().month})
         </label>
 
         <label>
           <input type="radio" name="timeRange" value="year"
-            onChange={() => props.setStatTime('year')}
-            checked={props.statTime === 'year'}
+            onChange={() => props.setStatRange('year')}
+            checked={props.statRange === 'year'}
           />
           Year ({intervals().year})
         </label>
 
         <label>
           <input type="radio" name="timeRange" value="all"
-            onChange={() => props.setStatTime('all')}
-            checked={props.statTime === 'all'}
+            onChange={() => props.setStatRange('all')}
+            checked={props.statRange === 'all'}
           />
           All time
         </label>
@@ -233,9 +233,9 @@ function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean)
   return { entries, sumAll };
 }
 
-function getStartOfStatTime(selectedDate: Date, statTime: StatTime) {
+function getStartOfStatRange(selectedDate: Date, statRange: StatRange) {
   const from = selectedDate;
-  const time = statTime;
+  const time = statRange;
 
   switch (time) {
     case 'day':   return from;
@@ -247,11 +247,11 @@ function getStartOfStatTime(selectedDate: Date, statTime: StatTime) {
   }
 }
 
-function isItemInRange(item: Item, statTime: StatTime, target: Date) {
+function isItemInRange(item: Item, statRange: StatRange, target: Date) {
   const itemDate = new Date(item.start);
   itemDate.setHours(0, 0, 0, 0);
 
-  switch (statTime) {
+  switch (statRange) {
     case 'day':
       return itemDate.toDateString() === target.toDateString();
     case 'week':
@@ -264,7 +264,7 @@ function isItemInRange(item: Item, statTime: StatTime, target: Date) {
     case 'all':
       return true;
     default:
-      throw new Error(statTime satisfies never);
+      throw new Error(statRange satisfies never);
   }
 }
 
