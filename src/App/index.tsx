@@ -488,8 +488,8 @@ export function App() {
           )}
         </For>
         <div class={sRow}>
-          <div class={cx(sCell)}><b>Total</b></div>
-          <div class={cx(sCell)}>{minutesToHoursMinutes(sortedStats().sumAll)}</div>
+          <div class={cx(sCell)}></div>
+          <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
           <div class={cx(sCell)}></div>
         </div>
       </div>
