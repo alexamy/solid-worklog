@@ -35,12 +35,17 @@ export function DatePicker() {
         />
         <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
         {toTimestamp(now())}
-        <div class={sLamp} />
+        <Lamp />
       </div>
     </div>
   );
 }
 
+function Lamp() {
+  return <div class={sLamp} />;
+}
+
+// styles
 const sCurrentDate = css`
   display: flex;
   justify-content: space-between;
