@@ -1,4 +1,7 @@
 # Solid™️ Worklog
+A time management application for monitoring time spent on tasks, with tracking of total time spent.
+
+### https://alexamy.github.io/solid-worklog/
 
 ## Core functionality
 - Task entries with auto-calculated duration (start/end timestamps)
@@ -9,13 +12,11 @@
 - Automatic app state sync to localStorage
 - State import/export via JSON
 
-Available at https://alexamy.github.io/solid-worklog/.
-
 ## Inspired by
 - [Toggl Track](https://toggl.com/)
 - [Marinara Pomodoro](https://chromewebstore.google.com/detail/marinara-pomodoro%C2%AE-assist/lojgmehidjdhhbmpjfamhpkpodfcodef)
 
-## Quick start
+## Local development
 ```bash
 $ npm install
 $ npm run dev
@@ -23,7 +24,7 @@ $ npm run dev
 ```
 
 ## Solid 🥰
-Learn more on the [Solid Website](https://docs.solidjs.com/quick-start) and come chat with on [Discord](https://discord.com/invite/solidjs).
+Learn more on the [Solid Website](https://docs.solidjs.com/quick-start) and come chat on [Discord](https://discord.com/invite/solidjs).
 
 ## Available scripts
 In the project directory, you can run:
