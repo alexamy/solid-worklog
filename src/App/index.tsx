@@ -1,14 +1,15 @@
 import { css, cx } from '@linaria/core';
 import createFuzzySearch from '@nozbe/microfuzz';
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
-import { createStore, produce, SetStoreFunction } from 'solid-js/store';
+import { createStore, produce } from 'solid-js/store';
 import { Portal } from 'solid-js/web';
-import superjson from 'superjson';
 import { Statistics } from './Statistics';
 import { AppContext, getDefaultAppStore } from './store/app';
 import { DataContext, DataStore, getDefaultDataStore, Item } from './store/data';
 import { DatePicker } from './DatePicker';
 import { sCell, sCellHeader, sRow } from './styles';
+import { persistStore } from './store/persistence';
+import superjson from 'superjson';
 
 // component
 export function App() {
@@ -332,42 +333,6 @@ function updateTimestamp(date: Date, timestamp: string) {
 }
 
 // api
-function persistStore(
-  store: DataStore,
-  setStore: SetStoreFunction<DataStore>,
-  storageKey = 'solid-worklog-store',
-) {
-  function save(key = storageKey) {
-    localStorage.setItem(key, superjson.stringify(store));
-  }
-
-  function load(key = storageKey, backupStore = getDefaultDataStore()) {
-    const items = localStorage.getItem(key);
-    if (items) {
-      try {
-        setStore(superjson.parse(items));
-      } catch (error) {
-        console.error(error);
-        localStorage.removeItem(key);
-        setStore(backupStore);
-      }
-    }
-  }
-
-  createEffect(() => load());
-  createEffect(() => save());
-
-  function reset() {
-    localStorage.removeItem(storageKey);
-    setStore(getDefaultDataStore());
-    window.location.reload();
-  }
-
-  return {
-    reset,
-  };
-}
-
 async function uploadJson(): Promise<DataStore | undefined> {
   const input = document.createElement('input');
   input.type = 'file';
