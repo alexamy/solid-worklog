@@ -13,47 +13,13 @@ type SortOrder = 'asc' | 'desc';
 export function Statistics() {
   const [appStore] = useAppContext();
   const [dataStore] = useDataContext();
-  const selectedDate = () => appStore.selectedDate;
+  const selectedDate = createMemo(() => appStore.selectedDate);
 
+  // start time
   const [statTime, setStatTime] = createSignal<StatTime>('day');
+  const statTimeStartDate = createMemo(() => getStartOfStatTime(selectedDate(), statTime()));
 
-  const statTimeStartDate = createMemo(() => {
-    const from = selectedDate();
-    const time = statTime();
-
-    switch (time) {
-      case 'day':   return from;
-      case 'week':  return getStartOfWeek(from);
-      case 'month': return new Date(from.getFullYear(), from.getMonth(), 1);
-      case 'year':  return new Date(from.getFullYear(), 0, 1);
-      case 'all':   return new Date(0);
-      default:      throw new Error(time satisfies never);
-    }
-  });
-
-  function dateFilter(item: Item) {
-    const time = statTime();
-    const target = statTimeStartDate();
-    const itemDate = new Date(item.start);
-    itemDate.setHours(0, 0, 0, 0);
-
-    switch (time) {
-      case 'day':
-        return itemDate.toDateString() === target.toDateString();
-      case 'week':
-        return getStartOfWeek(itemDate).toDateString() === target.toDateString();
-      case 'month':
-        return itemDate.getFullYear() === target.getFullYear()
-            && itemDate.getMonth() === target.getMonth();
-      case 'year':
-        return itemDate.getFullYear() === target.getFullYear();
-      case 'all':
-        return true;
-      default:
-        throw new Error(time satisfies never);
-    }
-  }
-
+  // sorting
   const [sortBy, setSortBy] = createSignal<SortBy>('tag');
   const [sortOrder, setSortOrder] = createSignal<SortOrder>('asc');
 
@@ -66,9 +32,10 @@ export function Statistics() {
     }
   }
 
+  // stats
   const dayStats = createMemo(() => calculateStatsAtDate(
     dataStore.items,
-    dateFilter,
+    (item) => isItemInRange(item, statTime(), statTimeStartDate()),
   ));
 
   const sortedStats = createMemo(() => getSortedStats(
@@ -191,6 +158,42 @@ function PomodoroIcon(props: { amount?: number, grayed?: boolean }) {
     alt="Pomodoro"
     classList={{ [sPomodoroGrayed]: props.grayed }}
   />;
+}
+
+// methods
+function getStartOfStatTime(selectedDate: Date, statTime: StatTime) {
+  const from = selectedDate;
+  const time = statTime;
+
+  switch (time) {
+    case 'day':   return from;
+    case 'week':  return getStartOfWeek(from);
+    case 'month': return new Date(from.getFullYear(), from.getMonth(), 1);
+    case 'year':  return new Date(from.getFullYear(), 0, 1);
+    case 'all':   return new Date(0);
+    default:      throw new Error(time satisfies never);
+  }
+}
+
+function isItemInRange(item: Item, statTime: StatTime, target: Date) {
+  const itemDate = new Date(item.start);
+  itemDate.setHours(0, 0, 0, 0);
+
+  switch (statTime) {
+    case 'day':
+      return itemDate.toDateString() === target.toDateString();
+    case 'week':
+      return getStartOfWeek(itemDate).toDateString() === target.toDateString();
+    case 'month':
+      return itemDate.getFullYear() === target.getFullYear()
+          && itemDate.getMonth() === target.getMonth();
+    case 'year':
+      return itemDate.getFullYear() === target.getFullYear();
+    case 'all':
+      return true;
+    default:
+      throw new Error(statTime satisfies never);
+  }
 }
 
 function getStartOfWeek(date: Date) {
