@@ -469,6 +469,9 @@ export function App() {
               <div class={cx(sCell, sCellPomodoro)}>
                 <Show when={entry.pomodoros > 0}>
                   <Switch>
+                    <Match when={entry.tag === 'idle'}>
+                      <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
+                    </Match>
                     <Match when={Math.floor(entry.pomodoros) > 4}>
                       <PomodoroIcon /> x{Math.floor(entry.pomodoros)}
                     </Match>
