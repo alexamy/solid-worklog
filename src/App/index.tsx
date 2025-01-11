@@ -10,6 +10,7 @@ import { DatePicker } from './DatePicker';
 import { sCell, sCellHeader, sRow } from './styles';
 import { Utilities } from './Utilities';
 import { persistObject } from './store/persistence';
+import { NowContext } from './store/now';
 
 // component
 export function App() {
@@ -211,110 +212,112 @@ export function App() {
   }
 
   return (
-    <AppContext.Provider value={[appStore, setAppStore]}>
-      <DataContext.Provider value={[dataStore, setDataStore]}>
-        <div class={sApp}>
-          <Portal>
-            <div ref={tagListElement} class={sTagList}>
-              <For each={availableTags()}>
-                {(tag) =>
-                  <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
-                    {tag}
+    <NowContext.Provider value={now}>
+      <AppContext.Provider value={[appStore, setAppStore]}>
+        <DataContext.Provider value={[dataStore, setDataStore]}>
+          <div class={sApp}>
+            <Portal>
+              <div ref={tagListElement} class={sTagList}>
+                <For each={availableTags()}>
+                  {(tag) =>
+                    <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
+                      {tag}
+                    </div>
+                  }
+                </For>
+              </div>
+            </Portal>
+
+            <DatePicker />
+
+            Worklog
+            <div class={sToolbar}>
+              <div class={sToolbarLeft}>
+                <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
+                <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
+                <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
+              </div>
+              <div class={sToolbarRight}>
+                Rows:
+                <button disabled={isInProgress()} onClick={() => addItem()}>+</button>
+                <button disabled={isInProgress() || !selectedItemId()} onClick={() => moveUp()}>↑</button>
+                <button disabled={isInProgress() || !selectedItemId()} onClick={() => moveDown()}>↓</button>
+                <button disabled={isInProgress() || !selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
+              </div>
+            </div>
+
+
+            <div class={sTable}>
+              <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
+                <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
+                <div class={cx(sCell, sCellHeader)}>Tag</div>
+                <div class={cx(sCell, sCellHeader)}>Description</div>
+              </div>
+              <For each={itemsAtDate()}>
+                {(item) => (
+                  <div class={cx(sRow)}
+                    classList={{
+                      [sRowSelected]: selectedItemId() === item.id,
+                      [sRowIdle]: item.tag === 'idle',
+                    }}
+                    onClick={() => setSelectedItemId(item.id)}
+                  >
+                    <div
+                      class={cx(sCell, sCellEditable)}
+                      contentEditable
+                      onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
+                      onKeyDown={(e) => onCellKeyDown(e)}
+                    >
+                      {toTimestamp(item.start)}
+                    </div>
+                    <div class={sCell}>
+                      {calculateDuration(item.start, item.end ?? now())}
+                    </div>
+                    <div
+                      class={cx(sCell, sCellEditable)}
+                      classList={{ [sCellGrayed]: !item.end }}
+                      contentEditable={Boolean(item.end)}
+                      onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
+                      onKeyDown={(e) => onCellKeyDown(e)}
+                    >
+                      {toTimestamp(item.end ?? now())}
+                    </div>
+                    <div
+                      data-item-id={item.id}
+                      data-tag={true}
+                      class={cx(sCell, sCellEditable, sCellEditableText)}
+                      contentEditable
+                      onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                      onClick={(e) => positionTagList(e)}
+                      onKeyDown={(e) => onTagCellKeyDown(e)}
+                      onKeyUp={(e) => onTagCellKeyUp(e)}
+                    >
+                      {item.tag}
+                    </div>
+                    <div
+                      class={cx(sCell, sCellEditable, sCellEditableText)}
+                      contentEditable
+                      onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
+                      onKeyDown={(e) => onCellKeyDown(e)}
+                    >
+                      {item.description}
+                    </div>
                   </div>
-                }
+                )}
               </For>
             </div>
-          </Portal>
 
-          <DatePicker />
+            <br />
+            Statistics
+            <Statistics />
 
-          Worklog
-          <div class={sToolbar}>
-            <div class={sToolbarLeft}>
-              <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
-              <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
-              <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
-            </div>
-            <div class={sToolbarRight}>
-              Rows:
-              <button disabled={isInProgress()} onClick={() => addItem()}>+</button>
-              <button disabled={isInProgress() || !selectedItemId()} onClick={() => moveUp()}>↑</button>
-              <button disabled={isInProgress() || !selectedItemId()} onClick={() => moveDown()}>↓</button>
-              <button disabled={isInProgress() || !selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
-            </div>
+            <br />
+            Utilities
+            <Utilities reset={persistData.reset} />
           </div>
-
-
-          <div class={sTable}>
-            <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
-              <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
-              <div class={cx(sCell, sCellHeader)}>Tag</div>
-              <div class={cx(sCell, sCellHeader)}>Description</div>
-            </div>
-            <For each={itemsAtDate()}>
-              {(item) => (
-                <div class={cx(sRow)}
-                  classList={{
-                    [sRowSelected]: selectedItemId() === item.id,
-                    [sRowIdle]: item.tag === 'idle',
-                  }}
-                  onClick={() => setSelectedItemId(item.id)}
-                >
-                  <div
-                    class={cx(sCell, sCellEditable)}
-                    contentEditable
-                    onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
-                    onKeyDown={(e) => onCellKeyDown(e)}
-                  >
-                    {toTimestamp(item.start)}
-                  </div>
-                  <div class={sCell}>
-                    {calculateDuration(item.start, item.end ?? now())}
-                  </div>
-                  <div
-                    class={cx(sCell, sCellEditable)}
-                    classList={{ [sCellGrayed]: !item.end }}
-                    contentEditable={Boolean(item.end)}
-                    onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
-                    onKeyDown={(e) => onCellKeyDown(e)}
-                  >
-                    {toTimestamp(item.end ?? now())}
-                  </div>
-                  <div
-                    data-item-id={item.id}
-                    data-tag={true}
-                    class={cx(sCell, sCellEditable, sCellEditableText)}
-                    contentEditable
-                    onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                    onClick={(e) => positionTagList(e)}
-                    onKeyDown={(e) => onTagCellKeyDown(e)}
-                    onKeyUp={(e) => onTagCellKeyUp(e)}
-                  >
-                    {item.tag}
-                  </div>
-                  <div
-                    class={cx(sCell, sCellEditable, sCellEditableText)}
-                    contentEditable
-                    onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                    onKeyDown={(e) => onCellKeyDown(e)}
-                  >
-                    {item.description}
-                  </div>
-                </div>
-              )}
-            </For>
-          </div>
-
-          <br />
-          Statistics
-          <Statistics />
-
-          <br />
-          Utilities
-          <Utilities reset={persistData.reset} />
-        </div>
-      </DataContext.Provider>
-    </AppContext.Provider>
+        </DataContext.Provider>
+      </AppContext.Provider>
+    </NowContext.Provider>
   )
 }
 
