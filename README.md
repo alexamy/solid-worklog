@@ -1,4 +1,4 @@
-# Solid™️ Worklog
+# Solid Worklog
 A time management application for monitoring time spent on tasks, with tracking of total time spent.
 
 ### https://alexamy.github.io/solid-worklog/
