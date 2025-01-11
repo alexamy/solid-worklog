@@ -658,13 +658,13 @@ function calculateDuration(start: Date, end: Date) {
 function minutesToHoursMinutes(minutesAmount: number) {
   const hours = Math.floor(minutesAmount / 60);
   const minutes = minutesAmount % 60;
-  if (hours > 0) {
-    return `${hours} h ${minutes} min`;
-  }
-  if(minutes > 0) {
-    return `${minutes} min`;
-  }
-  return '0 min';
+
+  let result = '';
+  if (hours > 0) result += `${hours} h`;
+  if (minutes > 0) result += ` ${minutes} min`;
+  result = result.trim();
+
+  return result || '0 min';
 }
 
 function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
