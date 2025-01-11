@@ -20,4 +20,9 @@ export default [
       },
     },
   },
+  {
+    rules: {
+      'solid/self-closing-comp': 'off',
+    },
+  }
 ];
