@@ -779,7 +779,7 @@ const sRow = css`
 `;
 
 const sRowIdle = css`
-  color: #555;
+  color: #999;
 `;
 
 const sRowSelectable = css`
