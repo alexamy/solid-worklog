@@ -458,7 +458,7 @@ export function App() {
       <div class={sTableStats}>
         <div class={sRow}>
           <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>Tag</div>
-          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Time</div>
+          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Duration</div>
           <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros (30 min)</div>
         </div>
         <For each={sortedStats().entries}>
@@ -659,12 +659,7 @@ function minutesToHoursMinutes(minutesAmount: number) {
   const hours = Math.floor(minutesAmount / 60);
   const minutes = minutesAmount % 60;
 
-  let result = '';
-  if (hours > 0) result += `${hours} h`;
-  if (minutes > 0) result += ` ${minutes} min`;
-  result = result.trim();
-
-  return result || '0 min';
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 }
 
 function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
