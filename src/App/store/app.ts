@@ -7,7 +7,7 @@ export interface AppStore {
 
 export const AppContext = createContext<[AppStore, SetStoreFunction<AppStore>]>();
 
-export function useDataContext() {
+export function useAppContext() {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error("Can't find AppContext");
