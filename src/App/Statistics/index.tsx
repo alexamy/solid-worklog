@@ -184,41 +184,6 @@ function PomodoroIcon(props: { amount?: number, grayed?: boolean }) {
 }
 
 // methods
-function getStartOfStatTime(selectedDate: Date, statTime: StatTime) {
-  const from = selectedDate;
-  const time = statTime;
-
-  switch (time) {
-    case 'day':   return from;
-    case 'week':  return getStartOfWeek(from);
-    case 'month': return new Date(from.getFullYear(), from.getMonth(), 1);
-    case 'year':  return new Date(from.getFullYear(), 0, 1);
-    case 'all':   return new Date(0);
-    default:      throw new Error(time satisfies never);
-  }
-}
-
-function isItemInRange(item: Item, statTime: StatTime, target: Date) {
-  const itemDate = new Date(item.start);
-  itemDate.setHours(0, 0, 0, 0);
-
-  switch (statTime) {
-    case 'day':
-      return itemDate.toDateString() === target.toDateString();
-    case 'week':
-      return getStartOfWeek(itemDate).toDateString() === target.toDateString();
-    case 'month':
-      return itemDate.getFullYear() === target.getFullYear()
-          && itemDate.getMonth() === target.getMonth();
-    case 'year':
-      return itemDate.getFullYear() === target.getFullYear();
-    case 'all':
-      return true;
-    default:
-      throw new Error(statTime satisfies never);
-  }
-}
-
 function getSortedStats(dayStats: StatResult, sortBy: SortBy, sortOrder: SortOrder): StatResult {
   const { entries, sumAll } = dayStats;
 
@@ -258,6 +223,41 @@ function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean)
   const sumAll = entries.reduce((sum, entry) => sum + entry.duration, 0);
 
   return { entries, sumAll };
+}
+
+function getStartOfStatTime(selectedDate: Date, statTime: StatTime) {
+  const from = selectedDate;
+  const time = statTime;
+
+  switch (time) {
+    case 'day':   return from;
+    case 'week':  return getStartOfWeek(from);
+    case 'month': return new Date(from.getFullYear(), from.getMonth(), 1);
+    case 'year':  return new Date(from.getFullYear(), 0, 1);
+    case 'all':   return new Date(0);
+    default:      throw new Error(time satisfies never);
+  }
+}
+
+function isItemInRange(item: Item, statTime: StatTime, target: Date) {
+  const itemDate = new Date(item.start);
+  itemDate.setHours(0, 0, 0, 0);
+
+  switch (statTime) {
+    case 'day':
+      return itemDate.toDateString() === target.toDateString();
+    case 'week':
+      return getStartOfWeek(itemDate).toDateString() === target.toDateString();
+    case 'month':
+      return itemDate.getFullYear() === target.getFullYear()
+          && itemDate.getMonth() === target.getMonth();
+    case 'year':
+      return itemDate.getFullYear() === target.getFullYear();
+    case 'all':
+      return true;
+    default:
+      throw new Error(statTime satisfies never);
+  }
 }
 
 function getStartOfWeek(date: Date) {
