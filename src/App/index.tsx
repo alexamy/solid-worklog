@@ -19,8 +19,6 @@ interface Item {
   end: Date | undefined;
 }
 
-
-
 // component
 export function App() {
   const [store, setStore] = createStore<Store>(getDefaultStore());
@@ -311,7 +309,7 @@ export function App() {
   }
 
   return (
-    <div class={sApp}>
+    <div>
       <Portal>
         <div ref={tagListElement} class={sTagList}>
           <For each={availableTags()}>
@@ -728,13 +726,6 @@ function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivEl
 }
 
 // styles
-const sApp = css`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 500px;
-`;
-
 const sToolbar = css`
   display: flex;
   justify-content: space-between;
