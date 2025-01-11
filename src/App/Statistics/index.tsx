@@ -32,9 +32,10 @@ export function Statistics() {
   });
 
   function dateFilter(item: Item) {
-    const target = statTimeStartDate();
-    const itemDate = getDateNoTime(item.start);
     const time = statTime();
+    const target = statTimeStartDate();
+    const itemDate = new Date(item.start);
+    itemDate.setHours(0, 0, 0, 0);
 
     switch (time) {
       case 'day':
@@ -75,7 +76,7 @@ export function Statistics() {
 
     const stats = entries.map(item => ({
       ...item,
-      pomodoros: toPomodoro(item.duration),
+      pomodoros: item.duration / 30,
     }));
 
     stats.sort((a, b) => {
@@ -136,6 +137,7 @@ export function Statistics() {
           </div>
         )}
       </For>
+
       <div class={sRow}>
         <div class={cx(sCell)}></div>
         <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
@@ -255,10 +257,6 @@ function getDateNoTime(date: Date) {
   target.setHours(0, 0, 0, 0);
 
   return target;
-}
-
-function toPomodoro(minutes: number) {
-  return minutes / 30;
 }
 
 function minutesToHoursMinutes(minutesAmount: number) {
