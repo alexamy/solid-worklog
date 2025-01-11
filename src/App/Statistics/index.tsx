@@ -27,8 +27,8 @@ export function Statistics() {
   const selectedDate = () => appStore.selectedDate;
 
   // range
-  const [statRange, setStatRange] = createSignal<StatRange>('day');
-  const statStartDate = createMemo(() => getStartOfStatRange(selectedDate(), statRange()));
+  const [range, setRange] = createSignal<StatRange>('day');
+  const startDate = createMemo(() => getStartOfStatRange(selectedDate(), range()));
 
   // sorting
   const [sortBy, setSortBy] = createSignal<SortBy>('tag');
@@ -43,20 +43,20 @@ export function Statistics() {
     }
   }
 
-  const dayStats = createMemo(() => aggregateByTag(
-    dataStore.items.filter(item => isItemInRange(item, statRange(), statStartDate())),
+  const stats = createMemo(() => aggregateByTag(
+    dataStore.items.filter(item => isItemInRange(item, range(), startDate())),
   ));
 
   const sortedStats = createMemo(() =>
-    getSortedStats(dayStats(), sortBy(), sortOrder())
+    getSortedStats(stats(), sortBy(), sortOrder())
   );
 
   return (
     <>
       <Toolbar
         selectedDate={selectedDate()}
-        statRange={statRange()}
-        setStatRange={setStatRange}
+        statRange={range()}
+        setStatRange={setRange}
       />
 
       <div class={sTableStats}>
@@ -72,9 +72,10 @@ export function Statistics() {
         </div>
       </div>
 
-      <For each={sortedStats().entries}>{(entry) => (
-        <ItemRow entry={entry} />
-      )}
+      <For each={sortedStats().entries}>
+        {(entry) => (
+          <ItemRow entry={entry} />
+        )}
       </For>
 
       <div class={sRow}>
