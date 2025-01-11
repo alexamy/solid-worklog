@@ -206,26 +206,6 @@ function isItemInRange(item: Item, statTime: StatTime, target: Date) {
   }
 }
 
-function getStartOfWeek(date: Date) {
-  const result = new Date(date);
-  const day = result.getDay();
-  const diff = day === 0 ? -6 : 1 - day; // Adjust to make Monday the first day
-  result.setDate(result.getDate() + diff);
-  result.setHours(0, 0, 0, 0);
-  return result;
-}
-
-function getWeekInterval(date: Date) {
-  const start = getStartOfWeek(date);
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-
-  const startStr = start.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
-  const endStr = end.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
-
-  return `${startStr} - ${endStr}`;
-}
-
 function getSortedStats(dayStats: ReturnType<typeof calculateStatsAtDate>, sortBy: SortBy, sortOrder: SortOrder) {
   const { entries, sumAll } = dayStats;
 
@@ -270,6 +250,27 @@ function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean)
 
   return { entries, sumAll };
 }
+
+function getStartOfWeek(date: Date) {
+  const result = new Date(date);
+  const day = result.getDay();
+  const diff = day === 0 ? -6 : 1 - day; // Adjust to make Monday the first day
+  result.setDate(result.getDate() + diff);
+  result.setHours(0, 0, 0, 0);
+  return result;
+}
+
+function getWeekInterval(date: Date) {
+  const start = getStartOfWeek(date);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+
+  const startStr = start.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+  const endStr = end.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+
+  return `${startStr} - ${endStr}`;
+}
+
 
 function minutesToHoursMinutes(minutesAmount: number) {
   const hours = Math.floor(minutesAmount / 60);
