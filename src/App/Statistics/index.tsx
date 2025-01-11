@@ -221,10 +221,9 @@ function aggregateByTag(items: Item[]): StatResult {
   const tags = [...new Set(items.map(item => item.tag))];
 
   const entries = tags.map(tag => {
-    const now = new Date();
-    const itemsWithTag = items.filter(item => item.tag === tag);
-    const duration = itemsWithTag
-      .map(item => calculateDuration(item.start, item.end ?? now))
+    const duration = items
+      .filter(item => item.tag === tag)
+      .map(item => calculateDuration(item.start, item.end ?? new Date()))
       .reduce((a, b) => a + b, 0);
 
     return { tag: tag || '*empty*', duration, pomodoros: duration / 30 };
@@ -276,6 +275,7 @@ function getStartOfWeek(date: Date) {
   const diff = day === 0 ? -6 : 1 - day; // Adjust to make Monday the first day
   result.setDate(result.getDate() + diff);
   result.setHours(0, 0, 0, 0);
+
   return result;
 }
 
