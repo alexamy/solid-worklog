@@ -1,3 +1,6 @@
+import { createContext, useContext } from 'solid-js';
+import { SetStoreFunction } from 'solid-js/store';
+
 export interface DataStore {
   items: Item[];
 }
@@ -8,6 +11,17 @@ export interface Item {
   tag: string;
   start: Date;
   end: Date | undefined;
+}
+
+export const DataContext = createContext<[DataStore, SetStoreFunction<DataStore>]>();
+
+export function useDataContext() {
+  const context = useContext(DataContext)
+  if (!context) {
+    throw new Error("Can't find DataContext");
+  }
+
+  return context;
 }
 
 export function getDefaultDataStore(): DataStore {
