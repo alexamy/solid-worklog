@@ -458,14 +458,14 @@ export function App() {
       <div class={sTableStats}>
         <div class={sRow}>
           <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>Tag</div>
-          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Minutes</div>
+          <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>Time</div>
           <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('pomodoros')}>Pomodoros (30 min)</div>
         </div>
         <For each={sortedStats().entries}>
           {(entry) => (
             <div class={sRow}>
               <div class={sCell}>{entry.tag}</div>
-              <div class={sCell}>{entry.duration} min</div>
+              <div class={sCell}>{minutesToHoursMinutes(entry.duration)}</div>
               <div class={cx(sCell, sCellPomodoro)}>
                 <Show when={entry.pomodoros > 0}>
                   <Switch>
@@ -658,7 +658,10 @@ function calculateDuration(start: Date, end: Date) {
 function minutesToHoursMinutes(minutes: number) {
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
-  return `${hours} h ${remainingMinutes} min`;
+  if (hours > 0) {
+    return `${hours} h ${remainingMinutes} min`;
+  }
+  return `${remainingMinutes} min`;
 }
 
 function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
