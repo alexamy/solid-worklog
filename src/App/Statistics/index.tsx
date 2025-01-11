@@ -25,10 +25,7 @@ export function Statistics() {
   const [appStore] = useAppContext();
   const [dataStore] = useDataContext();
   const selectedDate = () => appStore.selectedDate;
-
-  // range
-  const [range, setRange] = createSignal<StatRange>('day');
-  const startDate = createMemo(() => getStartOfStatRange(selectedDate(), range()));
+  const now = () => appStore.now;
 
   // sorting
   const [sortBy, setSortBy] = createSignal<SortBy>('tag');
@@ -43,10 +40,14 @@ export function Statistics() {
     }
   }
 
+  // range
+  const [range, setRange] = createSignal<StatRange>('day');
+  const startDate = createMemo(() => getStartOfStatRange(selectedDate(), range()));
+
   // stats
-  const stats = createMemo(() => aggregateByTag(
+  const stats = createMemo(() => { now(); return aggregateByTag(
     dataStore.items.filter(item => isItemInRange(item, range(), startDate())),
-  ));
+  );});
 
   const sortedStats = createMemo(() => ({
     entries: getSortedEntries(stats().entries, sortBy(), sortOrder()),
