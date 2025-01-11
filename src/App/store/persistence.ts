@@ -7,25 +7,25 @@ export function persistData<T extends object>(
   getDefaultStore: () => T,
   storageKey = 'solid-worklog-store',
 ) {
-  function save(key = storageKey) {
-    localStorage.setItem(key, superjson.stringify(store));
-  }
+  createEffect(load);
+  createEffect(save);
 
-  function load(key = storageKey) {
-    const items = localStorage.getItem(key);
+  function load() {
+    const items = localStorage.getItem(storageKey);
     if (items) {
       try {
         setStore(superjson.parse(items));
       } catch (error) {
         console.error(error);
-        localStorage.removeItem(key);
+        localStorage.removeItem(storageKey);
         setStore(getDefaultStore());
       }
     }
   }
 
-  createEffect(() => load());
-  createEffect(() => save());
+  function save() {
+    localStorage.setItem(storageKey, superjson.stringify(store));
+  }
 
   function reset() {
     localStorage.removeItem(storageKey);
