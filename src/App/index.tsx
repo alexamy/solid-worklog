@@ -15,7 +15,8 @@ export function App() {
   const persist = persistStore(dataStore, setDataStore);
 
   // date
-  const [selectedDate, setSelectedDate] = createSignal(new Date());
+  const selectedDate = () => appStore.selectedDate;
+  const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
   const isToday = createMemo(() => selectedDate().toDateString() === new Date().toDateString());
 
   function moveDate(delta: number) {

@@ -13,7 +13,7 @@ type SortOrder = 'asc' | 'desc';
 export function Statistics() {
   const [appStore] = useAppContext();
   const [dataStore] = useDataContext();
-  const selectedDate = createMemo(() => appStore.selectedDate);
+  const selectedDate = () => appStore.selectedDate;
 
   // start time
   const [statTime, setStatTime] = createSignal<StatTime>('day');
