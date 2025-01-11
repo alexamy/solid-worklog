@@ -9,8 +9,8 @@ import { getDefaultDataStore, Item, DataStore } from './store/data';
 
 // component
 export function App() {
-  const [store, setStore] = createStore<DataStore>(getDefaultDataStore());
-  const persist = persistStore(store, setStore);
+  const [dataStore, setDataStore] = createStore<DataStore>(getDefaultDataStore());
+  const persist = persistStore(dataStore, setDataStore);
 
   // date
   const [currentDate, setCurrentDate] = createSignal(new Date());
@@ -27,8 +27,8 @@ export function App() {
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
 
   // items
-  const isInProgress = createMemo(() => store.items[0].end === undefined);
-  const itemsAtDate = createMemo(() => store.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
+  const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
+  const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === currentDate().toDateString()));
 
   const [now, setNow] = createSignal(new Date());
   createEffect(() => {
@@ -87,7 +87,7 @@ export function App() {
   }
 
   const dayStats = createMemo(() => calculateStatsAtDate(
-    store.items,
+    dataStore.items,
     dateFilter,
   ));
 
@@ -118,7 +118,7 @@ export function App() {
   });
 
   const allTags = createMemo(() => {
-    const tags = store.items.map(item => item.tag);
+    const tags = dataStore.items.map(item => item.tag);
     const uniqueTags = [...new Set(tags)];
     return uniqueTags;
   });
@@ -168,7 +168,7 @@ export function App() {
 
   // methods
   function createItem(item: Partial<Item>) {
-    setStore('items', (items) => [{
+    setDataStore('items', (items) => [{
       id: randomId(),
       description: '',
       tag: '',
@@ -179,7 +179,7 @@ export function App() {
   }
 
   function updateItem(item: Partial<Item>, id: string) {
-    setStore('items', item => item.id === id, item);
+    setDataStore('items', item => item.id === id, item);
   }
 
   function addItem() {
@@ -192,7 +192,7 @@ export function App() {
   function startItem(item: Partial<Item> = {}) {
     setCurrentDate(now());
 
-    const lastItem = store.items[0];
+    const lastItem = dataStore.items[0];
     if(!lastItem || !lastItem.end) {
       throw new Error('No last item or end time');
     }
@@ -216,7 +216,7 @@ export function App() {
   }
 
   function finishItem() {
-    setStore('items', 0, {
+    setDataStore('items', 0, {
       end: new Date(),
     });
   }
@@ -230,21 +230,21 @@ export function App() {
     const selected = selectedItemId()!;
 
     // select next item
-    const index = store.items.findIndex(item => item.id === selected);
+    const index = dataStore.items.findIndex(item => item.id === selected);
     if(index >= 0) {
-      const item = store.items[index + 1];
+      const item = dataStore.items[index + 1];
       setSelectedItemId(item?.id);
     }
 
     // remove item
-    const filtered = store.items.filter(item => item.id !== selected);
+    const filtered = dataStore.items.filter(item => item.id !== selected);
     if(filtered.length > 0) {
-      setStore('items', filtered);
+      setDataStore('items', filtered);
     }
   }
 
   function moveUp() {
-    setStore('items', produce((items) => {
+    setDataStore('items', produce((items) => {
       const index = items.findIndex(item => item.id === selectedItemId());
       if (index > 0) {
         [items[index], items[index - 1]] = [items[index - 1], items[index]];
@@ -253,7 +253,7 @@ export function App() {
   }
 
   function moveDown() {
-    setStore('items', produce((items) => {
+    setDataStore('items', produce((items) => {
       const index = items.findIndex(item => item.id === selectedItemId());
       if (index < items.length - 1) {
         [items[index], items[index + 1]] = [items[index + 1], items[index]];
@@ -282,7 +282,7 @@ export function App() {
 
   async function uploadStore() {
     const data = await uploadJson();
-    if (data) setStore(data);
+    if (data) setDataStore(data);
   }
 
   function getWeekInterval(date: Date) {
@@ -338,7 +338,7 @@ export function App() {
           <button disabled={isInProgress()} onClick={() => addItem()}>+</button>
           <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveUp()}>↑</button>
           <button disabled={!selectedItemId() || isInProgress()} onClick={() => moveDown()}>↓</button>
-          <button disabled={!selectedItemId() || isInProgress() || store.items.length <= 1} onClick={() => removeItem()}>-</button>
+          <button disabled={!selectedItemId() || isInProgress() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
         </div>
       </div>
 
@@ -487,7 +487,7 @@ export function App() {
       Utilities
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
-          <button onClick={() => downloadJson(store)}>Save backup</button>
+          <button onClick={() => downloadJson(dataStore)}>Save backup</button>
           <button onClick={uploadStore}>Load backup</button>
           <button onDblClick={persist.reset}>Reset (double click)</button>
         </div>
