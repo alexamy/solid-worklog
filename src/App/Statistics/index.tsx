@@ -289,7 +289,6 @@ function getWeekInterval(date: Date) {
   return `${startStr} - ${endStr}`;
 }
 
-
 function minutesToHoursMinutes(minutesAmount: number) {
   const hours = Math.floor(minutesAmount / 60);
   const minutes = minutesAmount % 60;
