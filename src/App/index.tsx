@@ -15,23 +15,18 @@ export function App() {
   const [appStore, setAppStore] = createStore(getDefaultAppStore());
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
 
+  // update now timestamp every 30 seconds
   createEffect(() => {
     const intervalId = setInterval(() => setAppStore('now', new Date()), 30000);
     onCleanup(() => clearInterval(intervalId));
   });
 
-  // date
+  // store
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
   const now = () => appStore.now;
 
-  // selected
-  const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
-
-  // items
-  const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
-  const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === selectedDate().toDateString()));
-
+  // tags and fuzzy search
   const allTags = createMemo(() => {
     const tags = dataStore.items.map(item => item.tag);
     const uniqueTags = [...new Set(tags)];
@@ -81,7 +76,11 @@ export function App() {
     onCleanup(() => document.body.removeEventListener('click', onClick));
   });
 
-  // methods
+  // worklog table data
+  const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
+  const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
+  const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === selectedDate().toDateString()));
+
   function createItem(item: Partial<Item>) {
     setDataStore('items', (items) => [{
       id: randomId(),
@@ -195,8 +194,6 @@ export function App() {
     updateAvailableTags(e.currentTarget.textContent!);
     toggleTagList('show');
   }
-
-
 
   return (
     <AppContext.Provider value={[appStore, setAppStore]}>
