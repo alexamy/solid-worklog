@@ -11,13 +11,21 @@ export function useNowContext() {
   return context;
 }
 
-export function createTicker(duration: number) {
+export function createTicker() {
   const [now, setNow] = createSignal(new Date());
-  const tick = () => setNow(new Date());
 
-  tick();
   createEffect(() => {
-    const intervalId = setInterval(tick, duration);
+    let previous = new Date();
+
+    function check() {
+      const current = new Date();
+      if (current.getMinutes() !== previous.getMinutes()) {
+        setNow(current);
+        previous = current;
+      }
+    }
+
+    const intervalId = setInterval(check, 1000);
     onCleanup(() => clearInterval(intervalId));
   });
 
