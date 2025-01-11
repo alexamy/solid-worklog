@@ -35,18 +35,25 @@ export function DatePicker() {
         />
         <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
         {toTimestamp(now())}
-        <Lamp now={now} />
+        <Lamp trigger={now} />
       </div>
     </div>
   );
 }
 
-// TODO: flicker on every now update
-function Lamp(props: { now: () => Date }) {
+function Lamp(props: { trigger: () => void }) {
   let element!: HTMLDivElement;
 
+  // trigger element switch between main and fallback in Show component
+  const [flicker, setFlicker] = createSignal(false);
+  createEffect(on(() => props.trigger(), () => {
+    setFlicker(flick => !flick);
+  }));
+
   return (
-    <div ref={element} class={sLamp} />
+    <Show when={flicker()} fallback={<div ref={element} class={sLamp} />}>
+      <div ref={element} class={sLamp} />
+    </Show>
   );
 }
 

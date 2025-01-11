@@ -12,7 +12,7 @@ import { css } from '@linaria/core';
 
 // component
 export function App() {
-  const now = createTicker(30000);
+  const now = createTicker(5000);
   const [appStore, setAppStore] = createStore(getDefaultAppStore());
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
 
