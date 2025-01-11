@@ -9,6 +9,7 @@ import { persistObject } from './store/persistence';
 import { NowContext } from './store/now';
 import { Worklog } from './Worklog';
 import { css } from '@linaria/core';
+import { Settings } from './Settings';
 
 // component
 export function App() {
@@ -41,6 +42,9 @@ export function App() {
             <br />
             Statistics
             <Statistics />
+            <br />
+            Settings
+            <Settings />
             <br />
             Utilities
             <Utilities reset={persistData.reset} />

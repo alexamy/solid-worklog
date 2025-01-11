@@ -3,6 +3,7 @@ import { SetStoreFunction } from 'solid-js/store';
 
 export interface AppStore {
   selectedDate: Date;
+  jiraHost: string;
 }
 
 export const AppContext = createContext<[AppStore, SetStoreFunction<AppStore>]>();
@@ -19,5 +20,6 @@ export function useAppContext() {
 export function getDefaultAppStore(): AppStore {
   return {
     selectedDate: new Date(),
+    jiraHost: '',
   };
 }
