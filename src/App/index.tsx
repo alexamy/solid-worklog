@@ -7,6 +7,7 @@ import { Statistics } from './Statistics';
 import { AppContext, getDefaultAppStore } from './store/app';
 import { DataContext, getDefaultDataStore, Item } from './store/data';
 import { DatePicker } from './DatePicker';
+import { createTicker } from './store/now';
 import { sCell, sCellHeader, sRow } from './styles';
 import { Utilities } from './Utilities';
 import { persistObject } from './store/persistence';
@@ -32,15 +33,11 @@ export function App() {
   );
 
   // update now timestamp every 30 seconds
-  createEffect(() => {
-    const intervalId = setInterval(() => setAppStore('now', new Date()), 30000);
-    onCleanup(() => clearInterval(intervalId));
-  });
+  const now = createTicker(30000);
 
   // store
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
-  const now = () => appStore.now;
 
   // tags and fuzzy search
   const allTags = createMemo(() => {
