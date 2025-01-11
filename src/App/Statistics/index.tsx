@@ -71,31 +71,11 @@ export function Statistics() {
     dateFilter,
   ));
 
-  const sortedStats = createMemo(() => {
-    const { entries, sumAll } = dayStats();
-
-    const stats = entries.map(item => ({
-      ...item,
-      pomodoros: item.duration / 30,
-    }));
-
-    stats.sort((a, b) => {
-      const aVal = a[sortBy()];
-      const bVal = b[sortBy()];
-
-      if (typeof aVal === 'string' && typeof bVal === 'string') {
-        return sortOrder() === 'asc'
-          ? aVal.localeCompare(bVal)
-          : bVal.localeCompare(aVal);
-      }
-
-      return sortOrder() === 'asc'
-        ? Number(aVal) - Number(bVal)
-        : Number(bVal) - Number(aVal);
-    });
-
-    return { entries: stats, sumAll };
-  });
+  const sortedStats = createMemo(() => getSortedStats(
+    dayStats(),
+    sortBy(),
+    sortOrder(),
+  ));
 
   return (
     <>
@@ -233,6 +213,32 @@ function getWeekInterval(date: Date) {
   return `${startStr} - ${endStr}`;
 }
 
+function getSortedStats(dayStats: ReturnType<typeof calculateStatsAtDate>, sortBy: SortBy, sortOrder: SortOrder) {
+  const { entries, sumAll } = dayStats;
+
+  const stats = entries.map(item => ({
+    ...item,
+    pomodoros: item.duration / 30,
+  }));
+
+  stats.sort((a, b) => {
+    const aVal = a[sortBy];
+    const bVal = b[sortBy];
+
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      return sortOrder === 'asc'
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
+    }
+
+    return sortOrder === 'asc'
+      ? Number(aVal) - Number(bVal)
+      : Number(bVal) - Number(aVal);
+  });
+
+  return { entries: stats, sumAll };
+}
+
 function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean) {
   const itemsAtDate = itemsAll.filter(filter);
 
@@ -250,13 +256,6 @@ function calculateStatsAtDate(itemsAll: Item[], filter: (item: Item) => boolean)
   const sumAll = entries.reduce((sum, entry) => sum + entry.duration, 0);
 
   return { entries, sumAll };
-}
-
-function getDateNoTime(date: Date) {
-  const target = new Date(date);
-  target.setHours(0, 0, 0, 0);
-
-  return target;
 }
 
 function minutesToHoursMinutes(minutesAmount: number) {
