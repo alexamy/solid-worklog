@@ -67,10 +67,10 @@ export function Statistics() {
       <div class={sTableStats}>
         <div class={sRow}>
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-          Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+          Pomodoros
         </div>
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-          Pomodoros
+          Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
         </div>
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>
           Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
@@ -84,8 +84,8 @@ export function Statistics() {
       </For>
 
       <div class={sRow}>
-        <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
         <div class={cx(sCell)}></div>
+        <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
         <div class={cx(sCell)}></div>
       </div>
     </div>
@@ -160,7 +160,6 @@ function ItemRow(props: StatEntry) {
 
   return (
     <div class={sRow}>
-      <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
       <div class={cx(sCell, sCellPomodoro)}>
         <Show when={props.pomodoros > 0}>
           <Switch>
@@ -179,6 +178,7 @@ function ItemRow(props: StatEntry) {
           </Switch>
         </Show>
       </div>
+      <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
       <div class={cx(sCell, sCellText)}><TagView tag={props.tag} jiraHost={appStore.jiraHost} /></div>
     </div>
   );
@@ -324,7 +324,7 @@ function minutesToHoursMinutes(minutesAmount: number) {
 // styles
 const sTableStats = css`
   display: grid;
-  grid-template-columns: auto 180px auto;
+  grid-template-columns: 180px 160px auto;
 `;
 
 const sCellText = css`
