@@ -48,9 +48,14 @@ export function Statistics() {
   const startDate = createMemo(() => getStartOfStatRange(selectedDate(), range()));
 
   // stats
-  const stats = createMemo(() => { now(); return aggregateByTag(
-    dataStore.items.filter(item => isItemAtStartDate(item, range(), startDate())),
-  );});
+  const stats = createMemo(() => {
+    now(); // force update on clock change
+
+    const items = dataStore.items.filter(item => isItemAtStartDate(item, range(), startDate()));
+    const result = aggregateByTag(items);
+
+    return result;
+  });
 
   const sortedStats = createMemo(() => ({
     entries: getSortedEntries(stats().entries, sortBy(), sortOrder()),
