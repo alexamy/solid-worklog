@@ -196,11 +196,14 @@ function PomodoroCell(props: { tag: string, amount: number }) {
 
 function PomodoroIcon(props: { amount?: number }) {
   const amount = () => props.amount ?? 1;
-  const fullWidth = () => amount() * 24;
-  const width = () => fullWidth() >= 10 ? fullWidth() : 0;
+  const width = () => {
+    const full = amount() * 24;
+    const result = full >= 10 ? full : 0;
+    return result.toFixed(2);
+  }
 
   return <img
-    width={width().toFixed(2)}
+    width={width()}
     height={24}
     src={pomodoroSvg}
     alt="Pomodoro"
