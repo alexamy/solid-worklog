@@ -27,6 +27,12 @@ export function Worklog() {
     .filter(item => item.start.toDateString() === selectedDate().toDateString())
   );
 
+  function onCellKeyDown(e: KeyboardEventTarget) {
+    if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
+    }
+  }
+
   // tag list
   const tagList = createTagListControls(selectedItemId);
 
@@ -35,13 +41,6 @@ export function Worklog() {
     const uniqueTags = [...new Set(tags)];
     return uniqueTags;
   });
-
-  // methods
-  function onCellKeyDown(e: KeyboardEventTarget) {
-    if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
-    }
-  }
 
   function onTagCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
