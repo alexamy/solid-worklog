@@ -176,7 +176,7 @@ function TagList(props: {
     const rect = parent.currentTarget.getBoundingClientRect();
     setStyle({
       left: `${rect.left}px`,
-      top: `${rect.top + rect.height - 1}px`,
+      top: `${rect.top + rect.height + 9}px`, // TODO: why changed from -1 to +9? it was ok before
       width: `${rect.width}px`,
     });
   }));
