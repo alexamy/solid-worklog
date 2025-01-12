@@ -7,7 +7,6 @@ import createFuzzySearch from '@nozbe/microfuzz';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
 import { calculateDuration } from '../time';
-import { produce } from 'solid-js/store';
 import { useNowContext } from '../store/now';
 
 export function Worklog() {
@@ -237,27 +236,25 @@ function ToolbarTable(props: {
     moveDown,
   }] = useDataContext();
 
-  const selectedDate = () => props.selectedDate;
-  const selectedItemId = () => props.selectedItemId;
-  const setSelectedItemId = (id: string | undefined) => props.setSelectedItemId(id);
+  const onlyOneItem = () => dataStore.items.length === 1;
 
   return (
     <div class={sToolbarRight}>
       <button
-        disabled={!selectedItemId()}
-        onClick={() => addItem(selectedDate())}
+        disabled={!props.selectedItemId}
+        onClick={() => addItem(props.selectedDate)}
       >+</button>
       <button
-        disabled={!selectedItemId()}
-        onClick={() => moveUp(selectedItemId()!)}
+        disabled={!props.selectedItemId}
+        onClick={() => moveUp(props.selectedItemId!)}
       >↑</button>
       <button
-        disabled={!selectedItemId()}
-        onClick={() => moveDown(selectedItemId()!)}
+        disabled={!props.selectedItemId}
+        onClick={() => moveDown(props.selectedItemId!)}
       >↓</button>
       <button
-        disabled={!selectedItemId() || dataStore.items.length <= 1}
-        onClick={() => removeItem(selectedItemId()!, setSelectedItemId)}
+        disabled={!props.selectedItemId || onlyOneItem()}
+        onClick={() => removeItem(props.selectedItemId!, props.setSelectedItemId)}
       >-</button>
     </div>
   );
