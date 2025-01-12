@@ -7,6 +7,9 @@ export type DataContextValue = ReturnType<typeof createDataStore>;
 export function createDataStore() {
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
 
+  // memos
+  const isInProgress = () => dataStore.items[0].end === undefined;
+
   // item management
   function createItem(item: Partial<Item>) {
     setDataStore('items', (items) => [{
@@ -101,6 +104,8 @@ export function createDataStore() {
   }
 
   return [dataStore, setDataStore, {
+    isInProgress,
+
     createItem,
     addItem,
     removeItem,

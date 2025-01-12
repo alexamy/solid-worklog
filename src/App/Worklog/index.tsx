@@ -179,9 +179,9 @@ function Toolbar(props: {
   setSelectedItemId: (id: string | undefined) => void,
 }) {
   const [appStore, setAppStore] = useAppContext();
-  const [dataStore] = useDataContext();
-
-  const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
+  const [_1, _2, {
+    isInProgress,
+  }] = useDataContext();
 
   return (
     <div class={sToolbar}>
