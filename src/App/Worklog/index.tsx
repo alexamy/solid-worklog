@@ -219,6 +219,7 @@ function ToolbarWorklog(props: {
     startLog,
     finishLog,
     tapLog,
+    fillLog,
   }] = useDataContext();
 
   function start() {
@@ -231,6 +232,7 @@ function ToolbarWorklog(props: {
       <button disabled={props.isInProgress} onClick={() => start()}>Start</button>
       <button disabled={!props.isInProgress} onClick={() => finishLog()}>Finish</button>
       <button disabled={!props.isInProgress} onClick={() => tapLog()}>Tap</button>
+      <button disabled={props.isInProgress} onClick={() => fillLog()}>Fill</button>
     </div>
   );
 }
