@@ -54,6 +54,7 @@ async function uploadJson(): Promise<DataStore | undefined> {
 function downloadJson(content: unknown) {
   const { json, meta } = superjson.serialize(content);
   const data = JSON.stringify({ json, meta }, null, 2);
+
   const filename = `worklog-backup-${new Date().toISOString().split('T')[0]}.json`;
   downloadBlob(data, filename, 'application/json');
 }
@@ -61,11 +62,14 @@ function downloadJson(content: unknown) {
 function downloadBlob(content: string, filename: string, contentType: string) {
   const blob = new Blob([content], { type: contentType });
   const url = URL.createObjectURL(blob);
+
   const a = document.createElement('a');
+  document.body.appendChild(a);
+
   a.href = url;
   a.download = filename;
-  document.body.appendChild(a);
   a.click();
+
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
