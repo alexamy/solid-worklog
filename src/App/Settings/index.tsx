@@ -24,7 +24,7 @@ export function Settings() {
           aria-label="Jira host"
           size={60}
           value={appStore.jiraHost}
-          // @ts-expect-error fix lib types
+          // @ts-expect-error TODO: fix lib types (should be Solid JSX, not native HTML)
           onInput={(e) => setJiraHost(e.target.value)}
         />
       </div>
