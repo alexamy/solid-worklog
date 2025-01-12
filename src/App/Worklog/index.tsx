@@ -180,7 +180,7 @@ function Toolbar(props: {
   setSelectedItemId: (id: string | undefined) => void,
 }) {
   const [appStore, setAppStore] = useAppContext();
-  const [dataStore, setDataStore] = useDataContext();
+  const [dataStore] = useDataContext();
 
   const selectedDate = () => appStore.selectedDate;
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
@@ -190,6 +190,31 @@ function Toolbar(props: {
 
   const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
 
+  return (
+    <div class={sToolbar}>
+      <ToolbarWorklog
+        isInProgress={isInProgress()}
+        setSelectedDate={setSelectedDate}
+      />
+      <Show when={!isInProgress()}>
+        <ToolbarTable
+          selectedDate={selectedDate()}
+          selectedItemId={selectedItemId()}
+          setSelectedItemId={setSelectedItemId}
+        />
+      </Show>
+    </div>
+  );
+}
+
+function ToolbarWorklog(props: {
+  isInProgress: boolean,
+  setSelectedDate: (date: Date) => void,
+}) {
+  const [dataStore, setDataStore] = useDataContext();
+  const setSelectedDate = (date: Date) => props.setSelectedDate(date);
+
+  // TODO: merge with other toolbar
   function createItem(item: Partial<Item>) {
     setDataStore('items', (items) => [{
       id: randomId(),
@@ -199,13 +224,6 @@ function Toolbar(props: {
       end: undefined,
       ...item,
     }, ...items]);
-  }
-
-  function addItem() {
-    createItem({
-      start: new Date(selectedDate().setHours(12, 0, 0, 0)),
-      end: new Date(selectedDate().setHours(12, 5, 0, 0)),
-    });
   }
 
   function startItem(item: Partial<Item> = {}) {
@@ -246,6 +264,45 @@ function Toolbar(props: {
     startItem();
   }
 
+  return (
+    <div class={sToolbarLeft}>
+      <button disabled={props.isInProgress} onClick={() => startItem()}>Start</button>
+      <button disabled={!props.isInProgress} onClick={() => finishItem()}>Finish</button>
+      <button disabled={!props.isInProgress} onClick={() => tapItem()}>Tap</button>
+    </div>
+  );
+}
+
+function ToolbarTable(props: {
+  selectedDate: Date,
+  selectedItemId: string | undefined,
+  setSelectedItemId: (id: string | undefined) => void,
+}) {
+  const [dataStore, setDataStore] = useDataContext();
+
+  const selectedDate = () => props.selectedDate;
+  const selectedItemId = () => props.selectedItemId;
+  const setSelectedItemId = (id: string | undefined) => props.setSelectedItemId(id);
+
+  // TODO: merge with other toolbar
+  function createItem(item: Partial<Item>) {
+    setDataStore('items', (items) => [{
+      id: randomId(),
+      description: '',
+      tag: '',
+      start: new Date(),
+      end: undefined,
+      ...item,
+    }, ...items]);
+  }
+
+  function addItem() {
+    createItem({
+      start: new Date(selectedDate().setHours(12, 0, 0, 0)),
+      end: new Date(selectedDate().setHours(12, 5, 0, 0)),
+    });
+  }
+
   function removeItem() {
     const selected = selectedItemId()!;
 
@@ -282,20 +339,11 @@ function Toolbar(props: {
   }
 
   return (
-    <div class={sToolbar}>
-      <div class={sToolbarLeft}>
-        <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
-        <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
-        <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
-      </div>
-      <Show when={!isInProgress()}>
-        <div class={sToolbarRight}>
-          <button onClick={() => addItem()}>+</button>
-          <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
-          <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
-          <button disabled={!selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
-        </div>
-      </Show>
+    <div class={sToolbarRight}>
+      <button onClick={() => addItem()}>+</button>
+      <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
+      <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
+      <button disabled={!selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
     </div>
   );
 }
