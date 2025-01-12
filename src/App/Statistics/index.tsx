@@ -51,7 +51,7 @@ export function Statistics() {
     now(); // force update on clock change
 
     const start = getStartOfStatRange(selectedDate(), range());
-    const items = dataStore.items.filter(item => isItemInInterval(item, start, range()));
+    const items = dataStore.items.filter(item => areItemsInRange(item, start, range()));
     const result = aggregateByTag(items);
 
     return result;
@@ -282,7 +282,7 @@ function getStartOfStatRange(selectedDate: Date, statRange: StatRange) {
   }
 }
 
-function isItemInInterval(item: Item, target: Date, statRange: StatRange) {
+function areItemsInRange(item: Item, target: Date, statRange: StatRange) {
   const itemDate = new Date(item.start);
   itemDate.setHours(0, 0, 0, 0);
 
