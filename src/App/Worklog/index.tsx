@@ -10,8 +10,8 @@ import { calculateDuration } from '../time';
 import { useNowContext } from '../store/now';
 
 export function Worklog() {
-  const [appStore] = useAppContext();
-  const [dataStore, setDataStore] = useDataContext();
+  const [appStore, setAppStore] = useAppContext();
+  const [dataStore, setDataStore, { isInProgress }] = useDataContext();
   const now = useNowContext();
 
   const selectedDate = () => appStore.selectedDate;
@@ -97,7 +97,19 @@ export function Worklog() {
 
   return (
     <>
-      <Toolbar selectedItemId={selectedItemId()} setSelectedItemId={setSelectedItemId} />
+      <div class={sToolbar}>
+        <ToolbarWorklog
+          isInProgress={isInProgress()}
+          setSelectedDate={(date) => setAppStore('selectedDate', date)}
+        />
+        <Show when={!isInProgress()}>
+          <ToolbarTable
+            selectedDate={appStore.selectedDate}
+            selectedItemId={selectedItemId()}
+            setSelectedItemId={(id) => setSelectedItemId(id)}
+          />
+        </Show>
+      </div>
 
       <Portal>
         <div ref={tagListElement} class={sTagList}>
@@ -174,32 +186,6 @@ export function Worklog() {
   );
 }
 
-function Toolbar(props: {
-  selectedItemId: string | undefined,
-  setSelectedItemId: (id: string | undefined) => void,
-}) {
-  const [appStore, setAppStore] = useAppContext();
-  const [_1, _2, {
-    isInProgress,
-  }] = useDataContext();
-
-  return (
-    <div class={sToolbar}>
-      <ToolbarWorklog
-        isInProgress={isInProgress()}
-        setSelectedDate={(date) => setAppStore('selectedDate', date)}
-      />
-      <Show when={!isInProgress()}>
-        <ToolbarTable
-          selectedDate={appStore.selectedDate}
-          selectedItemId={props.selectedItemId}
-          setSelectedItemId={(id) => props.setSelectedItemId(id)}
-        />
-      </Show>
-    </div>
-  );
-}
-
 function ToolbarWorklog(props: {
   isInProgress: boolean,
   setSelectedDate: (date: Date) => void,
@@ -261,11 +247,6 @@ function ToolbarTable(props: {
 }
 
 // methods
-// TODO: remove from there
-function randomId() {
-  return Math.random().toString(16).substring(2, 8);
-}
-
 function updateTimestamp(date: Date, timestamp: string) {
   const [hours, minutes] = timestamp.split(':').map(Number);
   if (isNaN(hours) || isNaN(minutes)) {
