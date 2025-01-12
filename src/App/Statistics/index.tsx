@@ -51,7 +51,7 @@ export function Statistics() {
     now(); // force update on clock change
 
     const start = getStartOfStatRange(selectedDate(), range());
-    const items = dataStore.items.filter(item => isItemAtStartDate(item, range(), start));
+    const items = dataStore.items.filter(item => isItemInInterval(item, start, range()));
     const result = aggregateByTag(items);
 
     return result;
@@ -282,21 +282,20 @@ function getStartOfStatRange(selectedDate: Date, statRange: StatRange) {
   }
 }
 
-function isItemAtStartDate(item: Item, statRange: StatRange, start: Date) {
+function isItemInInterval(item: Item, target: Date, statRange: StatRange) {
   const itemDate = new Date(item.start);
   itemDate.setHours(0, 0, 0, 0);
 
   switch (statRange) {
     case 'day':
-      return itemDate.toDateString() === start.toDateString();
+      return itemDate.toDateString() === target.toDateString();
     case 'week':
-      // start is monday in call site
-      return getStartOfWeek(itemDate).toDateString() === start.toDateString();
+      return getStartOfWeek(itemDate).toDateString() === getStartOfWeek(target).toDateString();
     case 'month':
-      return itemDate.getFullYear() === start.getFullYear()
-          && itemDate.getMonth() === start.getMonth();
+      return itemDate.getFullYear() === target.getFullYear()
+          && itemDate.getMonth() === target.getMonth();
     case 'year':
-      return itemDate.getFullYear() === start.getFullYear();
+      return itemDate.getFullYear() === target.getFullYear();
     case 'all':
       return true;
     default:
