@@ -9,7 +9,8 @@ import { useDataContext } from '../store/data';
 import { calculateDuration } from '../time';
 import { useNowContext } from '../store/now';
 
-type TagListParent = MouseEvent & { currentTarget: HTMLElement };
+type MouseEventTarget = MouseEvent & { currentTarget: HTMLElement };
+type KeyboardEventTarget = KeyboardEvent & { currentTarget: HTMLElement };
 
 export function Worklog() {
   const [appStore, setAppStore] = useAppContext();
@@ -20,7 +21,7 @@ export function Worklog() {
 
   // tag list
   const [tagListQuery, setTagListQuery] = createSignal('');
-  const [tagListParent, setTagListParent] = createSignal<TagListParent>();
+  const [tagListParent, setTagListParent] = createSignal<MouseEventTarget>();
   const [tagListVisible, setTagListVisible] = createSignal(false);
 
   const allTags = createMemo(() => {
@@ -51,20 +52,20 @@ export function Worklog() {
     .filter(item => item.start.toDateString() === selectedDate().toDateString())
   );
 
-  function onCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLElement }) {
+  function onCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
     }
   }
 
-  function onTagCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLElement }) {
+  function onTagCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
       setTagListVisible(false);
     }
   }
 
-  function onTagCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLElement }) {
+  function onTagCellKeyUp(e: KeyboardEventTarget) {
     if (e.key === 'Enter') return;
     setTagListQuery(e.currentTarget.textContent!);
     setTagListVisible(true);
@@ -161,7 +162,7 @@ function TagList(props: {
   tags: string[],
   visible: boolean,
   query: string,
-  parent?: TagListParent,
+  parent?: MouseEventTarget,
   onTagClick: (tag: string) => void,
 }) {
   let tagListElement!: HTMLDivElement;
@@ -279,7 +280,7 @@ function updateTimestamp(date: Date, timestamp: string) {
   return newDate;
 }
 
-function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLElement }) {
+function triggerNonDestructiveBlur(e: KeyboardEventTarget) {
   const selection = window.getSelection();
   const offset = selection?.focusOffset || 0;
 
