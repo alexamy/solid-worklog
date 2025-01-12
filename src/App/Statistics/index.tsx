@@ -155,33 +155,42 @@ function Toolbar(props: {
 
 function ItemRow(props: StatEntry) {
   const [appStore] = useAppContext();
-  const wholePomodoros = () => Math.floor(props.pomodoros);
-  const restPomodoros = () => props.pomodoros - wholePomodoros();
 
   return (
     <div class={sRow}>
       <div class={cx(sCell, sCellPomodoro)}>
         <Show when={props.pomodoros > 0}>
-          <Switch>
-            <Match when={props.tag === 'idle'}>
-              <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
-            </Match>
-            <Match when={wholePomodoros() > 4}>
-              <PomodoroIcon /> x{wholePomodoros()}
-            </Match>
-            <Match when={wholePomodoros() <= 4}>
-              <For each={Array(wholePomodoros())}>
-                {() => <PomodoroIcon />}
-              </For>
-              <PomodoroIcon amount={restPomodoros()} />
-            </Match>
-          </Switch>
+          <PomodoroCell tag={props.tag} amount={props.pomodoros} />
         </Show>
       </div>
       <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
-      <div class={cx(sCell, sCellText)}><TagView tag={props.tag} jiraHost={appStore.jiraHost} /></div>
+      <div class={cx(sCell, sCellText)}>
+        <TagView tag={props.tag} jiraHost={appStore.jiraHost} />
+      </div>
     </div>
   );
+}
+
+function PomodoroCell(props: { tag: string, amount: number }) {
+  const whole = () => Math.floor(props.amount);
+  const rest = () => props.amount - whole();
+
+  return (
+    <Switch>
+      <Match when={props.tag === 'idle'}>
+        <span>🌞 🌴 ⛱️ 🧘‍♀️ 🍹</span>
+      </Match>
+      <Match when={whole() > 4}>
+        <PomodoroIcon /> x{whole()}
+      </Match>
+      <Match when={whole() <= 4}>
+        <For each={Array(whole())}>
+          {() => <PomodoroIcon />}
+        </For>
+        <PomodoroIcon amount={rest()} />
+      </Match>
+    </Switch>
+  )
 }
 
 function PomodoroIcon(props: { amount?: number }) {
