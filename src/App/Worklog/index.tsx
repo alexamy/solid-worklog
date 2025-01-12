@@ -11,7 +11,7 @@ import { useNowContext } from '../store/now';
 
 export function Worklog() {
   const [appStore, setAppStore] = useAppContext();
-  const [dataStore, setDataStore, { isInProgress }] = useDataContext();
+  const [dataStore, _, { isInProgress, updateItem }] = useDataContext();
   const now = useNowContext();
 
   const selectedDate = () => appStore.selectedDate;
@@ -73,10 +73,6 @@ export function Worklog() {
   const itemsAtDate = createMemo(() => dataStore.items
     .filter(item => item.start.toDateString() === selectedDate().toDateString())
   );
-
-  function updateItem(item: Partial<Item>, id: string) {
-    setDataStore('items', item => item.id === id, item);
-  }
 
   function onCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
     if (e.key === 'Enter') {

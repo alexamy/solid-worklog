@@ -31,6 +31,10 @@ export function createDataStore() {
     });
   }
 
+  function updateItem(item: Partial<Item>, id: string) {
+    setDataStore('items', item => item.id === id, item);
+  }
+
   function removeItem(selected: string, setSelectedItemId: (id: string) => void) {
     // select next item
     const index = dataStore.items.findIndex(item => item.id === selected);
@@ -108,6 +112,7 @@ export function createDataStore() {
 
     createItem,
     addItem,
+    updateItem,
     removeItem,
 
     startLog,
