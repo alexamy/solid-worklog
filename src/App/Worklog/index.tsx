@@ -19,31 +19,6 @@ export function Worklog() {
 
   const selectedDate = () => appStore.selectedDate;
 
-  // tag list
-  const [tagListQuery, setTagListQuery] = createSignal('');
-  const [tagListParent, setTagListParent] = createSignal<MouseEventTarget>();
-  const [tagListVisible, setTagListVisible] = createSignal(false);
-
-  const allTags = createMemo(() => {
-    const tags = dataStore.items.map(item => item.tag);
-    const uniqueTags = [...new Set(tags)];
-    return uniqueTags;
-  });
-
-  // hide tag list when clicking outside current tag cell
-  createEffect(() => {
-    document.body.addEventListener('click', onClick);
-    onCleanup(() => document.body.removeEventListener('click', onClick));
-
-    function onClick(e: MouseEvent) {
-      const target = e.target as HTMLElement;
-      const isCurrentTagCell = target.dataset.tag && target.dataset.itemId === selectedItemId();
-      if (!isCurrentTagCell) {
-        setTagListVisible(false);
-      }
-    }
-  });
-
   // worklog table data
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
   createEffect(on(selectedDate, () => setSelectedItemId(undefined)));
@@ -52,6 +27,16 @@ export function Worklog() {
     .filter(item => item.start.toDateString() === selectedDate().toDateString())
   );
 
+  // tag list
+  const tagList = createTagListControls(selectedItemId);
+
+  const allTags = createMemo(() => {
+    const tags = dataStore.items.map(item => item.tag);
+    const uniqueTags = [...new Set(tags)];
+    return uniqueTags;
+  });
+
+  // methods
   function onCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
@@ -61,14 +46,14 @@ export function Worklog() {
   function onTagCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
-      setTagListVisible(false);
+      tagList.setVisible(false);
     }
   }
 
   function onTagCellKeyUp(e: KeyboardEventTarget) {
     if (e.key === 'Enter') return;
-    setTagListQuery(e.currentTarget.textContent!);
-    setTagListVisible(true);
+    tagList.setQuery(e.currentTarget.textContent!);
+    tagList.setVisible(true);
   }
 
   return (
@@ -89,9 +74,9 @@ export function Worklog() {
 
       <TagList
         tags={allTags()}
-        visible={tagListVisible()}
-        query={tagListQuery()}
-        parent={tagListParent()}
+        visible={tagList.visible()}
+        query={tagList.query()}
+        parent={tagList.parent()}
         onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
 
@@ -136,9 +121,9 @@ export function Worklog() {
                 class={cx(sCell, sCellEditable, sCellEditableText)}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onClick={(e) => setTagListParent(e)}
                 onKeyDown={(e) => onTagCellKeyDown(e)}
                 onKeyUp={(e) => onTagCellKeyUp(e)}
+                onClick={(e) => tagList.setParent(e)}
               >
                 {item.tag}
               </div>
@@ -201,6 +186,32 @@ function TagList(props: {
       </div>
     </Portal>
   );
+}
+
+function createTagListControls(selectedItemId: () => string | undefined) {
+  const [query, setQuery] = createSignal('');
+  const [parent, setParent] = createSignal<MouseEventTarget>();
+  const [visible, setVisible] = createSignal(false);
+
+  // hide tag list when clicking outside current tag cell
+  createEffect(() => {
+    document.body.addEventListener('click', onClick);
+    onCleanup(() => document.body.removeEventListener('click', onClick));
+
+    function onClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      const isCurrentTagCell = target.dataset.tag && target.dataset.itemId === selectedItemId();
+      if (!isCurrentTagCell) {
+        setVisible(false);
+      }
+    }
+  });
+
+  return {
+    query, setQuery,
+    parent, setParent,
+    visible, setVisible,
+  };
 }
 
 function ToolbarWorklog(props: {
