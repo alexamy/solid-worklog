@@ -104,6 +104,7 @@ export function createDataStore() {
     addItem,
     removeItem,
 
+    // TODO: change suffix to Log
     startItem,
     finishItem,
     tapItem,
