@@ -365,10 +365,6 @@ function updateTimestamp(date: Date, timestamp: string) {
   return newDate;
 }
 
-function randomId() {
-  return Math.random().toString(16).substring(2, 8);
-}
-
 function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
   const selection = window.getSelection();
   const offset = selection?.focusOffset || 0;
