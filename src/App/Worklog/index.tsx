@@ -18,6 +18,8 @@ export function Worklog() {
   const now = useNowContext();
 
   // worklog table data
+  // FIX: when now signal is received, the items are moved one day back in UX
+  // maybe because of around 00:00 and ISO string bug in DatePicker
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
   const itemsAtDate = createMemo(() => dataStore.items
     .filter(item => item.start.toDateString() === appStore.selectedDate.toDateString())
