@@ -5,7 +5,7 @@ import { css, cx } from '@linaria/core';
 import { Portal } from 'solid-js/web';
 import createFuzzySearch from '@nozbe/microfuzz';
 import { useAppContext } from '../store/app';
-import { useDataContext } from '../store/data';
+import { Item, useDataContext } from '../store/data';
 import { calculateDuration } from '../time';
 import { useNowContext } from '../store/now';
 
@@ -19,11 +19,19 @@ export function Worklog() {
 
   // worklog table data
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
-  createEffect(on(() => appStore.selectedDate, () => setSelectedItemId(undefined)));
-
   const itemsAtDate = createMemo(() => dataStore.items
     .filter(item => item.start.toDateString() === appStore.selectedDate.toDateString())
   );
+
+  // reset selected item when date changes
+  createEffect(on(() => appStore.selectedDate, () => setSelectedItemId(undefined)));
+
+  // reset selected item when no items at current date
+  createEffect(on(itemsAtDate, (items) => {
+    if (items.length === 0) {
+      setSelectedItemId(undefined);
+    }
+  }));
 
   function onCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
