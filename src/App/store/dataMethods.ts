@@ -98,10 +98,10 @@ export function createDataStore() {
     const newItem = createItem(item);
     setDataStore('items', produce((items) => {
       const selectedIndex = items.findIndex(item => item.id === selected);
-        const newIndex = items.findIndex(item => item.id === newItem.id);
-        items.splice(newIndex, 1); // Remove
-        items.splice(selectedIndex, 0, newItem); // Insert
-      }));
+      const newIndex = items.findIndex(item => item.id === newItem.id);
+      items.splice(newIndex, 1); // Remove
+      items.splice(selectedIndex, 0, newItem); // Insert
+    }));
 
     return newItem;
   }
