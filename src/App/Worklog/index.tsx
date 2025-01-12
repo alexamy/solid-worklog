@@ -243,8 +243,8 @@ function ToolbarTable(props: {
   const [dataStore, _, {
     addItem,
     removeItem,
-    moveUp,
-    moveDown,
+    moveRowUp,
+    moveRowDown,
   }] = useDataContext();
 
   const onlyOneItem = () => dataStore.items.length === 1;
@@ -257,11 +257,11 @@ function ToolbarTable(props: {
       >+</button>
       <button
         disabled={!props.selectedItemId}
-        onClick={() => moveUp(props.selectedItemId!)}
+        onClick={() => moveRowUp(props.selectedItemId!)}
       >↑</button>
       <button
         disabled={!props.selectedItemId}
-        onClick={() => moveDown(props.selectedItemId!)}
+        onClick={() => moveRowDown(props.selectedItemId!)}
       >↓</button>
       <button
         disabled={!props.selectedItemId || onlyOneItem()}

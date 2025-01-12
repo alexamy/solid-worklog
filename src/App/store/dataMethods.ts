@@ -110,7 +110,7 @@ export function createDataStore() {
     }
   }
 
-  function moveUp(selected: string) {
+  function moveRowUp(selected: string) {
     setDataStore('items', produce((items) => {
       const index = items.findIndex(item => item.id === selected);
       if (index > 0) {
@@ -119,7 +119,7 @@ export function createDataStore() {
     }));
   }
 
-  function moveDown(selected: string) {
+  function moveRowDown(selected: string) {
     setDataStore('items', produce((items) => {
       const index = items.findIndex(item => item.id === selected);
       if (index < items.length - 1) {
@@ -141,8 +141,8 @@ export function createDataStore() {
     fillLog,
     tapLog,
 
-    moveUp,
-    moveDown,
+    moveRowUp,
+    moveRowDown,
     duplicateRow,
   }] as const;
 }
