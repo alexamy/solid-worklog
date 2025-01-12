@@ -62,17 +62,26 @@ export function createDataStore() {
     // if from last item the time is between 20 minutes and 2 hours, then add entry with idle tag
     const duration = calculateDuration(lastItem.end, now);
     if(duration >= 20 && duration <= 2 * 60) {
-      createItem({
-        start: lastItem.end,
-        end: now,
-        tag: 'idle',
-      });
+      fillLog({ tag: 'idle' });
     }
 
     // start new item
     createItem({
       start: now,
       end: undefined,
+      ...item,
+    });
+  }
+
+  function fillLog(item: Partial<Item> = {}) {
+    const lastItem = dataStore.items[0];
+    if(!lastItem || !lastItem.end) {
+      throw new Error('No last item or end time');
+    }
+
+    createItem({
+      start: lastItem.end,
+      end: new Date(),
       ...item,
     });
   }
@@ -89,6 +98,13 @@ export function createDataStore() {
   }
 
   // item movement
+  function duplicateRow(selected: string) {
+    const item = dataStore.items.find(item => item.id === selected);
+    if(item) {
+      createItem(item);
+    }
+  }
+
   function moveUp(selected: string) {
     setDataStore('items', produce((items) => {
       const index = items.findIndex(item => item.id === selected);
@@ -117,10 +133,12 @@ export function createDataStore() {
 
     startLog,
     finishLog,
+    fillLog,
     tapLog,
 
     moveUp,
     moveDown,
+    duplicateRow,
   }] as const;
 }
 
