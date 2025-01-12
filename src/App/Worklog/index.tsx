@@ -51,20 +51,20 @@ export function Worklog() {
     .filter(item => item.start.toDateString() === selectedDate().toDateString())
   );
 
-  function onCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+  function onCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLElement }) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
     }
   }
 
-  function onTagCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+  function onTagCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLElement }) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
       setTagListVisible(false);
     }
   }
 
-  function onTagCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+  function onTagCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLElement }) {
     if (e.key === 'Enter') return;
     setTagListQuery(e.currentTarget.textContent!);
     setTagListVisible(true);
@@ -279,7 +279,7 @@ function updateTimestamp(date: Date, timestamp: string) {
   return newDate;
 }
 
-function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+function triggerNonDestructiveBlur(e: KeyboardEvent & { currentTarget: HTMLElement }) {
   const selection = window.getSelection();
   const offset = selection?.focusOffset || 0;
 
