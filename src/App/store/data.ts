@@ -27,14 +27,16 @@ export function useDataContext() {
 export function getDefaultDataStore(): DataStore {
   const now = new Date();
 
-  function at(options: Partial<{ year: number, month: number, day: number, hour: number, minute: number }>) {
-    const { year, month, day, hour, minute } = {
-      year: now.getFullYear(),
-      month: now.getMonth(),
-      day: now.getDate(),
-      hour: now.getHours(),
-      minute: now.getMinutes(),
-      ...options,
+  function at(options: {
+    hour: number, minute: number,
+    day?: number, month?: number, year?: number,
+  }) {
+    const { hour, minute, year, month, day } = {
+      hour: options.hour,
+      minute: options.minute,
+      day: now.getDate() + (options.day || 0),
+      month: now.getMonth() + (options.month || 0),
+      year: now.getFullYear() + (options.year || 0),
     };
     return new Date(year, month, day, hour, minute, 0);
   }
