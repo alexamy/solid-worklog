@@ -17,14 +17,12 @@ export function Worklog() {
   const [dataStore, _, { isInProgress, updateItem }] = useDataContext();
   const now = useNowContext();
 
-  const selectedDate = () => appStore.selectedDate;
-
   // worklog table data
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
-  createEffect(on(selectedDate, () => setSelectedItemId(undefined)));
+  createEffect(on(() => appStore.selectedDate, () => setSelectedItemId(undefined)));
 
   const itemsAtDate = createMemo(() => dataStore.items
-    .filter(item => item.start.toDateString() === selectedDate().toDateString())
+    .filter(item => item.start.toDateString() === appStore.selectedDate.toDateString())
   );
 
   function onCellKeyDown(e: KeyboardEventTarget) {
@@ -64,7 +62,7 @@ export function Worklog() {
         />
         <Show when={!isInProgress()}>
           <ToolbarTable
-            selectedDate={selectedDate()}
+            selectedDate={appStore.selectedDate}
             selectedItemId={selectedItemId()}
             setSelectedItemId={(id) => setSelectedItemId(id)}
           />
