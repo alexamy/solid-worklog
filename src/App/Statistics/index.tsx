@@ -213,12 +213,12 @@ function PomodoroIcon(props: { amount?: number }) {
 
 // methods
 function TagView(props: { tag: string, jiraHost: string }) {
-  const jiraRegex = /([A-Z0-9]+-[0-9]+)/;
+  const jiraRegex = /(^|\s+)([A-Z][A-Z0-9]+-[0-9]+)/;
 
   return (
     <span>
       <For each={props.tag.split(jiraRegex)}>
-        {(part) => part.match(jiraRegex)
+        {(part) => props.jiraHost && part.match(jiraRegex)
           ? <a href={`${props.jiraHost}browse/${part}`}>{part}</a>
           : part
         }

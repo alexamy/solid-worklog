@@ -24,7 +24,7 @@ export function Settings() {
           size={60}
           value={appStore.jiraHost}
           // @ts-expect-error fix lib types
-          onInput={(e) => setJiraHost(e.target.value)}
+          onInput={(e) => setJiraHost(e.target.value.trim())}
         />
       </div>
     </div>
