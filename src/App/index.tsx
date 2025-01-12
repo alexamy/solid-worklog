@@ -1,4 +1,3 @@
-import { createStore } from 'solid-js/store';
 import { Statistics } from './Statistics';
 import { AppContext, createAppStore, getDefaultAppStore } from './store/app';
 import { DataContext, getDefaultDataStore } from './store/data';
@@ -16,7 +15,7 @@ import { createDataStore } from './store/dataMethods';
 export function App() {
   const now = createClock();
   const [appStore, setAppStore] = createAppStore();
-  const [dataStore, setDataStore] = createDataStore();
+  const [dataStore, setDataStore, dataMethods] = createDataStore();
 
   const persistApp = persistObject(
     appStore,
@@ -35,7 +34,7 @@ export function App() {
   return (
     <NowContext.Provider value={now}>
       <AppContext.Provider value={[appStore, setAppStore]}>
-        <DataContext.Provider value={[dataStore, setDataStore]}>
+        <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
           <div class={sApp}>
             <DatePicker />
             Worklog
