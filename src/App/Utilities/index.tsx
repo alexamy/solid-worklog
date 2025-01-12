@@ -8,7 +8,7 @@ export function Utilities(props: { reset: () => void }) {
 
   async function uploadStore() {
     const data = await uploadJson();
-    if (data) setDataStore(data);
+    setDataStore(data);
   }
 
   return (
@@ -22,13 +22,13 @@ export function Utilities(props: { reset: () => void }) {
   )
 }
 
-async function uploadJson(): Promise<DataStore | undefined> {
+async function uploadJson(): Promise<DataStore> {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
   input.click();
 
-  return new Promise((resolve, reject) => {
+  const data = await new Promise<DataStore>((resolve, reject) => {
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
@@ -42,6 +42,8 @@ async function uploadJson(): Promise<DataStore | undefined> {
       }
     };
   });
+
+  return data;
 }
 
 function downloadJson(content: unknown) {
