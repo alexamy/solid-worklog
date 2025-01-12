@@ -172,6 +172,7 @@ function TagList(props: {
   const [style, setStyle] = createSignal({});
   createEffect(on(() => props.parent, (parent) => {
     if (!parent) return;
+
     const rect = parent.currentTarget.getBoundingClientRect();
     setStyle({
       left: `${rect.left}px`,
