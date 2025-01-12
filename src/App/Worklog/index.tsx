@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show } from 'solid-js';
 import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft, sToolbarRight } from '../styles';
 import { toTimestamp } from '../time';
 import { css, cx } from '@linaria/core';
@@ -70,6 +70,8 @@ export function Worklog() {
 
   // worklog table data
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
+  createEffect(on(selectedDate, () => setSelectedItemId(undefined)));
+
   const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
   const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === selectedDate().toDateString()));
 

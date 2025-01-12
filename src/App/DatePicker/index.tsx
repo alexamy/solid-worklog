@@ -15,7 +15,6 @@ export function DatePicker() {
   const isToday = createMemo(() => selectedDate().toDateString() === new Date().toDateString());
 
   function moveDate(delta: number) {
-    // setSelectedItemId(undefined); // TODO: reset selected item
     const next = new Date(selectedDate());
     next.setDate(next.getDate() + delta);
     setSelectedDate(next);
