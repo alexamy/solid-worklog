@@ -11,12 +11,11 @@ import { produce } from 'solid-js/store';
 import { useNowContext } from '../store/now';
 
 export function Worklog() {
-  const [appStore, setAppStore] = useAppContext();
+  const [appStore] = useAppContext();
   const [dataStore, setDataStore] = useDataContext();
   const now = useNowContext();
 
   const selectedDate = () => appStore.selectedDate;
-  const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
 
   // tags and fuzzy search
   const allTags = createMemo(() => {
@@ -72,8 +71,124 @@ export function Worklog() {
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
   createEffect(on(selectedDate, () => setSelectedItemId(undefined)));
 
-  const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
   const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === selectedDate().toDateString()));
+
+  function updateItem(item: Partial<Item>, id: string) {
+    setDataStore('items', item => item.id === id, item);
+  }
+
+  function onCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+    if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
+    }
+  }
+
+  function onTagCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+    if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
+      toggleTagList('hide');
+    }
+  }
+
+  function onTagCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
+    if (e.key === 'Enter') return;
+    updateAvailableTags(e.currentTarget.textContent!);
+    toggleTagList('show');
+  }
+
+  return (
+    <>
+      <Toolbar selectedItemId={selectedItemId()} setSelectedItemId={setSelectedItemId} />
+
+      <Portal>
+        <div ref={tagListElement} class={sTagList}>
+          <For each={availableTags()}>
+            {(tag) =>
+              <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
+                {tag}
+              </div>
+            }
+          </For>
+        </div>
+      </Portal>
+
+      <div class={sTable}>
+        <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
+          <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
+          <div class={cx(sCell, sCellHeader)}>Tag</div>
+          <div class={cx(sCell, sCellHeader)}>Description</div>
+        </div>
+        <For each={itemsAtDate()}>
+          {(item) => (
+            <div class={cx(sRow)}
+              classList={{
+                [sRowSelected]: selectedItemId() === item.id,
+                [sRowIdle]: item.tag === 'idle',
+              }}
+              onClick={() => setSelectedItemId(item.id)}
+            >
+              <div
+                class={cx(sCell, sCellEditable)}
+                contentEditable
+                onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
+                onKeyDown={(e) => onCellKeyDown(e)}
+              >
+                {toTimestamp(item.start)}
+              </div>
+              <div class={sCell}>
+                {calculateDuration(item.start, item.end ?? now())}
+              </div>
+              <div
+                class={cx(sCell, sCellEditable)}
+                classList={{ [sCellGrayed]: !item.end }}
+                contentEditable={Boolean(item.end)}
+                onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
+                onKeyDown={(e) => onCellKeyDown(e)}
+              >
+                {toTimestamp(item.end ?? now())}
+              </div>
+              <div
+                data-item-id={item.id}
+                data-tag={true}
+                class={cx(sCell, sCellEditable, sCellEditableText)}
+                contentEditable
+                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                onClick={(e) => positionTagList(e)}
+                onKeyDown={(e) => onTagCellKeyDown(e)}
+                onKeyUp={(e) => onTagCellKeyUp(e)}
+              >
+                {item.tag}
+              </div>
+              <div
+                class={cx(sCell, sCellEditable, sCellEditableText)}
+                contentEditable
+                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
+                onKeyDown={(e) => onCellKeyDown(e)}
+              >
+                {item.description}
+              </div>
+            </div>
+          )}
+        </For>
+      </div>
+    </>
+  );
+}
+
+function Toolbar(props: {
+  selectedItemId: string | undefined,
+  setSelectedItemId: (id: string | undefined) => void,
+}) {
+  const [appStore, setAppStore] = useAppContext();
+  const [dataStore, setDataStore] = useDataContext();
+
+  const selectedDate = () => appStore.selectedDate;
+  const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
+
+  const selectedItemId = () => props.selectedItemId;
+  const setSelectedItemId = (id: string | undefined) => props.setSelectedItemId(id);
+
+  const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
 
   function createItem(item: Partial<Item>) {
     setDataStore('items', (items) => [{
@@ -84,10 +199,6 @@ export function Worklog() {
       end: undefined,
       ...item,
     }, ...items]);
-  }
-
-  function updateItem(item: Partial<Item>, id: string) {
-    setDataStore('items', item => item.id === id, item);
   }
 
   function addItem() {
@@ -170,115 +281,22 @@ export function Worklog() {
     }));
   }
 
-  function onCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
-    if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
-    }
-  }
-
-  function onTagCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
-    if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
-      toggleTagList('hide');
-    }
-  }
-
-  function onTagCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
-    if (e.key === 'Enter') return;
-    updateAvailableTags(e.currentTarget.textContent!);
-    toggleTagList('show');
-  }
-
   return (
-    <>
-      <div class={sToolbar}>
-        <div class={sToolbarLeft}>
-          <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
-          <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
-          <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
-        </div>
-        <Show when={!isInProgress()}>
-          <div class={sToolbarRight}>
-            <button onClick={() => addItem()}>+</button>
-            <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
-            <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
-            <button disabled={!selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
-          </div>
-        </Show>
+    <div class={sToolbar}>
+      <div class={sToolbarLeft}>
+        <button disabled={isInProgress()} onClick={() => startItem()}>Start</button>
+        <button disabled={!isInProgress()} onClick={() => finishItem()}>Finish</button>
+        <button disabled={!isInProgress()} onClick={() => tapItem()}>Tap</button>
       </div>
-
-      <Portal>
-        <div ref={tagListElement} class={sTagList}>
-          <For each={availableTags()}>
-            {(tag) =>
-              <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
-                {tag}
-              </div>
-            }
-          </For>
+      <Show when={!isInProgress()}>
+        <div class={sToolbarRight}>
+          <button onClick={() => addItem()}>+</button>
+          <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
+          <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
+          <button disabled={!selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
         </div>
-      </Portal>
-
-      <div class={sTable}>
-        <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
-          <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
-          <div class={cx(sCell, sCellHeader)}>Tag</div>
-          <div class={cx(sCell, sCellHeader)}>Description</div>
-        </div>
-        <For each={itemsAtDate()}>
-          {(item) => (
-            <div class={cx(sRow)}
-              classList={{
-                [sRowSelected]: selectedItemId() === item.id,
-                [sRowIdle]: item.tag === 'idle',
-              }}
-              onClick={() => setSelectedItemId(item.id)}
-            >
-              <div
-                class={cx(sCell, sCellEditable)}
-                contentEditable
-                onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {toTimestamp(item.start)}
-              </div>
-              <div class={sCell}>
-                {calculateDuration(item.start, item.end ?? now())}
-              </div>
-              <div
-                class={cx(sCell, sCellEditable)}
-                classList={{ [sCellGrayed]: !item.end }}
-                contentEditable={Boolean(item.end)}
-                onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {toTimestamp(item.end ?? now())}
-              </div>
-              <div
-                data-item-id={item.id}
-                data-tag={true}
-                class={cx(sCell, sCellEditable, sCellEditableText)}
-                contentEditable
-                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onClick={(e) => positionTagList(e)}
-                onKeyDown={(e) => onTagCellKeyDown(e)}
-                onKeyUp={(e) => onTagCellKeyUp(e)}
-              >
-                {item.tag}
-              </div>
-              <div
-                class={cx(sCell, sCellEditable, sCellEditableText)}
-                contentEditable
-                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {item.description}
-              </div>
-            </div>
-          )}
-        </For>
-      </div>
-    </>
+      </Show>
+    </div>
   );
 }
 
