@@ -11,15 +11,19 @@ export function createDataStore() {
   const isInProgress = () => dataStore.items[0].end === undefined;
 
   // item management
-  function createItem(item: Partial<Item>) {
-    setDataStore('items', (items) => [{
+  function createItem(partial: Partial<Item>) {
+    const item = {
       id: randomId(),
       description: '',
       tag: '',
       start: new Date(),
       end: undefined,
-      ...item,
-    }, ...items]);
+      ...partial,
+    };
+
+    setDataStore('items', (items) => [item, ...items]);
+
+    return item;
   }
 
   function addItem(at: Date) {
@@ -98,6 +102,7 @@ export function createDataStore() {
   }
 
   // item movement
+  // TODO: move above or below selected item
   function duplicateRow(selected: string) {
     const item = dataStore.items.find(item => item.id === selected);
     if(item) {
