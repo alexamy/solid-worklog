@@ -256,10 +256,26 @@ function ToolbarWorklog(props: {
 
   return (
     <div class={sToolbarLeft}>
-      <button disabled={props.isInProgress} onClick={() => start()}>Start</button>
-      <button disabled={props.isInProgress} onClick={() => fill()}>Fill</button>
-      <button disabled={!props.isInProgress} onClick={() => tap()}>Tap</button>
-      <button disabled={!props.isInProgress} onClick={() => finish()}>Finish</button>
+      <button
+        title="Start new entry"
+        disabled={props.isInProgress}
+        onClick={() => start()}
+      >Start</button>
+      <button
+        title="Add completed entry between last entry and now"
+        disabled={props.isInProgress}
+        onClick={() => fill()}
+      >Fill</button>
+      <button
+        title="Finish current entry and start new one"
+        disabled={!props.isInProgress}
+        onClick={() => tap()}
+      >Tap</button>
+      <button
+        title="Finish current entry"
+        disabled={!props.isInProgress}
+        onClick={() => finish()}
+      >Finish</button>
     </div>
   );
 }
