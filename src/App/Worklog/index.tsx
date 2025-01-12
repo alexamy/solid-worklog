@@ -73,6 +73,7 @@ export function Worklog() {
         />
         <Show when={!isInProgress()}>
           <ToolbarTable
+            items={itemsAtDate()}
             selectedDate={appStore.selectedDate}
             selectedItemId={selectedItemId()}
             setSelectedItemId={(id) => setSelectedItemId(id)}
@@ -285,6 +286,7 @@ function ToolbarWorklog(props: {
 }
 
 function ToolbarTable(props: {
+  items: Item[],
   selectedDate: Date,
   selectedItemId: string | undefined,
   setSelectedItemId: (id: string | undefined) => void,
@@ -297,7 +299,10 @@ function ToolbarTable(props: {
     duplicateRow,
   }] = useDataContext();
 
-  const onlyOneItem = () => dataStore.items.length === 1;
+
+  const isFirstItem = () => props.items[0]?.id === props.selectedItemId;
+  const isLastItem = () => props.items[props.items.length - 1]?.id === props.selectedItemId;
+  const isOnlyOneItemAtAll = () => dataStore.items.length === 1;
 
   return (
     <div class={sToolbarRight}>
@@ -312,17 +317,17 @@ function ToolbarTable(props: {
       >++</button>
       <button
         title="Move row up"
-        disabled={!props.selectedItemId}
+        disabled={!props.selectedItemId || isFirstItem()}
         onClick={() => moveRowUp(props.selectedItemId!)}
       >↑</button>
       <button
         title="Move row down"
-        disabled={!props.selectedItemId}
+        disabled={!props.selectedItemId || isLastItem()}
         onClick={() => moveRowDown(props.selectedItemId!)}
       >↓</button>
       <button
         title="Remove row"
-        disabled={!props.selectedItemId || onlyOneItem()}
+        disabled={!props.selectedItemId || isOnlyOneItemAtAll()}
         onClick={() => removeRow(props.selectedItemId!, props.setSelectedItemId)}
       >-</button>
     </div>
