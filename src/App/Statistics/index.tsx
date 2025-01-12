@@ -1,5 +1,5 @@
 import { css, cx } from '@linaria/core';
-import { createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
 import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft } from '../styles';
@@ -217,12 +217,14 @@ function TagView(props: { tag: string, jiraHost: string }) {
 
   return (
     <span>
-      <For each={props.tag.split(jiraRegex)}>
-        {(part) => props.jiraHost && part.match(jiraRegex)
-          ? <a href={`${props.jiraHost}browse/${part}`}>{part}</a>
-          : part
-        }
-      </For>
+      <Show when={props.jiraHost} fallback={props.tag}>
+        <For each={props.tag.split(jiraRegex)}>
+          {(part) => part.match(jiraRegex)
+            ? <a href={`${props.jiraHost}browse/${part}`}>{part}</a>
+            : part
+          }
+        </For>
+      </Show>
     </span>
   );
 }
