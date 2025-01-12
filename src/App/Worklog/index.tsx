@@ -1,13 +1,15 @@
-import { createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, on, onCleanup, Show } from 'solid-js';
 import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft, sToolbarRight } from '../styles';
 import { toTimestamp } from '../time';
 import { css, cx } from '@linaria/core';
 import { Portal } from 'solid-js/web';
 import createFuzzySearch from '@nozbe/microfuzz';
 import { useAppContext } from '../store/app';
-import { Item, useDataContext } from '../store/data';
+import { useDataContext } from '../store/data';
 import { calculateDuration } from '../time';
 import { useNowContext } from '../store/now';
+
+type TagListParent = MouseEvent & { currentTarget: HTMLElement };
 
 export function Worklog() {
   const [appStore, setAppStore] = useAppContext();
@@ -17,6 +19,8 @@ export function Worklog() {
   const selectedDate = () => appStore.selectedDate;
 
   // tag list
+  const [tagListQuery, setTagListQuery] = createSignal('');
+  const [tagListParent, setTagListParent] = createSignal<TagListParent>();
   const [tagListVisible, setTagListVisible] = createSignal(false);
 
   const allTags = createMemo(() => {
@@ -62,7 +66,7 @@ export function Worklog() {
 
   function onTagCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
     if (e.key === 'Enter') return;
-    updateAvailableTags(e.currentTarget.textContent!);
+    setTagListQuery(e.currentTarget.textContent!);
     setTagListVisible(true);
   }
 
@@ -86,6 +90,8 @@ export function Worklog() {
         tags={allTags()}
         visible={tagListVisible()}
         onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
+        query={tagListQuery}
+        parent={tagListParent}
       />
 
       <div class={sTable}>
@@ -129,7 +135,7 @@ export function Worklog() {
                 class={cx(sCell, sCellEditable, sCellEditableText)}
                 contentEditable
                 onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onClick={(e) => positionTagList(e)}
+                onClick={(e) => setTagListParent(e)}
                 onKeyDown={(e) => onTagCellKeyDown(e)}
                 onKeyUp={(e) => onTagCellKeyUp(e)}
               >
@@ -155,22 +161,27 @@ function TagList(props: {
   tags: string[],
   visible: boolean,
   onTagClick: (tag: string) => void,
+  query: () => string,
+  parent: () => TagListParent | undefined,
 }) {
   let tagListElement!: HTMLDivElement;
   const fuzzySearch = createMemo(() => createFuzzySearch(props.tags));
   const [availableTags, setAvailableTags] = createSignal<string[]>([]);
 
-  function updateAvailableTags(query: string) {
+  // update available tags
+  createEffect(on(() => props.query(), (query) => {
     const results = fuzzySearch()(query);
     setAvailableTags(results.map(result => result.item));
-  }
+  }));
 
-  function positionTagList(e: MouseEvent & { currentTarget: HTMLDivElement }) {
-    const rect = e.currentTarget.getBoundingClientRect();
+  // position tag list
+  createEffect(on(() => props.parent(), (parent) => {
+    if (!parent) return;
+    const rect = parent.currentTarget.getBoundingClientRect();
     tagListElement.style.left = `${rect.left}px`;
     tagListElement.style.top = `${rect.top + rect.height - 1}px`;
     tagListElement.style.width = `${rect.width}px`;
-  }
+  }));
 
   return (
     <Portal>
