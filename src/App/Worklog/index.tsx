@@ -169,12 +169,15 @@ function TagList(props: {
   }));
 
   // position tag list
+  const [style, setStyle] = createSignal({});
   createEffect(on(() => props.parent, (parent) => {
     if (!parent) return;
     const rect = parent.currentTarget.getBoundingClientRect();
-    tagListElement.style.left = `${rect.left}px`;
-    tagListElement.style.top = `${rect.top + rect.height - 1}px`;
-    tagListElement.style.width = `${rect.width}px`;
+    setStyle({
+      left: `${rect.left}px`,
+      top: `${rect.top + rect.height - 1}px`,
+      width: `${rect.width}px`,
+    });
   }));
 
   return (
@@ -182,7 +185,7 @@ function TagList(props: {
       <div
         class={sTagList}
         ref={tagListElement}
-        style={{ display: props.visible ? 'block' : 'none' }}
+        style={{ ...style(), display: props.visible ? 'block' : 'none' }}
       >
         <For each={availableTags()}>
           {(tag) =>
