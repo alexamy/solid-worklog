@@ -182,25 +182,19 @@ function Toolbar(props: {
   const [appStore, setAppStore] = useAppContext();
   const [dataStore] = useDataContext();
 
-  const selectedDate = () => appStore.selectedDate;
-  const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
-
-  const selectedItemId = () => props.selectedItemId;
-  const setSelectedItemId = (id: string | undefined) => props.setSelectedItemId(id);
-
   const isInProgress = createMemo(() => dataStore.items[0].end === undefined);
 
   return (
     <div class={sToolbar}>
       <ToolbarWorklog
         isInProgress={isInProgress()}
-        setSelectedDate={setSelectedDate}
+        setSelectedDate={(date) => setAppStore('selectedDate', date)}
       />
       <Show when={!isInProgress()}>
         <ToolbarTable
-          selectedDate={selectedDate()}
-          selectedItemId={selectedItemId()}
-          setSelectedItemId={setSelectedItemId}
+          selectedDate={appStore.selectedDate}
+          selectedItemId={props.selectedItemId}
+          setSelectedItemId={(id) => props.setSelectedItemId(id)}
         />
       </Show>
     </div>
