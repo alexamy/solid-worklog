@@ -346,6 +346,7 @@ function updateTimestamp(date: Date, timestamp: string) {
   return newDate;
 }
 
+// save cursor position when firing blur event which will update the state
 function triggerNonDestructiveBlur(e: KeyboardEventTarget) {
   const selection = window.getSelection();
   const offset = selection?.focusOffset || 0;
