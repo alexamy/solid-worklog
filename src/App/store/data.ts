@@ -28,12 +28,13 @@ export function getDefaultDataStore(): DataStore {
   const now = new Date();
 
   function at(options: Partial<{ year: number, month: number, day: number, hour: number, minute: number }>) {
-    const { year, month, day, hour, minute } = { ...options,
+    const { year, month, day, hour, minute } = {
       year: now.getFullYear(),
       month: now.getMonth(),
       day: now.getDate(),
       hour: now.getHours(),
-      minute: now.getMinutes()
+      minute: now.getMinutes(),
+      ...options,
     };
     return new Date(year, month, day, hour, minute, 0);
   }
