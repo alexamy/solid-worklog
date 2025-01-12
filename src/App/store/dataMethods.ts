@@ -44,7 +44,6 @@ export function createDataStore() {
   // worklog methods
   function startItem(item: Partial<Item> = {}) {
     const now = new Date();
-    // setSelectedDate(now); // TODO: call in place of startItem call
 
     const lastItem = dataStore.items[0];
     if(!lastItem || !lastItem.end) {
@@ -56,14 +55,14 @@ export function createDataStore() {
     if(duration >= 20 && duration <= 2 * 60) {
       createItem({
         start: lastItem.end,
-        end: new Date(),
+        end: now,
         tag: 'idle',
       });
     }
 
     // start new item
     createItem({
-      start: new Date(),
+      start: now,
       end: undefined,
       ...item,
     });

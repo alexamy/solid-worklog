@@ -205,62 +205,20 @@ function ToolbarWorklog(props: {
   isInProgress: boolean,
   setSelectedDate: (date: Date) => void,
 }) {
-  const [dataStore, setDataStore] = useDataContext();
-  const setSelectedDate = (date: Date) => props.setSelectedDate(date);
+  const [_1, _2, {
+    startItem,
+    finishItem,
+    tapItem,
+  }] = useDataContext();
 
-  // TODO: merge with other toolbar
-  function createItem(item: Partial<Item>) {
-    setDataStore('items', (items) => [{
-      id: randomId(),
-      description: '',
-      tag: '',
-      start: new Date(),
-      end: undefined,
-      ...item,
-    }, ...items]);
-  }
-
-  function startItem(item: Partial<Item> = {}) {
-    const now = new Date();
-    setSelectedDate(now);
-
-    const lastItem = dataStore.items[0];
-    if(!lastItem || !lastItem.end) {
-      throw new Error('No last item or end time');
-    }
-
-    // if from last item the time is between 20 minutes and 2 hours, then add entry with idle tag
-    const duration = calculateDuration(lastItem.end, now);
-    if(duration >= 20 && duration <= 2 * 60) {
-      createItem({
-        start: lastItem.end,
-        end: new Date(),
-        tag: 'idle',
-      });
-    }
-
-    // start new item
-    createItem({
-      start: new Date(),
-      end: undefined,
-      ...item,
-    });
-  }
-
-  function finishItem() {
-    setDataStore('items', 0, {
-      end: new Date(),
-    });
-  }
-
-  function tapItem() {
-    finishItem();
+  function start() {
     startItem();
+    props.setSelectedDate(new Date()); // TODO: add app store methods
   }
 
   return (
     <div class={sToolbarLeft}>
-      <button disabled={props.isInProgress} onClick={() => startItem()}>Start</button>
+      <button disabled={props.isInProgress} onClick={() => start()}>Start</button>
       <button disabled={!props.isInProgress} onClick={() => finishItem()}>Finish</button>
       <button disabled={!props.isInProgress} onClick={() => tapItem()}>Tap</button>
     </div>
