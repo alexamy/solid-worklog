@@ -6,11 +6,13 @@ export interface AppStore {
   jiraHost: string;
 }
 
-export const AppContext = createContext<[AppStore, SetStoreFunction<AppStore>]>();
+export type AppContextValue = [AppStore, SetStoreFunction<AppStore>];
+export const AppContext = createContext<AppContextValue>();
 
 export function createAppStore() {
   const [appStore, setAppStore] = createStore(getDefaultAppStore());
-  return [appStore, setAppStore] as const;
+
+  return [appStore, setAppStore] satisfies AppContextValue;
 }
 
 export function useAppContext() {

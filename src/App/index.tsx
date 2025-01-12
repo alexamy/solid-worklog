@@ -14,27 +14,27 @@ import { createDataStore } from './store/dataMethods';
 // component
 export function App() {
   const now = createClock();
-  const [appStore, setAppStore] = createAppStore();
-  const [dataStore, setDataStore, dataMethods] = createDataStore();
+  const appStore = createAppStore();
+  const dataStore = createDataStore();
 
   const persistApp = persistObject(
-    appStore,
-    setAppStore,
+    appStore[0],
+    appStore[1],
     getDefaultAppStore,
     'solid-worklog-app',
   );
 
   const persistData = persistObject(
-    dataStore,
-    setDataStore,
+    dataStore[0],
+    dataStore[1],
     getDefaultDataStore,
     'solid-worklog-store',
   );
 
   return (
     <NowContext.Provider value={now}>
-      <AppContext.Provider value={[appStore, setAppStore]}>
-        <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
+      <AppContext.Provider value={appStore}>
+        <DataContext.Provider value={dataStore}>
           <div class={sApp}>
             <DatePicker />
             Worklog

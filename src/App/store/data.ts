@@ -1,6 +1,5 @@
 import { createContext, useContext } from 'solid-js';
-import { SetStoreFunction } from 'solid-js/store';
-import { createDataStore } from './dataMethods';
+import { DataContextValue } from './dataMethods';
 
 export interface DataStore {
   items: Item[];
@@ -14,7 +13,7 @@ export interface Item {
   end: Date | undefined;
 }
 
-export const DataContext = createContext<ReturnType<typeof createDataStore>>();
+export const DataContext = createContext<DataContextValue>();
 
 export function useDataContext() {
   const context = useContext(DataContext);

@@ -2,6 +2,8 @@ import { createStore, produce } from 'solid-js/store';
 import { getDefaultDataStore, Item } from './data';
 import { calculateDuration } from '../time';
 
+export type DataContextValue = ReturnType<typeof createDataStore>;
+
 export function createDataStore() {
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
 
