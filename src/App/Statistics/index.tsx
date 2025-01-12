@@ -66,14 +66,14 @@ export function Statistics() {
 
       <div class={sTableStats}>
         <div class={sRow}>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>
-          Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
-        </div>
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
           Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
         </div>
         <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-          Pomodoros (30 min)
+          Pomodoros
+        </div>
+        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>
+          Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
         </div>
       </div>
 
@@ -84,8 +84,8 @@ export function Statistics() {
       </For>
 
       <div class={sRow}>
-        <div class={cx(sCell)}></div>
         <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
+        <div class={cx(sCell)}></div>
         <div class={cx(sCell)}></div>
       </div>
     </div>
@@ -160,7 +160,6 @@ function ItemRow(props: StatEntry) {
 
   return (
     <div class={sRow}>
-      <div class={sCell}><TagView tag={props.tag} jiraHost={appStore.jiraHost} /></div>
       <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
       <div class={cx(sCell, sCellPomodoro)}>
         <Show when={props.pomodoros > 0}>
@@ -180,6 +179,7 @@ function ItemRow(props: StatEntry) {
           </Switch>
         </Show>
       </div>
+      <div class={cx(sCell, sCellText)}><TagView tag={props.tag} jiraHost={appStore.jiraHost} /></div>
     </div>
   );
 }
@@ -324,7 +324,11 @@ function minutesToHoursMinutes(minutesAmount: number) {
 // styles
 const sTableStats = css`
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: auto 180px auto;
+`;
+
+const sCellText = css`
+  justify-content: flex-start;
 `;
 
 const sCellPomodoro = css`
