@@ -102,7 +102,7 @@ export function Worklog() {
         />
         <Show when={!isInProgress()}>
           <ToolbarTable
-            selectedDate={appStore.selectedDate}
+            selectedDate={selectedDate()}
             selectedItemId={selectedItemId()}
             setSelectedItemId={(id) => setSelectedItemId(id)}
           />
