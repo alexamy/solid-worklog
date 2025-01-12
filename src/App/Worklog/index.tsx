@@ -24,7 +24,9 @@ export function Worklog() {
   );
 
   // reset selected item when date changes
-  createEffect(on(() => appStore.selectedDate, () => setSelectedItemId(undefined)));
+  createEffect(on(() => appStore.selectedDate, () => {
+    setSelectedItemId(undefined);
+  }));
 
   // reset selected item when no items at current date
   createEffect(on(itemsAtDate, (items) => {
