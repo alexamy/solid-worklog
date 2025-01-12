@@ -16,54 +16,21 @@ export function Worklog() {
 
   const selectedDate = () => appStore.selectedDate;
 
-  // tags and fuzzy search
-  const allTags = createMemo(() => {
-    const tags = dataStore.items.map(item => item.tag);
-    const uniqueTags = [...new Set(tags)];
-    return uniqueTags;
-  });
+  // tag list
+  const [tagListVisible, setTagListVisible] = createSignal(false);
 
-  const fuzzySearch = createMemo(() => createFuzzySearch(allTags()));
-  const [availableTags, setAvailableTags] = createSignal<string[]>([]);
-
-  function updateAvailableTags(query: string) {
-    const results = fuzzySearch()(query);
-    setAvailableTags(results.map(result => result.item));
-  }
-
-  let tagListElement!: HTMLDivElement;
-  onMount(() => {
-    tagListElement.style.display = 'none';
-  });
-
-  function positionTagList(e: MouseEvent & { currentTarget: HTMLDivElement }) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    tagListElement.style.left = `${rect.left}px`;
-    tagListElement.style.top = `${rect.top + rect.height - 1}px`;
-    tagListElement.style.width = `${rect.width}px`;
-  }
-
-  function toggleTagList(type?: 'show' | 'hide') {
-    if (type === 'show') {
-      tagListElement.style.display = 'block';
-    } else if (type === 'hide') {
-      tagListElement.style.display = 'none';
-    } else {
-      tagListElement.style.display = tagListElement.style.display === 'block' ? 'none' : 'block';
-    }
-  }
-
+  // hide tag list when clicking outside current tag cell
   createEffect(() => {
-    function onClick(e: MouseEvent) {
-      const target = e.target as HTMLElement;
-
-      if (!target.dataset.tag || target.dataset.itemId !== selectedItemId()) {
-        toggleTagList('hide');
-      }
-    }
-
     document.body.addEventListener('click', onClick);
     onCleanup(() => document.body.removeEventListener('click', onClick));
+
+    function onClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      const isCurrentTagCell = target.dataset.tag && target.dataset.itemId === selectedItemId();
+      if (!isCurrentTagCell) {
+        setTagListVisible(false);
+      }
+    }
   });
 
   // worklog table data
@@ -83,14 +50,14 @@ export function Worklog() {
   function onTagCellKeyDown(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
-      toggleTagList('hide');
+      setTagListVisible(false);
     }
   }
 
   function onTagCellKeyUp(e: KeyboardEvent & { currentTarget: HTMLDivElement }) {
     if (e.key === 'Enter') return;
     updateAvailableTags(e.currentTarget.textContent!);
-    toggleTagList('show');
+    setTagListVisible(true);
   }
 
   return (
@@ -109,17 +76,10 @@ export function Worklog() {
         </Show>
       </div>
 
-      <Portal>
-        <div ref={tagListElement} class={sTagList}>
-          <For each={availableTags()}>
-            {(tag) =>
-              <div class={sTag} onClick={() => updateItem({ tag }, selectedItemId()!)}>
-                {tag}
-              </div>
-            }
-          </For>
-        </div>
-      </Portal>
+      <TagList
+        visible={tagListVisible()}
+        onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
+      />
 
       <div class={sTable}>
         <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
@@ -181,6 +141,54 @@ export function Worklog() {
         </For>
       </div>
     </>
+  );
+}
+
+function TagList(props: {
+  visible: boolean,
+  onTagClick: (tag: string) => void,
+}) {
+  const [dataStore] = useDataContext();
+
+  const allTags = createMemo(() => {
+    const tags = dataStore.items.map(item => item.tag);
+    const uniqueTags = [...new Set(tags)];
+    return uniqueTags;
+  });
+
+  const fuzzySearch = createMemo(() => createFuzzySearch(allTags()));
+  const [availableTags, setAvailableTags] = createSignal<string[]>([]);
+
+  function updateAvailableTags(query: string) {
+    const results = fuzzySearch()(query);
+    setAvailableTags(results.map(result => result.item));
+  }
+
+  let tagListElement!: HTMLDivElement;
+
+  function positionTagList(e: MouseEvent & { currentTarget: HTMLDivElement }) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    tagListElement.style.left = `${rect.left}px`;
+    tagListElement.style.top = `${rect.top + rect.height - 1}px`;
+    tagListElement.style.width = `${rect.width}px`;
+  }
+
+  return (
+    <Portal>
+      <div
+        ref={tagListElement}
+        class={sTagList}
+        style={{ display: props.visible ? 'block' : 'none' }}
+      >
+        <For each={availableTags()}>
+          {(tag) =>
+            <div class={sTag} onClick={() => props.onTagClick(tag)}>
+              {tag}
+            </div>
+          }
+        </For>
+      </div>
+    </Portal>
   );
 }
 
