@@ -11,7 +11,7 @@ export function useNowContext() {
   return context;
 }
 
-export function createTicker() {
+export function createClock() {
   const [now, setNow] = createSignal(new Date());
 
   createEffect(() => {

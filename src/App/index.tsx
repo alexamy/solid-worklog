@@ -3,7 +3,7 @@ import { Statistics } from './Statistics';
 import { AppContext, createAppStore, getDefaultAppStore } from './store/app';
 import { DataContext, getDefaultDataStore } from './store/data';
 import { DatePicker } from './DatePicker';
-import { createTicker } from './store/now';
+import { createClock } from './store/now';
 import { Utilities } from './Utilities';
 import { persistObject } from './store/persistence';
 import { NowContext } from './store/now';
@@ -14,7 +14,7 @@ import { createDataStore } from './store/dataMethods';
 
 // component
 export function App() {
-  const now = createTicker();
+  const now = createClock();
   const [appStore, setAppStore] = createAppStore();
   const [dataStore, setDataStore] = createDataStore();
 
