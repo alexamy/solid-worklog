@@ -27,18 +27,17 @@ export function useDataContext() {
 export function getDefaultDataStore(): DataStore {
   const now = new Date();
 
-  function at(options: {
-    hour: number, minute: number,
+  function at(hour: number, minute: number, offset: {
     day?: number, month?: number, year?: number,
-  }) {
-    const { hour, minute, year, month, day } = {
-      hour: options.hour,
-      minute: options.minute,
-      day: now.getDate() + (options.day || 0),
-      month: now.getMonth() + (options.month || 0),
-      year: now.getFullYear() + (options.year || 0),
-    };
-    return new Date(year, month, day, hour, minute, 0);
+  } = {}) {
+    return new Date(
+      now.getFullYear() + (offset.year || 0),
+      now.getMonth() + (offset.month || 0),
+      now.getDate() + (offset.day || 0),
+      hour,
+      minute,
+      0,
+    );
   }
 
   return {
@@ -46,20 +45,20 @@ export function getDefaultDataStore(): DataStore {
       id: '1',
       description: 'dinner',
       tag: 'idle',
-      start: at({ hour: 13, minute: 20 }),
-      end: at({ hour: 14, minute: 0 }),
+      start: at(13, 20),
+      end: at(14, 0),
     }, {
       id: '2',
       description: 'dev',
       tag: 'task 1',
-      start: at({ hour: 14, minute: 5 }),
-      end: at({ hour: 15, minute: 0 }),
+      start: at(14, 5),
+      end: at(15, 0),
     }, {
       id: '3',
       description: 'dev',
       tag: 'task 2',
-      start: at({ hour: 15, minute: 15 }),
-      end: at({ hour: 15, minute: 35 }),
+      start: at(15, 15),
+      end: at(15, 35),
     }],
   };
 }
