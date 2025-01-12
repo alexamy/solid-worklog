@@ -1,6 +1,6 @@
 import { createStore } from 'solid-js/store';
 import { Statistics } from './Statistics';
-import { AppContext, getDefaultAppStore } from './store/app';
+import { AppContext, createAppStore, getDefaultAppStore } from './store/app';
 import { DataContext, getDefaultDataStore } from './store/data';
 import { DatePicker } from './DatePicker';
 import { createTicker } from './store/now';
@@ -15,7 +15,7 @@ import { createDataStore } from './store/dataMethods';
 // component
 export function App() {
   const now = createTicker();
-  const [appStore, setAppStore] = createStore(getDefaultAppStore());
+  const [appStore, setAppStore] = createAppStore();
   const [dataStore, setDataStore] = createDataStore();
 
   const persistApp = persistObject(

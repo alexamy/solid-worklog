@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'solid-js';
-import { SetStoreFunction } from 'solid-js/store';
+import { createStore, SetStoreFunction } from 'solid-js/store';
 
 export interface AppStore {
   selectedDate: Date;
@@ -7,6 +7,11 @@ export interface AppStore {
 }
 
 export const AppContext = createContext<[AppStore, SetStoreFunction<AppStore>]>();
+
+export function createAppStore() {
+  const [appStore, setAppStore] = createStore(getDefaultAppStore());
+  return [appStore, setAppStore] as const;
+}
 
 export function useAppContext() {
   const context = useContext(AppContext);
