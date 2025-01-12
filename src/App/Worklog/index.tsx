@@ -70,7 +70,9 @@ export function Worklog() {
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
   createEffect(on(selectedDate, () => setSelectedItemId(undefined)));
 
-  const itemsAtDate = createMemo(() => dataStore.items.filter(item => item.start.toDateString() === selectedDate().toDateString()));
+  const itemsAtDate = createMemo(() => dataStore.items
+    .filter(item => item.start.toDateString() === selectedDate().toDateString())
+  );
 
   function updateItem(item: Partial<Item>, id: string) {
     setDataStore('items', item => item.id === id, item);
