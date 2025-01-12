@@ -59,6 +59,30 @@ export function getDefaultDataStore(): DataStore {
       tag: 'task 2',
       start: at(15, 15),
       end: at(15, 35),
+    }, {
+      id: '3a',
+      description: 'dev',
+      tag: 'task 2',
+      start: at(15, 45),
+      end: at(16, 0),
+    }, {
+      id: '4',
+      description: 'dev',
+      tag: 'task yesterday',
+      start: at(15, 15, { day: -1 }),
+      end: at(15, 35, { day: -1 }),
+    }, {
+      id: '5',
+      description: 'dev',
+      tag: 'task last month',
+      start: at(15, 15, { month: -1 }),
+      end: at(15, 35, { month: -1 }),
+    }, {
+      id: '6',
+      description: 'dev',
+      tag: 'task last year',
+      start: at(15, 15, { year: -1 }),
+      end: at(15, 35, { year: -1 }),
     }],
   };
 }
