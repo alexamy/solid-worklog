@@ -1,5 +1,5 @@
 # Solid Worklog
-A very opinionated time management application for monitoring time spent on tasks, with tracking of total time spent.
+Opinionated time management application for monitoring time spent on tasks and tracking total time spent.
 
 ### https://alexamy.github.io/solid-worklog/
 

@@ -79,9 +79,7 @@ export function Statistics() {
       </div>
 
       <For each={sortedStats().entries}>
-        {(entry) => (
-          <ItemRow {...entry} />
-        )}
+        {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
       </For>
 
       <div class={sRow}>
@@ -154,9 +152,7 @@ function Toolbar(props: {
   );
 }
 
-function ItemRow(props: StatEntry) {
-  const [appStore] = useAppContext();
-
+function ItemRow(props: StatEntry & { jiraHost: string }) {
   return (
     <div class={sRow}>
       <div class={cx(sCell, sCellPomodoro)}>
@@ -166,7 +162,7 @@ function ItemRow(props: StatEntry) {
       </div>
       <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
       <div class={cx(sCell, sCellText)}>
-        <TagView tag={props.tag} jiraHost={appStore.jiraHost} />
+        <TagView tag={props.tag} jiraHost={props.jiraHost} />
       </div>
     </div>
   );
