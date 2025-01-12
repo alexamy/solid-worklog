@@ -245,6 +245,7 @@ function ToolbarTable(props: {
     removeItem,
     moveRowUp,
     moveRowDown,
+    duplicateRow,
   }] = useDataContext();
 
   const onlyOneItem = () => dataStore.items.length === 1;
@@ -255,6 +256,10 @@ function ToolbarTable(props: {
         disabled={!props.selectedItemId}
         onClick={() => addItem(props.selectedDate)}
       >+</button>
+      <button
+        disabled={!props.selectedItemId}
+        onClick={() => duplicateRow(props.selectedItemId!)}
+      >++</button>
       <button
         disabled={!props.selectedItemId}
         onClick={() => moveRowUp(props.selectedItemId!)}

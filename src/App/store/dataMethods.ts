@@ -13,12 +13,12 @@ export function createDataStore() {
   // item management
   function createItem(partial: Partial<Item>) {
     const item = {
-      id: randomId(),
       description: '',
       tag: '',
       start: new Date(),
       end: undefined,
       ...partial,
+      id: randomId(),
     };
 
     setDataStore('items', (items) => [item, ...items]);
@@ -102,11 +102,16 @@ export function createDataStore() {
   }
 
   // item movement
-  // TODO: move above or below selected item
   function duplicateRow(selected: string) {
     const item = dataStore.items.find(item => item.id === selected);
     if(item) {
-      createItem(item);
+      const newItem = createItem(item);
+      setDataStore('items', produce((items) => {
+        const selectedIndex = items.findIndex(item => item.id === selected);
+        const newIndex = items.findIndex(item => item.id === newItem.id);
+        items.splice(newIndex, 1); // Remove from end
+        items.splice(selectedIndex, 0, newItem); // Insert before selected
+      }));
     }
   }
 
