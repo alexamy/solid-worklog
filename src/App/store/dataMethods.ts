@@ -47,7 +47,7 @@ export function createDataStore() {
   }
 
   // worklog methods
-  function startItem(item: Partial<Item> = {}) {
+  function startLog(item: Partial<Item> = {}) {
     const now = new Date();
 
     const lastItem = dataStore.items[0];
@@ -73,15 +73,15 @@ export function createDataStore() {
     });
   }
 
-  function finishItem() {
+  function finishLog() {
     setDataStore('items', 0, {
       end: new Date(),
     });
   }
 
-  function tapItem() {
-    finishItem();
-    startItem();
+  function tapLog() {
+    finishLog();
+    startLog();
   }
 
   // item movement
@@ -110,10 +110,9 @@ export function createDataStore() {
     addItem,
     removeItem,
 
-    // TODO: change suffix to Log
-    startItem,
-    finishItem,
-    tapItem,
+    startLog,
+    finishLog,
+    tapLog,
 
     moveUp,
     moveDown,

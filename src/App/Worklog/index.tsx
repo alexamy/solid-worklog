@@ -191,21 +191,21 @@ function ToolbarWorklog(props: {
   setSelectedDate: (date: Date) => void,
 }) {
   const [_1, _2, {
-    startItem,
-    finishItem,
-    tapItem,
+    startLog,
+    finishLog,
+    tapLog,
   }] = useDataContext();
 
   function start() {
-    startItem();
+    startLog();
     props.setSelectedDate(new Date()); // TODO: add app store methods
   }
 
   return (
     <div class={sToolbarLeft}>
       <button disabled={props.isInProgress} onClick={() => start()}>Start</button>
-      <button disabled={!props.isInProgress} onClick={() => finishItem()}>Finish</button>
-      <button disabled={!props.isInProgress} onClick={() => tapItem()}>Tap</button>
+      <button disabled={!props.isInProgress} onClick={() => finishLog()}>Finish</button>
+      <button disabled={!props.isInProgress} onClick={() => tapLog()}>Tap</button>
     </div>
   );
 }
