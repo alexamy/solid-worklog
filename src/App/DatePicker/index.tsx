@@ -27,6 +27,7 @@ export function DatePicker() {
         <button onClick={() => moveDate(-1)}>{'<'}</button>
         <input
           type="date"
+          // FIX: iso string is not a local date string
           value={selectedDate().toISOString().split('T')[0]}
           max={new Date().toISOString().split('T')[0]}
           onChange={(e) => setSelectedDate(new Date(e.target.value))}

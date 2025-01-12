@@ -244,6 +244,7 @@ function ToolbarWorklog(props: {
     props.setSelectedDate(new Date()); // TODO: add app store methods
   }
 
+  // FIX: case when filling from the past day
   function fill() {
     const item = fillLog();
     props.setSelectedDate(new Date());
