@@ -20,9 +20,11 @@ export function createDataStore() {
   }
 
   function addItem(at: Date) {
+    const date = new Date(at);
+
     createItem({
-      start: new Date(at.setHours(12, 0, 0, 0)),
-      end: new Date(at.setHours(12, 5, 0, 0)),
+      start: new Date(date.setHours(12, 0, 0, 0)),
+      end: new Date(date.setHours(12, 5, 0, 0)),
     });
   }
 

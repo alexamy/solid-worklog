@@ -230,72 +230,35 @@ function ToolbarTable(props: {
   selectedItemId: string | undefined,
   setSelectedItemId: (id: string | undefined) => void,
 }) {
-  const [dataStore, setDataStore] = useDataContext();
+  const [dataStore, _, {
+    addItem,
+    removeItem,
+    moveUp,
+    moveDown,
+  }] = useDataContext();
 
   const selectedDate = () => props.selectedDate;
   const selectedItemId = () => props.selectedItemId;
   const setSelectedItemId = (id: string | undefined) => props.setSelectedItemId(id);
 
-  // TODO: merge with other toolbar
-  function createItem(item: Partial<Item>) {
-    setDataStore('items', (items) => [{
-      id: randomId(),
-      description: '',
-      tag: '',
-      start: new Date(),
-      end: undefined,
-      ...item,
-    }, ...items]);
-  }
-
-  function addItem() {
-    createItem({
-      start: new Date(selectedDate().setHours(12, 0, 0, 0)),
-      end: new Date(selectedDate().setHours(12, 5, 0, 0)),
-    });
-  }
-
-  function removeItem() {
-    const selected = selectedItemId()!;
-
-    // select next item
-    const index = dataStore.items.findIndex(item => item.id === selected);
-    if(index >= 0) {
-      const item = dataStore.items[index + 1];
-      setSelectedItemId(item?.id);
-    }
-
-    // remove item
-    const filtered = dataStore.items.filter(item => item.id !== selected);
-    if(filtered.length > 0) {
-      setDataStore('items', filtered);
-    }
-  }
-
-  function moveUp() {
-    setDataStore('items', produce((items) => {
-      const index = items.findIndex(item => item.id === selectedItemId());
-      if (index > 0) {
-        [items[index], items[index - 1]] = [items[index - 1], items[index]];
-      }
-    }));
-  }
-
-  function moveDown() {
-    setDataStore('items', produce((items) => {
-      const index = items.findIndex(item => item.id === selectedItemId());
-      if (index < items.length - 1) {
-        [items[index], items[index + 1]] = [items[index + 1], items[index]];
-      }
-    }));
-  }
-
   return (
     <div class={sToolbarRight}>
-      <button onClick={() => addItem()}>+</button>
-      <button disabled={!selectedItemId()} onClick={() => moveUp()}>↑</button>
-      <button disabled={!selectedItemId()} onClick={() => moveDown()}>↓</button>
-      <button disabled={!selectedItemId() || dataStore.items.length <= 1} onClick={() => removeItem()}>-</button>
+      <button
+        disabled={!selectedItemId()}
+        onClick={() => addItem(selectedDate())}
+      >+</button>
+      <button
+        disabled={!selectedItemId()}
+        onClick={() => moveUp(selectedItemId()!)}
+      >↑</button>
+      <button
+        disabled={!selectedItemId()}
+        onClick={() => moveDown(selectedItemId()!)}
+      >↓</button>
+      <button
+        disabled={!selectedItemId() || dataStore.items.length <= 1}
+        onClick={() => removeItem(selectedItemId()!, setSelectedItemId)}
+      >-</button>
     </div>
   );
 }
