@@ -5,9 +5,10 @@ import { sToolbar } from '../styles';
 export function Settings() {
   const [appStore, setAppStore] = useAppContext();
 
-  function setJiraHost(value: string) {
+  function setJiraHost(text: string) {
+    const value = text.trim();
     const host = value.endsWith('/') ? value : value + '/';
-    setAppStore('jiraHost', host);
+    setAppStore('jiraHost', value ? host : '');
   }
 
   return (
@@ -24,7 +25,7 @@ export function Settings() {
           size={60}
           value={appStore.jiraHost}
           // @ts-expect-error fix lib types
-          onInput={(e) => setJiraHost(e.target.value.trim())}
+          onInput={(e) => setJiraHost(e.target.value)}
         />
       </div>
     </div>
