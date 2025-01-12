@@ -285,7 +285,7 @@ function isItemInRange(item: Item, statRange: StatRange, target: Date) {
     case 'day':
       return itemDate.toDateString() === target.toDateString();
     case 'week':
-      return getStartOfWeek(itemDate).toDateString() === target.toDateString();
+      return getStartOfWeek(itemDate).toDateString() === getStartOfWeek(target).toDateString();
     case 'month':
       return itemDate.getFullYear() === target.getFullYear()
           && itemDate.getMonth() === target.getMonth();
