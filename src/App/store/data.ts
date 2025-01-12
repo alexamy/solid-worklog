@@ -48,7 +48,7 @@ export function getDefaultDataStore(): DataStore {
       tag: 'idle',
       start: at({ hour: 13, minute: 20 }),
       end: at({ hour: 14, minute: 0 }),
-  }, {
+    }, {
       id: '2',
       description: 'dev',
       tag: 'task 1',
