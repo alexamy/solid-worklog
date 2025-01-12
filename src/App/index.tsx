@@ -10,12 +10,13 @@ import { NowContext } from './store/now';
 import { Worklog } from './Worklog';
 import { css } from '@linaria/core';
 import { Settings } from './Settings';
+import { createDataStore } from './store/dataMethods';
 
 // component
 export function App() {
   const now = createTicker();
   const [appStore, setAppStore] = createStore(getDefaultAppStore());
-  const [dataStore, setDataStore] = createStore(getDefaultDataStore());
+  const [dataStore, setDataStore] = createDataStore();
 
   const persistApp = persistObject(
     appStore,
