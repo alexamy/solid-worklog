@@ -250,7 +250,6 @@ function ToolbarTable(props: {
   setSelectedItemId: (id: string | undefined) => void,
 }) {
   const [dataStore, _, {
-    addRow,
     removeRow,
     moveRowUp,
     moveRowDown,
@@ -262,22 +261,22 @@ function ToolbarTable(props: {
   return (
     <div class={sToolbarRight}>
       <button
-        disabled={!props.selectedItemId}
-        onClick={() => addRow(props.selectedDate)}
-      >+</button>
-      <button
+        title="Duplicate row"
         disabled={!props.selectedItemId}
         onClick={() => duplicateRow(props.selectedItemId!)}
       >++</button>
       <button
+        title="Move row up"
         disabled={!props.selectedItemId}
         onClick={() => moveRowUp(props.selectedItemId!)}
       >↑</button>
       <button
+        title="Move row down"
         disabled={!props.selectedItemId}
         onClick={() => moveRowDown(props.selectedItemId!)}
       >↓</button>
       <button
+        title="Remove row"
         disabled={!props.selectedItemId || onlyOneItem()}
         onClick={() => removeRow(props.selectedItemId!, props.setSelectedItemId)}
       >-</button>
