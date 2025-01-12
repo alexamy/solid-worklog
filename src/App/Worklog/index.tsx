@@ -59,6 +59,7 @@ export function Worklog() {
         <ToolbarWorklog
           isInProgress={isInProgress()}
           setSelectedDate={(date) => setAppStore('selectedDate', date)}
+          setSelectedItemId={(id) => setSelectedItemId(id)}
         />
         <Show when={!isInProgress()}>
           <ToolbarTable
@@ -214,6 +215,7 @@ function createTagListControls(selectedItemId: () => string | undefined) {
 function ToolbarWorklog(props: {
   isInProgress: boolean,
   setSelectedDate: (date: Date) => void,
+  setSelectedItemId: (id: string | undefined) => void,
 }) {
   const [_1, _2, {
     startLog,
@@ -227,12 +229,17 @@ function ToolbarWorklog(props: {
     props.setSelectedDate(new Date()); // TODO: add app store methods
   }
 
+  function fill() {
+    const item = fillLog();
+    props.setSelectedItemId(item.id);
+  }
+
   return (
     <div class={sToolbarLeft}>
       <button disabled={props.isInProgress} onClick={() => start()}>Start</button>
       <button disabled={!props.isInProgress} onClick={() => finishLog()}>Finish</button>
       <button disabled={!props.isInProgress} onClick={() => tapLog()}>Tap</button>
-      <button disabled={props.isInProgress} onClick={() => fillLog()}>Fill</button>
+      <button disabled={props.isInProgress} onClick={() => fill()}>Fill</button>
     </div>
   );
 }

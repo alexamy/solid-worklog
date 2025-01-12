@@ -46,7 +46,7 @@ export function createDataStore() {
     }
 
     // start new item
-    createItem({
+    return createItem({
       start: now,
       end: undefined,
       ...item,
@@ -59,7 +59,7 @@ export function createDataStore() {
       throw new Error('No last item or end time');
     }
 
-    createItem({
+    return createItem({
       start: lastItem.end,
       end: new Date(),
       ...item,
@@ -81,7 +81,7 @@ export function createDataStore() {
   function addRow(at: Date) {
     const date = new Date(at);
 
-    createItem({
+    return createItem({
       start: new Date(date.setHours(12, 0, 0, 0)),
       end: new Date(date.setHours(12, 5, 0, 0)),
     });
@@ -97,6 +97,8 @@ export function createDataStore() {
         items.splice(newIndex, 1); // Remove
         items.splice(selectedIndex, 0, newItem); // Insert
       }));
+
+      return newItem;
     }
   }
 
