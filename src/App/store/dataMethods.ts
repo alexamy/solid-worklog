@@ -26,32 +26,8 @@ export function createDataStore() {
     return item;
   }
 
-  function addItem(at: Date) {
-    const date = new Date(at);
-
-    createItem({
-      start: new Date(date.setHours(12, 0, 0, 0)),
-      end: new Date(date.setHours(12, 5, 0, 0)),
-    });
-  }
-
   function updateItem(item: Partial<Item>, id: string) {
     setDataStore('items', item => item.id === id, item);
-  }
-
-  function removeItem(selected: string, setSelectedItemId: (id: string) => void) {
-    // select next item
-    const index = dataStore.items.findIndex(item => item.id === selected);
-    if(index >= 0) {
-      const item = dataStore.items[index + 1];
-      setSelectedItemId(item?.id);
-    }
-
-    // remove item
-    const filtered = dataStore.items.filter(item => item.id !== selected);
-    if(filtered.length > 0) {
-      setDataStore('items', filtered);
-    }
   }
 
   // worklog methods
@@ -102,6 +78,15 @@ export function createDataStore() {
   }
 
   // item movement
+  function addRow(at: Date) {
+    const date = new Date(at);
+
+    createItem({
+      start: new Date(date.setHours(12, 0, 0, 0)),
+      end: new Date(date.setHours(12, 5, 0, 0)),
+    });
+  }
+
   function duplicateRow(selected: string) {
     const item = dataStore.items.find(item => item.id === selected);
     if(item) {
@@ -109,9 +94,24 @@ export function createDataStore() {
       setDataStore('items', produce((items) => {
         const selectedIndex = items.findIndex(item => item.id === selected);
         const newIndex = items.findIndex(item => item.id === newItem.id);
-        items.splice(newIndex, 1); // Remove from end
-        items.splice(selectedIndex, 0, newItem); // Insert before selected
+        items.splice(newIndex, 1); // Remove
+        items.splice(selectedIndex, 0, newItem); // Insert
       }));
+    }
+  }
+
+  function removeRow(selected: string, setSelectedItemId: (id: string) => void) {
+    // select next item
+    const index = dataStore.items.findIndex(item => item.id === selected);
+    if(index >= 0) {
+      const item = dataStore.items[index + 1];
+      setSelectedItemId(item?.id);
+    }
+
+    // remove item
+    const filtered = dataStore.items.filter(item => item.id !== selected);
+    if(filtered.length > 0) {
+      setDataStore('items', filtered);
     }
   }
 
@@ -137,18 +137,18 @@ export function createDataStore() {
     isInProgress,
 
     createItem,
-    addItem,
     updateItem,
-    removeItem,
 
     startLog,
     finishLog,
     fillLog,
     tapLog,
 
+    addRow,
+    duplicateRow,
+    removeRow,
     moveRowUp,
     moveRowDown,
-    duplicateRow,
   }] as const;
 }
 
