@@ -11,7 +11,7 @@ export function createDataStore() {
   const isInProgress = () => dataStore.items[0].end === undefined;
 
   // item management
-  function createItem(partial: Partial<Item>) {
+  function createItem(partial: Partial<Item>): Item {
     const item = {
       description: '',
       tag: '',
@@ -26,12 +26,12 @@ export function createDataStore() {
     return item;
   }
 
-  function updateItem(item: Partial<Item>, id: string) {
+  function updateItem(item: Partial<Item>, id: string): void {
     setDataStore('items', item => item.id === id, item);
   }
 
   // worklog methods
-  function startLog(item: Partial<Item> = {}) {
+  function startLog(item: Partial<Item> = {}): Item {
     const now = new Date();
 
     const lastItem = dataStore.items[0];
@@ -53,7 +53,7 @@ export function createDataStore() {
     });
   }
 
-  function fillLog(item: Partial<Item> = {}) {
+  function fillLog(item: Partial<Item> = {}): Item {
     const lastItem = dataStore.items[0];
     if(!lastItem || !lastItem.end) {
       throw new Error('No last item or end time');
@@ -66,19 +66,19 @@ export function createDataStore() {
     });
   }
 
-  function finishLog() {
+  function finishLog(): void {
     setDataStore('items', 0, {
       end: new Date(),
     });
   }
 
-  function tapLog() {
+  function tapLog(): Item {
     finishLog();
-    startLog();
+    return startLog();
   }
 
   // item movement
-  function addRow(at: Date) {
+  function addRow(at: Date): Item {
     const date = new Date(at);
 
     return createItem({
@@ -87,22 +87,24 @@ export function createDataStore() {
     });
   }
 
-  function duplicateRow(selected: string) {
+  function duplicateRow(selected: string): Item {
     const item = dataStore.items.find(item => item.id === selected);
-    if(item) {
-      const newItem = createItem(item);
-      setDataStore('items', produce((items) => {
-        const selectedIndex = items.findIndex(item => item.id === selected);
+    if(!item) {
+      throw new Error('Item not found');
+    }
+
+    const newItem = createItem(item);
+    setDataStore('items', produce((items) => {
+      const selectedIndex = items.findIndex(item => item.id === selected);
         const newIndex = items.findIndex(item => item.id === newItem.id);
         items.splice(newIndex, 1); // Remove
         items.splice(selectedIndex, 0, newItem); // Insert
       }));
 
-      return newItem;
-    }
+    return newItem;
   }
 
-  function removeRow(selected: string, setSelectedItemId: (id: string) => void) {
+  function removeRow(selected: string, setSelectedItemId: (id: string) => void): void {
     // select next item
     const index = dataStore.items.findIndex(item => item.id === selected);
     if(index >= 0) {
@@ -117,7 +119,7 @@ export function createDataStore() {
     }
   }
 
-  function moveRowUp(selected: string) {
+  function moveRowUp(selected: string): void {
     setDataStore('items', produce((items) => {
       const index = items.findIndex(item => item.id === selected);
       if (index > 0) {
@@ -126,7 +128,7 @@ export function createDataStore() {
     }));
   }
 
-  function moveRowDown(selected: string) {
+  function moveRowDown(selected: string): void {
     setDataStore('items', produce((items) => {
       const index = items.findIndex(item => item.id === selected);
       if (index < items.length - 1) {
