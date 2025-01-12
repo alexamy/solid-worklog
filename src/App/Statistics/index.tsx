@@ -49,7 +49,7 @@ export function Statistics() {
 
   // stats
   const stats = createMemo(() => { now(); return aggregateByTag(
-    dataStore.items.filter(item => isItemInRange(item, range(), startDate())),
+    dataStore.items.filter(item => isItemAtStartDate(item, range(), startDate())),
   );});
 
   const sortedStats = createMemo(() => ({
@@ -277,20 +277,21 @@ function getStartOfStatRange(selectedDate: Date, statRange: StatRange) {
   }
 }
 
-function isItemInRange(item: Item, statRange: StatRange, target: Date) {
+function isItemAtStartDate(item: Item, statRange: StatRange, start: Date) {
   const itemDate = new Date(item.start);
   itemDate.setHours(0, 0, 0, 0);
 
   switch (statRange) {
     case 'day':
-      return itemDate.toDateString() === target.toDateString();
+      return itemDate.toDateString() === start.toDateString();
     case 'week':
-      return getStartOfWeek(itemDate).toDateString() === getStartOfWeek(target).toDateString();
+      // start is monday in call site
+      return getStartOfWeek(itemDate).toDateString() === start.toDateString();
     case 'month':
-      return itemDate.getFullYear() === target.getFullYear()
-          && itemDate.getMonth() === target.getMonth();
+      return itemDate.getFullYear() === start.getFullYear()
+          && itemDate.getMonth() === start.getMonth();
     case 'year':
-      return itemDate.getFullYear() === target.getFullYear();
+      return itemDate.getFullYear() === start.getFullYear();
     case 'all':
       return true;
     default:
