@@ -19,6 +19,12 @@ export function Worklog() {
   // tag list
   const [tagListVisible, setTagListVisible] = createSignal(false);
 
+  const allTags = createMemo(() => {
+    const tags = dataStore.items.map(item => item.tag);
+    const uniqueTags = [...new Set(tags)];
+    return uniqueTags;
+  });
+
   // hide tag list when clicking outside current tag cell
   createEffect(() => {
     document.body.addEventListener('click', onClick);
@@ -77,6 +83,7 @@ export function Worklog() {
       </div>
 
       <TagList
+        tags={allTags()}
         visible={tagListVisible()}
         onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
@@ -145,26 +152,18 @@ export function Worklog() {
 }
 
 function TagList(props: {
+  tags: string[],
   visible: boolean,
   onTagClick: (tag: string) => void,
 }) {
-  const [dataStore] = useDataContext();
-
-  const allTags = createMemo(() => {
-    const tags = dataStore.items.map(item => item.tag);
-    const uniqueTags = [...new Set(tags)];
-    return uniqueTags;
-  });
-
-  const fuzzySearch = createMemo(() => createFuzzySearch(allTags()));
+  let tagListElement!: HTMLDivElement;
+  const fuzzySearch = createMemo(() => createFuzzySearch(props.tags));
   const [availableTags, setAvailableTags] = createSignal<string[]>([]);
 
   function updateAvailableTags(query: string) {
     const results = fuzzySearch()(query);
     setAvailableTags(results.map(result => result.item));
   }
-
-  let tagListElement!: HTMLDivElement;
 
   function positionTagList(e: MouseEvent & { currentTarget: HTMLDivElement }) {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -176,8 +175,8 @@ function TagList(props: {
   return (
     <Portal>
       <div
-        ref={tagListElement}
         class={sTagList}
+        ref={tagListElement}
         style={{ display: props.visible ? 'block' : 'none' }}
       >
         <For each={availableTags()}>
