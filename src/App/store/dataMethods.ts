@@ -66,10 +66,12 @@ export function createDataStore() {
     });
   }
 
-  function finishLog(): void {
+  function finishLog(): Item {
     setDataStore('items', 0, {
       end: new Date(),
     });
+
+    return dataStore.items[0];
   }
 
   function tapLog(): Item {

@@ -234,12 +234,21 @@ function ToolbarWorklog(props: {
     props.setSelectedItemId(item.id);
   }
 
+  function tap() {
+    tapLog();
+  }
+
+  function finish() {
+    const item = finishLog();
+    props.setSelectedItemId(item.id);
+  }
+
   return (
     <div class={sToolbarLeft}>
       <button disabled={props.isInProgress} onClick={() => start()}>Start</button>
-      <button disabled={!props.isInProgress} onClick={() => finishLog()}>Finish</button>
-      <button disabled={!props.isInProgress} onClick={() => tapLog()}>Tap</button>
       <button disabled={props.isInProgress} onClick={() => fill()}>Fill</button>
+      <button disabled={!props.isInProgress} onClick={() => tap()}>Tap</button>
+      <button disabled={!props.isInProgress} onClick={() => finish()}>Finish</button>
     </div>
   );
 }
