@@ -349,6 +349,11 @@ function ToolbarTable(props: {
 }
 
 // methods
+// TODO: remove from there
+function randomId() {
+  return Math.random().toString(16).substring(2, 8);
+}
+
 function updateTimestamp(date: Date, timestamp: string) {
   const [hours, minutes] = timestamp.split(':').map(Number);
   if (isNaN(hours) || isNaN(minutes)) {
