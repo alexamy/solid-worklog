@@ -1,5 +1,5 @@
 import { css, cx } from '@linaria/core';
-import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
+import { createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
 import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft } from '../styles';
@@ -23,7 +23,7 @@ type SortBy = 'tag' | 'duration';
 type SortOrder = 'asc' | 'desc';
 
 export function Statistics() {
-  const [appStore] = useAppContext();
+  const [appStore, setAppStore] = useAppContext();
   const [dataStore] = useDataContext();
   const now = useNowContext();
 
@@ -43,7 +43,8 @@ export function Statistics() {
   }
 
   // range
-  const [range, setRange] = createSignal<StatRange>('day');
+  const range = () => appStore.statRange;
+  const setRange = (range: StatRange) => setAppStore('statRange', range);
   const startDate = createMemo(() => getStartOfStatRange(selectedDate(), range()));
 
   // stats
