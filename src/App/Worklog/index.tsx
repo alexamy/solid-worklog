@@ -259,6 +259,7 @@ function ToolbarTable(props: {
   setSelectedItemId: (id: string | undefined) => void,
 }) {
   const [dataStore, _, {
+    addRow,
     removeRow,
     moveRowUp,
     moveRowDown,
@@ -269,6 +270,10 @@ function ToolbarTable(props: {
 
   return (
     <div class={sToolbarRight}>
+      <button
+        title="Add row"
+        onClick={() => addRow(props.selectedDate)}
+      >+</button>
       <button
         title="Duplicate row"
         disabled={!props.selectedItemId}
