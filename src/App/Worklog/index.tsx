@@ -89,9 +89,9 @@ export function Worklog() {
       <TagList
         tags={allTags()}
         visible={tagListVisible()}
+        query={tagListQuery()}
+        parent={tagListParent()}
         onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
-        query={tagListQuery}
-        parent={tagListParent}
       />
 
       <div class={sTable}>
@@ -160,22 +160,22 @@ export function Worklog() {
 function TagList(props: {
   tags: string[],
   visible: boolean,
+  query: string,
+  parent?: TagListParent,
   onTagClick: (tag: string) => void,
-  query: () => string,
-  parent: () => TagListParent | undefined,
 }) {
   let tagListElement!: HTMLDivElement;
   const fuzzySearch = createMemo(() => createFuzzySearch(props.tags));
   const [availableTags, setAvailableTags] = createSignal<string[]>([]);
 
   // update available tags
-  createEffect(on(() => props.query(), (query) => {
+  createEffect(on(() => props.query, (query) => {
     const results = fuzzySearch()(query);
     setAvailableTags(results.map(result => result.item));
   }));
 
   // position tag list
-  createEffect(on(() => props.parent(), (parent) => {
+  createEffect(on(() => props.parent, (parent) => {
     if (!parent) return;
     const rect = parent.currentTarget.getBoundingClientRect();
     tagListElement.style.left = `${rect.left}px`;
