@@ -199,11 +199,10 @@ function PomodoroIcon(props: { amount?: number }) {
   }
 
   return <img
+    classList={{ [sPomodoroGrayed]: amount() < 1 }}
     width={width()}
     height={24}
     src={pomodoroSvg}
-    alt="Pomodoro"
-    classList={{ [sPomodoroGrayed]: amount() < 1 }}
   />;
 }
 
@@ -216,7 +215,7 @@ function TagView(props: { tag: string, jiraHost: string }) {
       <Show when={props.jiraHost} fallback={props.tag}>
         <For each={props.tag.split(jiraRegex)}>
           {(part) => part.match(jiraRegex)
-            ? <a href={`${props.jiraHost}browse/${part}`}>{part}</a>
+            ? <a href={`${props.jiraHost}/browse/${part}`}>{part}</a>
             : part
           }
         </For>

@@ -6,9 +6,8 @@ export function Settings() {
   const [appStore, setAppStore] = useAppContext();
 
   function setJiraHost(text: string) {
-    const value = text.trim();
-    const host = value.endsWith('/') ? value : value + '/';
-    setAppStore('jiraHost', value ? host : '');
+    const value = text.trim().replace(/\/+$/, '');
+    setAppStore('jiraHost', value);
   }
 
   return (
