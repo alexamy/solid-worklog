@@ -1,5 +1,5 @@
 # Solid Worklog
-A time management application for monitoring time spent on tasks, with tracking of total time spent.
+Opinionated time management application for monitoring time spent on tasks and tracking total time spent.
 
 ### https://alexamy.github.io/solid-worklog/
 
@@ -8,9 +8,10 @@ A time management application for monitoring time spent on tasks, with tracking 
 - Task tagging + descriptions (with special *idle* tag)
 - Tag autocomplete
 - Editable entries table
+- Automatic formatting of [Jira](https://www.atlassian.com/software/jira) issue links
 - Time aggregation by tags with period filtering
 - Automatic app state sync to localStorage
-- State import/export via JSON
+- State import/export via JSON file
 
 ## Inspired by
 - [Toggl Track](https://toggl.com/)

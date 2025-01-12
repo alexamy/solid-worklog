@@ -26,9 +26,19 @@ body {
   padding: 2rem;
 }
 
+a {
+  text-decoration: none;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
   }
+}
+
+@keyframes lamp-fade {
+  0% { opacity: 1; }
+  10% { opacity: 1; }
+  100% { opacity: 0; }
 }
