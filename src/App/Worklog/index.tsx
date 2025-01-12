@@ -239,6 +239,7 @@ function ToolbarWorklog(props: {
 
   function fill() {
     const item = fillLog();
+    props.setSelectedDate(new Date());
     props.setSelectedItemId(item.id);
   }
 
