@@ -45,13 +45,13 @@ export function Statistics() {
   // range
   const range = () => appStore.statRange;
   const setRange = (range: StatRange) => setAppStore('statRange', range);
-  const startDate = createMemo(() => getStartOfStatRange(selectedDate(), range()));
 
   // stats
   const stats = createMemo(() => {
     now(); // force update on clock change
 
-    const items = dataStore.items.filter(item => isItemAtStartDate(item, range(), startDate()));
+    const start = getStartOfStatRange(selectedDate(), range());
+    const items = dataStore.items.filter(item => isItemAtStartDate(item, range(), start));
     const result = aggregateByTag(items);
 
     return result;
