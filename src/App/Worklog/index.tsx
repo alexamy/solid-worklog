@@ -67,7 +67,7 @@ export function Worklog() {
 
   return (
     <div>
-      <div class='flex items-center justify-between gap-5 mb-2'>
+      <div class='flex items-center justify-between mb-2'>
         <ToolbarWorklog
           isInProgress={isInProgress()}
           setSelectedDate={(date) => setAppStore('selectedDate', date)}
@@ -266,7 +266,7 @@ function ToolbarWorklog(props: {
   }
 
   return (
-    <div class='flex align-center gap-3'>
+    <div class='flex align-center justify-start gap-3'>
       <button
         class="btn btn-sm btn-active btn-primary"
         title="Start new entry"
@@ -315,7 +315,7 @@ function ToolbarTable(props: {
   const isOnlyOneItemAtAll = () => dataStore.items.length === 1;
 
   return (
-    <div class='flex align-center gap-3'>
+    <div class='flex align-center justify-end gap-3'>
       <button
         class="btn btn-sm btn-neutral"
         title="Add row"
