@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, For, on, onCleanup, Show } from 'solid-js';
-import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft, sToolbarRight } from '../styles';
+import { sCell, sCellHeader, sRow, sToolbarLeft, sToolbarRight } from '../styles';
 import { toTimestamp } from '../time';
 import { css, cx } from '@linaria/core';
 import { Portal } from 'solid-js/web';
@@ -67,7 +67,7 @@ export function Worklog() {
 
   return (
     <div>
-      <div class='flex align-center justify-start gap-5 mb-2'>
+      <div class='flex align-center justify-between gap-5 mb-2'>
         <ToolbarWorklog
           isInProgress={isInProgress()}
           setSelectedDate={(date) => setAppStore('selectedDate', date)}
