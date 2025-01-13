@@ -119,7 +119,13 @@ function Toolbar(props: {
           onChange={() => props.setStatRange('day')}
           checked={props.statRange === 'day'}
         />
-        <span>Day <span class="text-xs italic text-gray-500">{intervals().day}</span></span>
+        <span>
+          Day
+          {' '}
+          <span class="text-xs italic text-gray-500">
+            {intervals().day}
+          </span>
+        </span>
       </label>
 
       <label class="label flex items-center gap-2">
@@ -129,7 +135,13 @@ function Toolbar(props: {
           onChange={() => props.setStatRange('week')}
           checked={props.statRange === 'week'}
         />
-        <span>Week <span class="text-xs italic text-gray-500">{intervals().week}</span></span>
+        <span>
+          Week
+          {' '}
+          <span class="text-xs italic text-gray-500">
+            {intervals().week}
+          </span>
+        </span>
       </label>
 
       <label class="label flex items-center gap-2">
@@ -139,7 +151,14 @@ function Toolbar(props: {
           onChange={() => props.setStatRange('month')}
           checked={props.statRange === 'month'}
         />
-        <span>Month <span class="text-xs italic text-gray-500">{intervals().month}</span></span>
+
+        <span>
+          Month
+          {' '}
+          <span class="text-xs italic text-gray-500">
+            {intervals().month}
+          </span>
+        </span>
       </label>
 
       <label class="label flex items-center gap-2">
@@ -149,7 +168,14 @@ function Toolbar(props: {
           onChange={() => props.setStatRange('year')}
           checked={props.statRange === 'year'}
         />
-        <span>Year <span class="text-xs italic text-gray-500">{intervals().year}</span></span>
+
+        <span>
+          Year
+          {' '}
+          <span class="text-xs italic text-gray-500">
+            {intervals().year}
+          </span>
+        </span>
       </label>
 
       <label class="label flex items-center gap-2">
@@ -159,7 +185,9 @@ function Toolbar(props: {
           onChange={() => props.setStatRange('all')}
           checked={props.statRange === 'all'}
         />
-        <span>All time</span>
+        <span>
+          All time
+        </span>
       </label>
     </div>
   );
