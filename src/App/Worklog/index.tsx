@@ -66,7 +66,7 @@ export function Worklog() {
   }
 
   return (
-    <>
+    <div>
       <div class={sToolbar}>
         <ToolbarWorklog
           isInProgress={isInProgress()}
@@ -150,7 +150,7 @@ export function Worklog() {
           )}
         </For>
       </div>
-    </>
+    </div>
   );
 }
 

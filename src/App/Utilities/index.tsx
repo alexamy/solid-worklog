@@ -12,11 +12,13 @@ export function Utilities(props: { reset: () => void }) {
   }
 
   return (
-    <div class={sToolbar}>
-      <div class={sToolbarLeft}>
-        <button onClick={() => downloadJson(dataStore)}>Save backup</button>
-        <button onClick={uploadStore}>Load backup</button>
-        <button onDblClick={() => props.reset()}>Reset (double click)</button>
+    <div>
+      <div class={sToolbar}>
+        <div class={sToolbarLeft}>
+          <button onClick={() => downloadJson(dataStore)}>Save backup</button>
+          <button onClick={uploadStore}>Load backup</button>
+          <button onDblClick={() => props.reset()}>Reset (double click)</button>
+        </div>
       </div>
     </div>
   )

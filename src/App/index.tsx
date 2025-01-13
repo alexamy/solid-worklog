@@ -39,13 +39,10 @@ export function App() {
             <DatePicker />
             Worklog
             <Worklog />
-            <br />
             Statistics
             <Statistics />
-            <br />
             Settings
             <Settings />
-            <br />
             Utilities
             <Utilities reset={persistData.reset} />
           </div>

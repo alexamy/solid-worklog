@@ -11,20 +11,22 @@ export function Settings() {
   }
 
   return (
-    <div class={sToolbar}>
-      <div class={sInput}>
-        <label for="jira-host">
-          Jira host
-        </label>
-        <input
-          id="jira-host"
-          type="text"
-          placeholder="Jira host"
-          aria-label="Jira host"
-          size={60}
-          value={appStore.jiraHost}
-          onInput={(e) => setJiraHost(e.target.value)}
-        />
+    <div>
+      <div class={sToolbar}>
+        <div class={sInput}>
+          <label for="jira-host">
+            Jira host
+          </label>
+          <input
+            id="jira-host"
+            type="text"
+            placeholder="Jira host"
+            aria-label="Jira host"
+            size={60}
+            value={appStore.jiraHost}
+            onInput={(e) => setJiraHost(e.target.value)}
+          />
+        </div>
       </div>
     </div>
   )

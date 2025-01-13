@@ -63,7 +63,7 @@ export function Statistics() {
   }));
 
   return (
-    <>
+    <div>
       <Toolbar
         selectedDate={selectedDate()}
         statRange={range()}
@@ -93,7 +93,7 @@ export function Statistics() {
         <div class={cx(sCell)}></div>
       </div>
     </div>
-    </>
+    </div>
   );
 }
 

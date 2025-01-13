@@ -29,7 +29,6 @@ export const sToolbar = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0;
   line-height: 1.5;
 `;
 
