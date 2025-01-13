@@ -1,7 +1,6 @@
-import { createEffect, createMemo, createSignal, on, onMount, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal, onMount, Show } from 'solid-js';
 import { toTimestamp } from '../time';
 import { useAppContext } from '../store/app';
-import { sToolbarLeft } from '../styles';
 import { css } from '@linaria/core';
 import { useNowContext } from '../store/now';
 import { useDataContext } from '../store/data';
@@ -52,7 +51,7 @@ export function DatePicker() {
         {', '}
         {toTimestamp(now())}
         <Show when={isInProgress()}>
-          <div class={sLamp} />
+          <div class='w-[8px] h-[8px] rounded-full bg-red-600 shadow shadow-red-600' />
         </Show>
       </div>
       <div class='flex items-center justify-end gap-3'>
@@ -114,14 +113,3 @@ function ThemeController() {
     </label>
   );
 }
-
-// styles
-const sLamp = css`
-  width: 8px;
-  height: 8px;
-  background-color: #c23616;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #c23616;
-  animation: lamp-fade 2s 1 ease-in-out;
-  animation-fill-mode: forwards;
-`;
