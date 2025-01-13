@@ -1,10 +1,9 @@
 import superjson from 'superjson';
 import { DataStore } from '../store/data';
-import { sToolbar, sToolbarLeft } from '../styles';
 import { useDataContext } from '../store/data';
 
-export function Utilities(props: { reset: () => void }) {
-  const [dataStore, setDataStore] = useDataContext();
+export function Utilities() {
+  const [dataStore, setDataStore, { resetToDefault, resetEmpty }] = useDataContext();
 
   async function uploadStore() {
     const data = await uploadJson();
@@ -13,11 +12,14 @@ export function Utilities(props: { reset: () => void }) {
 
   return (
     <div>
-      <div class={sToolbar}>
-        <div class={sToolbarLeft}>
+      <div class='flex items-center justify-between mb-2'>
+        <div class='flex align-center justify-start gap-3'>
           <button class="btn btn-sm btn-neutral" onClick={() => downloadJson(dataStore)}>Save backup</button>
           <button class="btn btn-sm btn-neutral" onClick={uploadStore}>Load backup</button>
-          <button class="btn btn-sm btn-neutral" onDblClick={() => props.reset()}>Reset (double click)</button>
+        </div>
+        <div class='flex align-center justify-end gap-3'>
+          <button class="btn btn-sm btn-warning" onDblClick={() => resetEmpty()}>Remove all</button>
+          <button class="btn btn-sm btn-warning" onDblClick={() => resetToDefault()}>Reset</button>
         </div>
       </div>
     </div>

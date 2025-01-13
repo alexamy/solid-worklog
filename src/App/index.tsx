@@ -17,14 +17,14 @@ export function App() {
   const appStore = createAppStore();
   const dataStore = createDataStore();
 
-  const persistApp = persistObject(
+  persistObject(
     appStore[0],
     appStore[1],
     getDefaultAppStore,
     'solid-worklog-app',
   );
 
-  const persistData = persistObject(
+  persistObject(
     dataStore[0],
     dataStore[1],
     getDefaultDataStore,
@@ -44,7 +44,7 @@ export function App() {
             <h2 class="text-2xl mt-6 mb-2">Settings</h2>
             <Settings />
             <h2 class="text-2xl mt-6 mb-2">Utilities</h2>
-            <Utilities reset={persistData.reset} />
+            <Utilities />
           </div>
         </DataContext.Provider>
       </AppContext.Provider>

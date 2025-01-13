@@ -139,6 +139,17 @@ export function createDataStore() {
     }));
   }
 
+  // reset methods, danger zone
+  function resetToDefault(): void {
+    setDataStore(getDefaultDataStore());
+  }
+
+  function resetEmpty(): void {
+    setDataStore({ items: [
+      { id: '1', start: new Date(), end: new Date(), description: '', tag: '' }
+    ] });
+  }
+
   return [dataStore, setDataStore, {
     isInProgress,
 
@@ -155,6 +166,9 @@ export function createDataStore() {
     removeRow,
     moveRowUp,
     moveRowDown,
+
+    resetToDefault,
+    resetEmpty,
   }] as const;
 }
 
