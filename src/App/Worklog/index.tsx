@@ -102,7 +102,7 @@ export function Worklog() {
             <div class={cx(sRow)}
               classList={{
                 'bg-gray-800': selectedItemId() === item.id,
-                [sRowIdle]: item.tag === 'idle',
+                'text-gray-600': item.tag === 'idle',
               }}
               onClick={() => setSelectedItemId(item.id)}
             >
@@ -387,14 +387,6 @@ const sTable = css`
   grid-template-columns: auto auto auto auto auto;
 `;
 
-const sRowSelected = css`
-  background-color: #161616;
-`;
-
-const sRowIdle = css`
-  color: #999;
-`;
-
 const sCellSpan3 = css`
   grid-column: span 3;
 `;
@@ -406,11 +398,6 @@ const sCellEditable = css`
 const sCellEditableText = css`
   min-width: 120px;
   justify-content: flex-start;
-`;
-
-const sCellGrayed = css`
-  color: #555;
-  font-style: italic;
 `;
 
 const sTagList = css`
