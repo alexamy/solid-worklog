@@ -35,7 +35,7 @@ export function DatePicker() {
         onClick={() => moveDate(-1)}
       >{'<'}</button>
       <input
-        class="w-32"
+        class="w-auto px-2 py-1"
         type="date"
         // FIX: iso string is not a local date string
         value={selectedDate().toISOString().split('T')[0]}
