@@ -14,4 +14,10 @@
   .table-statistics td:nth-child(2) {
     @apply w-36;
   }
+
+  .table-worklog td:nth-child(1),
+  .table-worklog td:nth-child(2),
+  .table-worklog td:nth-child(3) {
+    @apply w-24;
+  }
 }

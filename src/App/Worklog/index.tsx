@@ -91,65 +91,68 @@ export function Worklog() {
         onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
 
-      <div class={sTable}>
-        <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
-          <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
-          <div class={cx(sCell, sCellHeader)}>Tag</div>
-          <div class={cx(sCell, sCellHeader)}>Description</div>
-        </div>
-        <For each={itemsAtDate()}>
-          {(item) => (
-            <div class={cx(sRow)}
-              classList={{
-                'bg-gray-800': selectedItemId() === item.id,
-                'text-gray-600': item.tag === 'idle',
-              }}
-              onClick={() => setSelectedItemId(item.id)}
-            >
-              <div
-                class={cx(sCell, sCellEditable)}
-                contentEditable
-                onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
+      <table class="table table-worklog">
+        <thead>
+          <tr class="cursor-pointer">
+            <th>Start</th>
+            <th>Duration</th>
+            <th>Finish</th>
+            <th>Tag</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <For each={itemsAtDate()}>
+            {(item) => (
+              <tr
+                classList={{
+                  'bg-gray-800': selectedItemId() === item.id,
+                  'text-gray-600': item.tag === 'idle',
+                }}
+                onClick={() => setSelectedItemId(item.id)}
               >
-                {toTimestamp(item.start)}
-              </div>
-              <div class={sCell}>
-                {calculateDuration(item.start, item.end ?? now())}
-              </div>
-              <div
-                class={cx(sCell, sCellEditable)}
-                classList={{ 'text-gray-600': !item.end }}
-                contentEditable={Boolean(item.end)}
-                onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {toTimestamp(item.end ?? now())}
-              </div>
-              <div
-                data-item-id={item.id}
-                data-tag={true}
-                class={cx(sCell, sCellEditable, sCellEditableText)}
-                contentEditable
-                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => onTagCellKeyDown(e)}
-                onKeyUp={(e) => onTagCellKeyUp(e)}
-                onClick={(e) => tagList.setParent(e)}
-              >
-                {item.tag}
-              </div>
-              <div
-                class={cx(sCell, sCellEditable, sCellEditableText)}
-                contentEditable
-                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {item.description}
-              </div>
-            </div>
-          )}
-        </For>
-      </div>
+                <td
+                  contentEditable
+                  onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
+                  onKeyDown={(e) => onCellKeyDown(e)}
+                >
+                  {toTimestamp(item.start)}
+                </td>
+                <td>
+                  {calculateDuration(item.start, item.end ?? now())}
+                </td>
+                <td
+                  classList={{ 'text-gray-600': !item.end }}
+                  contentEditable={Boolean(item.end)}
+                  onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
+                  onKeyDown={(e) => onCellKeyDown(e)}
+                >
+                  {toTimestamp(item.end ?? now())}
+                </td>
+                <td
+                  data-item-id={item.id}
+                  data-tag={true}
+                  contentEditable
+                  onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                  onKeyDown={(e) => onTagCellKeyDown(e)}
+                  onKeyUp={(e) => onTagCellKeyUp(e)}
+                  onClick={(e) => tagList.setParent(e)}
+                >
+                  {item.tag}
+                </td>
+                <td
+                  contentEditable
+                  onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
+                  onKeyDown={(e) => onCellKeyDown(e)}
+                >
+                  {item.description}
+                </td>
+              </tr>
+            )}
+          </For>
+        </tbody>
+      </table>
     </div>
   );
 }
