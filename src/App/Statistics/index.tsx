@@ -70,29 +70,31 @@ export function Statistics() {
         setStatRange={setRange}
       />
 
-      <div class={sTableStats}>
-        <div class={sRow}>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-          Pomodoros
-        </div>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-          Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
-        </div>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>
-          Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
-        </div>
-      </div>
+      <div class="overflow-x-auto">
+        <table class='table'>
+          <div class={sRow}>
+            <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
+              Pomodoros
+            </div>
+            <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
+              Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+            </div>
+            <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>
+              Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+            </div>
+          </div>
 
-      <For each={sortedStats().entries}>
-        {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
-      </For>
+          <For each={sortedStats().entries}>
+            {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
+          </For>
 
-      <div class={sRow}>
-        <div class={cx(sCell)}></div>
-        <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
-        <div class={cx(sCell)}></div>
+          <div class={sRow}>
+            <div class={cx(sCell)}></div>
+            <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
+            <div class={cx(sCell)}></div>
+          </div>
+        </table>
       </div>
-    </div>
     </div>
   );
 }
