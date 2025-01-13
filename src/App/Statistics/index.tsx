@@ -112,9 +112,9 @@ function Toolbar(props: {
 
   return (
     <div class='flex items-center justify-start gap-5 mb-2'>
-      <label>
+      <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs"
+          class="radio radio-xs translate-y-[-2px]"
           type="radio"  name="timeRange" value="day"
           onChange={() => props.setStatRange('day')}
           checked={props.statRange === 'day'}
@@ -122,9 +122,9 @@ function Toolbar(props: {
         Day ({intervals().day})
       </label>
 
-      <label>
+      <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs"
+          class="radio radio-xs translate-y-[-2px]"
           type="radio" name="timeRange" value="week"
           onChange={() => props.setStatRange('week')}
           checked={props.statRange === 'week'}
@@ -132,9 +132,9 @@ function Toolbar(props: {
         Week ({intervals().week})
       </label>
 
-      <label>
+      <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs"
+          class="radio radio-xs translate-y-[-2px]  "
           type="radio" name="timeRange" value="month"
           onChange={() => props.setStatRange('month')}
           checked={props.statRange === 'month'}
@@ -142,9 +142,9 @@ function Toolbar(props: {
         Month ({intervals().month})
       </label>
 
-      <label>
+      <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs"
+          class="radio radio-xs translate-y-[-2px]"
           type="radio" name="timeRange" value="year"
           onChange={() => props.setStatRange('year')}
           checked={props.statRange === 'year'}
@@ -152,9 +152,9 @@ function Toolbar(props: {
         Year ({intervals().year})
       </label>
 
-      <label>
+      <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs"
+          class="radio radio-xs translate-y-[-2px]"
           type="radio" name="timeRange" value="all"
           onChange={() => props.setStatRange('all')}
           checked={props.statRange === 'all'}
