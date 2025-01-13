@@ -42,7 +42,7 @@ export function App() {
             <Statistics />
             <h2 class="text-2xl mt-6 mb-2">Settings</h2>
             <Settings />
-            <h2 class="text-2xl mt-6 mb-2">Utilities</h2>
+            <div class="mt-6"/>
             <Utilities />
           </div>
         </DataContext.Provider>
