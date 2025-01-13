@@ -117,7 +117,7 @@ function Toolbar(props: {
   } satisfies Record<StatRange, string>));
 
   return (
-    <div class='flex items-center justify-start gap-3 mb-2'>
+    <div class='flex items-center justify-start gap-3'>
       <label class="label flex items-center gap-2">
         <input
           class="radio radio-primary radio-xs translate-y-[-1px]"

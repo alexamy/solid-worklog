@@ -34,4 +34,8 @@
       @apply w-20 text-center;
     }
   }
+
+  .label {
+    padding-top: 0;
+  }
 }

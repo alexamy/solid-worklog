@@ -14,19 +14,20 @@ export function Settings() {
     <div>
       <div class={sToolbar}>
         <div class={sInput}>
-          <label for="jira-host">
-            Jira host
+          <label class="form-control w-full max-w-md">
+            <div class="label">
+              <span class="label-text">Jira host</span>
+            </div>
+            <input
+              class="input input-bordered w-full max-w-md"
+              id="jira-host"
+              type="text"
+              aria-label="Jira host"
+              size={60}
+              value={appStore.jiraHost}
+              onInput={(e) => setJiraHost(e.target.value)}
+            />
           </label>
-          <input
-            class="input input-bordered w-full max-w-md"
-            id="jira-host"
-            type="text"
-            placeholder="Jira host"
-            aria-label="Jira host"
-            size={60}
-            value={appStore.jiraHost}
-            onInput={(e) => setJiraHost(e.target.value)}
-          />
         </div>
       </div>
     </div>

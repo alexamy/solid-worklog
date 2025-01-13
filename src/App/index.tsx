@@ -35,15 +35,15 @@ export function App() {
     <NowContext.Provider value={now}>
       <AppContext.Provider value={appStore}>
         <DataContext.Provider value={dataStore}>
-          <div class='container max-w-screen-lg px-8 py-2 flex flex-col gap-4'>
+          <div class='container max-w-screen-lg px-8 py-2 flex flex-col'>
             <DatePicker />
-            <h2 class="text-2xl">Worklog</h2>
+            <h2 class="text-2xl mt-6 mb-2">Worklog</h2>
             <Worklog />
-            <h2 class="text-2xl">Statistics</h2>
+            <h2 class="text-2xl mt-6 mb-2">Statistics</h2>
             <Statistics />
-            <h2 class="text-2xl">Settings</h2>
+            <h2 class="text-2xl mt-6 mb-2">Settings</h2>
             <Settings />
-            <h2 class="text-2xl">Utilities</h2>
+            <h2 class="text-2xl mt-6 mb-2">Utilities</h2>
             <Utilities reset={persistData.reset} />
           </div>
         </DataContext.Provider>
