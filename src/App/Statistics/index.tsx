@@ -114,52 +114,52 @@ function Toolbar(props: {
     <div class='flex items-center justify-start gap-5 mb-2'>
       <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs translate-y-[-2px]"
+          class="radio radio-primary radio-xs translate-y-[-1px]"
           type="radio"  name="timeRange" value="day"
           onChange={() => props.setStatRange('day')}
           checked={props.statRange === 'day'}
         />
-        Day ({intervals().day})
+        <span>Day <span class="text-xs italic text-gray-500">{intervals().day}</span></span>
       </label>
 
       <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs translate-y-[-2px]"
+          class="radio radio-primary radio-xs translate-y-[-1px]"
           type="radio" name="timeRange" value="week"
           onChange={() => props.setStatRange('week')}
           checked={props.statRange === 'week'}
         />
-        Week ({intervals().week})
+        <span>Week <span class="text-xs italic text-gray-500">{intervals().week}</span></span>
       </label>
 
       <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs translate-y-[-2px]  "
+          class="radio radio-primary radio-xs translate-y-[-1px]"
           type="radio" name="timeRange" value="month"
           onChange={() => props.setStatRange('month')}
           checked={props.statRange === 'month'}
         />
-        Month ({intervals().month})
+        <span>Month <span class="text-xs italic text-gray-500">{intervals().month}</span></span>
       </label>
 
       <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs translate-y-[-2px]"
+          class="radio radio-primary radio-xs translate-y-[-1px]"
           type="radio" name="timeRange" value="year"
           onChange={() => props.setStatRange('year')}
           checked={props.statRange === 'year'}
         />
-        Year ({intervals().year})
+        <span>Year <span class="text-xs italic text-gray-500">{intervals().year}</span></span>
       </label>
 
       <label class="label flex items-center gap-2">
         <input
-          class="radio radio-xs translate-y-[-2px]"
+          class="radio radio-primary radio-xs translate-y-[-1px]"
           type="radio" name="timeRange" value="all"
           onChange={() => props.setStatRange('all')}
           checked={props.statRange === 'all'}
         />
-        All time
+        <span>All time</span>
       </label>
     </div>
   );
