@@ -7,6 +7,10 @@
     @apply border-b-[1px] border-b-gray-600;
   }
 
+  .table td[contenteditable] {
+    @apply cursor-text outline-none;
+  }
+
   .table-statistics td:nth-child(1) {
     @apply w-36;
   }
