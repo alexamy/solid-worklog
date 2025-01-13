@@ -47,6 +47,8 @@ export function DatePicker() {
           disabled={isToday()}
           onClick={() => moveDate(1)}
         >{'>'}</button>
+        {selectedDate().toLocaleDateString(undefined, { weekday: 'long' })}
+        {', '}
         {toTimestamp(now())}
         <Show when={isInProgress()}>
           <div class={sLamp} />
