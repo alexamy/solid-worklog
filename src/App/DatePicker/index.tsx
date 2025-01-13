@@ -23,8 +23,8 @@ export function DatePicker() {
   return (
     <div class={sCurrentDate}>
       <div class={sToolbarLeft}>
-        <button disabled={isToday()} onClick={() => setSelectedDate(new Date())}>Today</button>
-        <button onClick={() => moveDate(-1)}>{'<'}</button>
+        <button class="btn btn-sm" disabled={isToday()} onClick={() => setSelectedDate(new Date())}>Today</button>
+        <button class="btn btn-sm" onClick={() => moveDate(-1)}>{'<'}</button>
         <input
           type="date"
           // FIX: iso string is not a local date string
@@ -33,7 +33,7 @@ export function DatePicker() {
           onChange={(e) => setSelectedDate(new Date(e.target.value))}
           style={{ width: '110px' }}
         />
-        <button disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
+        <button class="btn btn-sm" disabled={isToday()} onClick={() => moveDate(1)}>{'>'}</button>
         {toTimestamp(now())}
         <Lamp trigger={now} />
       </div>
