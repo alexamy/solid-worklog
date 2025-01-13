@@ -34,7 +34,7 @@ export function App() {
     <NowContext.Provider value={now}>
       <AppContext.Provider value={appStore}>
         <DataContext.Provider value={dataStore}>
-          <div class='container max-w-screen-lg px-8 py-2 flex flex-col'>
+          <div class='container max-w-screen-md px-8 py-2 flex flex-col'>
             <DatePicker />
             <h2 class="text-2xl mt-6 mb-2">Worklog</h2>
             <Worklog />
