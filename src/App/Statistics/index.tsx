@@ -73,7 +73,7 @@ export function Statistics() {
       <div class="overflow-x-auto">
         <table class="table">
           <thead>
-            <tr>
+            <tr class="cursor-pointer">
               <th onClick={() => changeSorting('duration')}>
                 Pomodoros
               </th>
@@ -240,9 +240,11 @@ function PomodoroCell(props: { tag: string, amount: number }) {
 }
 
 function PomodoroIcon(props: { amount?: number }) {
+  const size = 20;
+
   const amount = () => props.amount ?? 1;
   const width = () => {
-    const full = amount() * 24;
+    const full = amount() * size;
     const result = full >= 10 ? full : 0;
     return result.toFixed(2);
   }
@@ -250,7 +252,7 @@ function PomodoroIcon(props: { amount?: number }) {
   return <img
     classList={{ [sPomodoroGrayed]: amount() < 1 }}
     width={width()}
-    height={24}
+    height={size}
     src={pomodoroSvg}
   />;
 }
