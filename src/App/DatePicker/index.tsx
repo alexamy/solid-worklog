@@ -56,13 +56,13 @@ export function DatePicker() {
         </Show>
       </div>
       <div class='flex items-center justify-end gap-3'>
-        <ThemeController theme="dark" />
+        <ThemeController />
       </div>
     </div>
   );
 }
 
-function ThemeController(props: { theme: 'light' | 'dark' }) {
+function ThemeController() {
   return (
     <label class="flex cursor-pointer gap-2">
       <svg
@@ -79,7 +79,7 @@ function ThemeController(props: { theme: 'light' | 'dark' }) {
         <path
           d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
       </svg>
-      <input type="checkbox" value={props.theme} class="toggle theme-controller" />
+      <input type="checkbox" value="dark" class="toggle theme-controller" />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
