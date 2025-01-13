@@ -123,7 +123,9 @@ export function Worklog() {
                   {calculateDuration(item.start, item.end ?? now())}
                 </td>
                 <td
-                  classList={{ 'text-gray-600': !item.end }}
+                  classList={{
+                    'text-transparent hover:text-gray-600': !item.end
+                  }}
                   contentEditable={Boolean(item.end)}
                   onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
                   onKeyDown={(e) => onCellKeyDown(e)}
