@@ -15,9 +15,9 @@ export function Utilities(props: { reset: () => void }) {
     <div>
       <div class={sToolbar}>
         <div class={sToolbarLeft}>
-          <button class="btn btn-sm" onClick={() => downloadJson(dataStore)}>Save backup</button>
-          <button class="btn btn-sm" onClick={uploadStore}>Load backup</button>
-          <button class="btn btn-sm" onDblClick={() => props.reset()}>Reset (double click)</button>
+          <button class="btn btn-sm btn-neutral" onClick={() => downloadJson(dataStore)}>Save backup</button>
+          <button class="btn btn-sm btn-neutral" onClick={uploadStore}>Load backup</button>
+          <button class="btn btn-sm btn-neutral" onDblClick={() => props.reset()}>Reset (double click)</button>
         </div>
       </div>
     </div>

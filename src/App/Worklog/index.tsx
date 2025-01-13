@@ -265,25 +265,25 @@ function ToolbarWorklog(props: {
   return (
     <div class={sToolbarLeft}>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-active btn-primary"
         title="Start new entry"
         disabled={props.isInProgress}
         onClick={() => start()}
       >Start</button>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-neutral"
         title="Add completed entry between last entry and now"
         disabled={props.isInProgress}
         onClick={() => fill()}
       >Fill</button>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-neutral"
         title="Finish current entry and start new one"
         disabled={!props.isInProgress}
         onClick={() => tap()}
       >Tap</button>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-active btn-primary"
         title="Finish current entry"
         disabled={!props.isInProgress}
         onClick={() => finish()}
@@ -314,30 +314,30 @@ function ToolbarTable(props: {
   return (
     <div class={sToolbarRight}>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-neutral"
         title="Add row"
         onClick={() => addRow(props.selectedDate)}
       >+</button>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-neutral"
         title="Duplicate row"
         disabled={!props.selectedItemId}
         onClick={() => duplicateRow(props.selectedItemId!)}
       >++</button>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-neutral"
         title="Move row up"
         disabled={!props.selectedItemId || isFirstItem()}
         onClick={() => moveRowUp(props.selectedItemId!)}
       >↑</button>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-neutral"
         title="Move row down"
         disabled={!props.selectedItemId || isLastItem()}
         onClick={() => moveRowDown(props.selectedItemId!)}
       >↓</button>
       <button
-        class="btn btn-sm"
+        class="btn btn-sm btn-neutral"
         title="Remove row"
         disabled={!props.selectedItemId || isOnlyOneItemAtAll()}
         onClick={() => removeRow(props.selectedItemId!, props.setSelectedItemId)}
