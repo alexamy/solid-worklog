@@ -15,6 +15,7 @@ export function DatePicker() {
   const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
 
   const isToday = createMemo(() => selectedDate().toDateString() === new Date().toDateString());
+  const dayOfWeek = () => selectedDate().toLocaleDateString(undefined, { weekday: 'long' });
 
   function moveDate(delta: number) {
     const next = new Date(selectedDate());
@@ -23,37 +24,35 @@ export function DatePicker() {
   }
 
   return (
-    <div class={sCurrentDate}>
-      <div class={sToolbarLeft}>
-        <button
-          class="btn btn-xs btn-neutral"
-          disabled={isToday()}
-          onClick={() => setSelectedDate(new Date())}
-        >Today</button>
-        <button
-          class="btn btn-xs btn-neutral"
-          onClick={() => moveDate(-1)}
-        >{'<'}</button>
-        <input
-          type="date"
-          // FIX: iso string is not a local date string
-          value={selectedDate().toISOString().split('T')[0]}
-          max={new Date().toISOString().split('T')[0]}
-          onChange={(e) => setSelectedDate(new Date(e.target.value))}
-          style={{ width: '110px' }}
-        />
-        <button
-          class="btn btn-xs btn-neutral"
-          disabled={isToday()}
-          onClick={() => moveDate(1)}
-        >{'>'}</button>
-        {selectedDate().toLocaleDateString(undefined, { weekday: 'long' })}
-        {', '}
-        {toTimestamp(now())}
-        <Show when={isInProgress()}>
-          <div class={sLamp} />
-        </Show>
-      </div>
+    <div class='flex items-center justify-start gap-3'>
+      <button
+        class="btn btn-xs btn-neutral"
+        disabled={isToday()}
+        onClick={() => setSelectedDate(new Date())}
+      >Today</button>
+      <button
+        class="btn btn-xs btn-neutral"
+        onClick={() => moveDate(-1)}
+      >{'<'}</button>
+      <input
+        type="date"
+        // FIX: iso string is not a local date string
+        value={selectedDate().toISOString().split('T')[0]}
+        max={new Date().toISOString().split('T')[0]}
+        onChange={(e) => setSelectedDate(new Date(e.target.value))}
+        style={{ width: '110px' }}
+      />
+      <button
+        class="btn btn-xs btn-neutral"
+        disabled={isToday()}
+        onClick={() => moveDate(1)}
+      >{'>'}</button>
+      {dayOfWeek()}
+      {', '}
+      {toTimestamp(now())}
+      <Show when={isInProgress()}>
+        <div class={sLamp} />
+      </Show>
     </div>
   );
 }

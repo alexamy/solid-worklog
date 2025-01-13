@@ -111,7 +111,7 @@ function Toolbar(props: {
   } satisfies Record<StatRange, string>));
 
   return (
-    <div class='flex align-center justify-start gap-5 mb-2'>
+    <div class='flex items-center justify-start gap-5 mb-2'>
       <label>
         <input type="radio" name="timeRange" value="day"
           onChange={() => props.setStatRange('day')}

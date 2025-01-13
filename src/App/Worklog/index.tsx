@@ -67,7 +67,7 @@ export function Worklog() {
 
   return (
     <div>
-      <div class='flex align-center justify-between gap-5 mb-2'>
+      <div class='flex items-center justify-between gap-5 mb-2'>
         <ToolbarWorklog
           isInProgress={isInProgress()}
           setSelectedDate={(date) => setAppStore('selectedDate', date)}
