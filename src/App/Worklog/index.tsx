@@ -101,7 +101,7 @@ export function Worklog() {
           {(item) => (
             <div class={cx(sRow)}
               classList={{
-                [sRowSelected]: selectedItemId() === item.id,
+                'bg-gray-800': selectedItemId() === item.id,
                 [sRowIdle]: item.tag === 'idle',
               }}
               onClick={() => setSelectedItemId(item.id)}
@@ -119,7 +119,7 @@ export function Worklog() {
               </div>
               <div
                 class={cx(sCell, sCellEditable)}
-                classList={{ [sCellGrayed]: !item.end }}
+                classList={{ 'text-gray-600': !item.end }}
                 contentEditable={Boolean(item.end)}
                 onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
                 onKeyDown={(e) => onCellKeyDown(e)}
