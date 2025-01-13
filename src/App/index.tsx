@@ -37,13 +37,13 @@ export function App() {
         <DataContext.Provider value={dataStore}>
           <div class='container max-w-screen-lg px-8 py-2 flex flex-col gap-4'>
             <DatePicker />
-            Worklog
+            <h2 class="text-2xl">Worklog</h2>
             <Worklog />
-            Statistics
+            <h2 class="text-2xl">Statistics</h2>
             <Statistics />
-            Settings
+            <h2 class="text-2xl">Settings</h2>
             <Settings />
-            Utilities
+            <h2 class="text-2xl">Utilities</h2>
             <Utilities reset={persistData.reset} />
           </div>
         </DataContext.Provider>
