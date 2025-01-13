@@ -35,7 +35,7 @@ export function App() {
     <NowContext.Provider value={now}>
       <AppContext.Provider value={appStore}>
         <DataContext.Provider value={dataStore}>
-          <div class={sApp}>
+          <div class='container max-w-screen-lg px-8 flex flex-col gap-4'>
             <DatePicker />
             Worklog
             <Worklog />
@@ -54,10 +54,3 @@ export function App() {
     </NowContext.Provider>
   )
 }
-
-const sApp = css`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 500px;
-`;
