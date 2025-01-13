@@ -4,9 +4,11 @@ import { useAppContext } from '../store/app';
 import { sToolbarLeft } from '../styles';
 import { css } from '@linaria/core';
 import { useNowContext } from '../store/now';
+import { useDataContext } from '../store/data';
 
 export function DatePicker() {
   const [appStore, setAppStore] = useAppContext();
+  const [_1, _2, { isInProgress }] = useDataContext();
   const now = useNowContext();
 
   const selectedDate = () => appStore.selectedDate;
@@ -46,25 +48,11 @@ export function DatePicker() {
           onClick={() => moveDate(1)}
         >{'>'}</button>
         {toTimestamp(now())}
-        <Lamp trigger={now} />
+        <Show when={isInProgress()}>
+          <div class={sLamp} />
+        </Show>
       </div>
     </div>
-  );
-}
-
-function Lamp(props: { trigger: () => void }) {
-  let element!: HTMLDivElement;
-
-  // trigger element switch between main and fallback in Show component
-  const [flicker, setFlicker] = createSignal(false);
-  createEffect(on(() => props.trigger(), () => {
-    setFlicker(flick => !flick);
-  }));
-
-  return (
-    <Show when={flicker()} fallback={<div ref={element} class={sLamp} />}>
-      <div ref={element} class={sLamp} />
-    </Show>
   );
 }
 
