@@ -1,7 +1,6 @@
-import { createEffect, createMemo, createSignal, onMount, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal, Show } from 'solid-js';
 import { toTimestamp } from '../time';
 import { useAppContext } from '../store/app';
-import { css } from '@linaria/core';
 import { useNowContext } from '../store/now';
 import { useDataContext } from '../store/data';
 
