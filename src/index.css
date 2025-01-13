@@ -26,12 +26,20 @@
     td:nth-child(1), td:nth-child(2) {
       @apply w-36 text-center;
     }
+
+    td:nth-child(3) {
+      @apply pr-10;
+    }
   }
 
   .table-worklog {
     th:nth-child(1), th:nth-child(2), th:nth-child(3),
     td:nth-child(1), td:nth-child(2), td:nth-child(3) {
       @apply w-20 text-center;
+    }
+
+    td:nth-child(4), td:nth-child(5) {
+      @apply pr-10;
     }
   }
 
