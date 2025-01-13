@@ -24,36 +24,40 @@ export function DatePicker() {
   }
 
   return (
-    <div class='flex items-center justify-start gap-3'>
-      <button
-        class="btn btn-xs btn-neutral"
-        disabled={isToday()}
-        onClick={() => setSelectedDate(new Date())}
-      >Today</button>
-      <button
-        class="btn btn-xs btn-neutral"
-        onClick={() => moveDate(-1)}
-      >{'<'}</button>
-      <input
-        class="w-auto px-2 py-1"
-        type="date"
-        // FIX: iso string is not a local date string
-        value={selectedDate().toISOString().split('T')[0]}
-        max={new Date().toISOString().split('T')[0]}
-        onChange={(e) => setSelectedDate(new Date(e.target.value))}
-      />
-      <button
-        class="btn btn-xs btn-neutral"
-        disabled={isToday()}
-        onClick={() => moveDate(1)}
-      >{'>'}</button>
-      {dayOfWeek()}
-      {', '}
-      {toTimestamp(now())}
-      <Show when={isInProgress()}>
-        <div class={sLamp} />
-      </Show>
-      <ThemeController theme="dark" />
+    <div class='flex items-center justify-between'>
+      <div class='flex items-center justify-start gap-3'>
+        <button
+          class="btn btn-xs btn-neutral"
+          disabled={isToday()}
+          onClick={() => setSelectedDate(new Date())}
+        >Today</button>
+        <button
+          class="btn btn-xs btn-neutral"
+          onClick={() => moveDate(-1)}
+        >{'<'}</button>
+        <input
+          class="w-auto px-2 py-1"
+          type="date"
+          // FIX: iso string is not a local date string
+          value={selectedDate().toISOString().split('T')[0]}
+          max={new Date().toISOString().split('T')[0]}
+          onChange={(e) => setSelectedDate(new Date(e.target.value))}
+        />
+        <button
+          class="btn btn-xs btn-neutral"
+          disabled={isToday()}
+          onClick={() => moveDate(1)}
+        >{'>'}</button>
+        {dayOfWeek()}
+        {', '}
+        {toTimestamp(now())}
+        <Show when={isInProgress()}>
+          <div class={sLamp} />
+        </Show>
+      </div>
+      <div class='flex items-center justify-end gap-3'>
+        <ThemeController theme="dark" />
+      </div>
     </div>
   );
 }
