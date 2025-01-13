@@ -124,7 +124,7 @@ export function Worklog() {
                 </td>
                 <td
                   classList={{
-                    'text-transparent hover:text-gray-600': !item.end
+                    'text-gray-600': !item.end
                   }}
                   contentEditable={Boolean(item.end)}
                   onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
