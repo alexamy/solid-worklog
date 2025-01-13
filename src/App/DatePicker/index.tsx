@@ -26,12 +26,12 @@ export function DatePicker() {
     <div class={sCurrentDate}>
       <div class={sToolbarLeft}>
         <button
-          class="btn btn-sm btn-neutral"
+          class="btn btn-xs btn-neutral"
           disabled={isToday()}
           onClick={() => setSelectedDate(new Date())}
         >Today</button>
         <button
-          class="btn btn-sm btn-neutral"
+          class="btn btn-xs btn-neutral"
           onClick={() => moveDate(-1)}
         >{'<'}</button>
         <input
@@ -43,7 +43,7 @@ export function DatePicker() {
           style={{ width: '110px' }}
         />
         <button
-          class="btn btn-sm btn-neutral"
+          class="btn btn-xs btn-neutral"
           disabled={isToday()}
           onClick={() => moveDate(1)}
         >{'>'}</button>
