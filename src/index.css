@@ -11,12 +11,20 @@
     @apply cursor-text outline-none;
   }
 
-  .table-statistics td:nth-child(1) {
+  .table td:not([contenteditable]) {
+    @apply cursor-default;
+  }
+
+  .table-statistics td:nth-child(1),
+  .table-statistics td:nth-child(2) {
     @apply w-36;
   }
 
+  .table-statistics th:nth-child(1),
+  .table-statistics th:nth-child(2),
+  .table-statistics td:nth-child(1),
   .table-statistics td:nth-child(2) {
-    @apply w-36;
+    @apply text-center;
   }
 
   .table-worklog td:nth-child(1),
@@ -27,10 +35,7 @@
 
   .table-worklog th:nth-child(1),
   .table-worklog th:nth-child(2),
-  .table-worklog th:nth-child(3) {
-    @apply text-center;
-  }
-
+  .table-worklog th:nth-child(3),
   .table-worklog td:nth-child(1),
   .table-worklog td:nth-child(2),
   .table-worklog td:nth-child(3) {
