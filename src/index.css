@@ -3,4 +3,7 @@
 @tailwind utilities;
 
 @layer components {
+  .table tr {
+    @apply border-b-[1px] border-b-gray-600;
+  }
 }

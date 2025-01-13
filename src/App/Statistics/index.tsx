@@ -71,28 +71,32 @@ export function Statistics() {
       />
 
       <div class="overflow-x-auto">
-        <table class='table'>
-          <div class={sRow}>
-            <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-              Pomodoros
-            </div>
-            <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-              Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
-            </div>
-            <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>
-              Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
-            </div>
-          </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th onClick={() => changeSorting('duration')}>
+                Pomodoros
+              </th>
+              <th onClick={() => changeSorting('duration')}>
+                Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+              </th>
+              <th onClick={() => changeSorting('tag')}>
+                Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+              </th>
+            </tr>
+          </thead>
 
-          <For each={sortedStats().entries}>
-            {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
-          </For>
+          <tbody>
+            <For each={sortedStats().entries}>
+              {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
+            </For>
 
-          <div class={sRow}>
-            <div class={cx(sCell)}></div>
-            <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
-            <div class={cx(sCell)}></div>
-          </div>
+            <tr>
+              <td></td>
+              <td><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></td>
+              <td></td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -197,17 +201,19 @@ function Toolbar(props: {
 
 function ItemRow(props: StatEntry & { jiraHost: string }) {
   return (
-    <div class={sRow}>
-      <div class={cx(sCell, sCellPomodoro)}>
+    <tr>
+      <td class="flex gap-1">
         <Show when={props.pomodoros > 0}>
           <PomodoroCell tag={props.tag} amount={props.pomodoros} />
         </Show>
-      </div>
-      <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
-      <div class={cx(sCell, sCellText)}>
+      </td>
+      <td>
+        {minutesToHoursMinutes(props.duration)}
+      </td>
+      <td>
         <TagView tag={props.tag} jiraHost={props.jiraHost} />
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 }
 
@@ -376,20 +382,6 @@ function minutesToHoursMinutes(minutesAmount: number) {
 }
 
 // styles
-const sTableStats = css`
-  display: grid;
-  grid-template-columns: 180px 160px auto;
-`;
-
-const sCellText = css`
-  justify-content: flex-start;
-`;
-
-const sCellPomodoro = css`
-  display: flex;
-  gap: 5px;
-`;
-
 const sPomodoroGrayed = css`
   filter: grayscale(100%) brightness(120%);
 `;
