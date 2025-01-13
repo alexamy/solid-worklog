@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, on, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal, on, onMount, Show } from 'solid-js';
 import { toTimestamp } from '../time';
 import { useAppContext } from '../store/app';
 import { sToolbarLeft } from '../styles';
@@ -63,6 +63,19 @@ export function DatePicker() {
 }
 
 function ThemeController() {
+  const [appStore, setAppStore] = useAppContext();
+  const [checked, setChecked] = createSignal(false);
+
+  onMount(() => {
+    document.head.setAttribute('data-theme', appStore.theme);
+    setChecked(appStore.theme === 'dark');
+  });
+
+  function onThemeChange() {
+    setChecked(!checked());
+    setAppStore('theme', checked() ? 'dark' : 'light');
+  }
+
   return (
     <label class="flex cursor-pointer gap-2">
       <svg
@@ -79,7 +92,13 @@ function ThemeController() {
         <path
           d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
       </svg>
-      <input type="checkbox" value="dark" class="toggle theme-controller" />
+      <input
+        type="checkbox"
+        value="dark"
+        class="toggle theme-controller"
+        checked={checked()}
+        onChange={onThemeChange}
+      />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"

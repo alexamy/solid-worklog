@@ -5,6 +5,7 @@ export interface AppStore {
   selectedDate: Date;
   statRange: 'day' | 'week' | 'month' | 'year' | 'all';
   jiraHost: string;
+  theme: 'light' | 'dark';
 }
 
 export type AppContextValue = [AppStore, SetStoreFunction<AppStore>];
@@ -30,5 +31,6 @@ export function getDefaultAppStore(): AppStore {
     selectedDate: new Date(),
     statRange: 'day',
     jiraHost: '',
+    theme: 'light',
   };
 }
