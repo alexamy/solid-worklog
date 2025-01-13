@@ -18,6 +18,18 @@
   .table-worklog td:nth-child(1),
   .table-worklog td:nth-child(2),
   .table-worklog td:nth-child(3) {
-    @apply w-24;
+    @apply w-20;
+  }
+
+  .table-worklog th:nth-child(1),
+  .table-worklog th:nth-child(2),
+  .table-worklog th:nth-child(3) {
+    @apply text-center;
+  }
+
+  .table-worklog td:nth-child(1),
+  .table-worklog td:nth-child(2),
+  .table-worklog td:nth-child(3) {
+    @apply text-center;
   }
 }

@@ -93,7 +93,7 @@ export function Worklog() {
 
       <table class="table table-worklog">
         <thead>
-          <tr class="cursor-pointer">
+          <tr class="cursor-pointer" onClick={() => setSelectedItemId(undefined)}>
             <th>Start</th>
             <th>Duration</th>
             <th>Finish</th>
@@ -251,7 +251,7 @@ function ToolbarWorklog(props: {
 
   // FIX: case when filling from the past day
   function fill() {
-    const item = fillLog();
+    const item = fillLog({ tag: 'idle' });
     props.setSelectedDate(new Date());
     props.setSelectedItemId(item.id);
   }
