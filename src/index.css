@@ -7,11 +7,11 @@
     @apply border-b-[1px] border-b-gray-600;
   }
 
-  td:nth-child(1) {
+  .table-statistics td:nth-child(1) {
     @apply w-48;
   }
 
-  td:nth-child(2) {
+  .table-statistics td:nth-child(2) {
     @apply w-48;
   }
 }
