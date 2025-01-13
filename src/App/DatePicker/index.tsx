@@ -35,12 +35,12 @@ export function DatePicker() {
         onClick={() => moveDate(-1)}
       >{'<'}</button>
       <input
+        class="w-32"
         type="date"
         // FIX: iso string is not a local date string
         value={selectedDate().toISOString().split('T')[0]}
         max={new Date().toISOString().split('T')[0]}
         onChange={(e) => setSelectedDate(new Date(e.target.value))}
-        style={{ width: '110px' }}
       />
       <button
         class="btn btn-xs btn-neutral"
