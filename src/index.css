@@ -7,6 +7,11 @@
     @apply border-b-[1px] border-b-gray-600;
   }
 
+  .table th,
+  .table td {
+    @apply p-2.5;
+  }
+
   .table td[contenteditable] {
     @apply cursor-text outline-none;
   }
@@ -15,22 +20,11 @@
     @apply cursor-default;
   }
 
-  .table-statistics td:nth-child(1),
-  .table-statistics td:nth-child(2) {
-    @apply w-36;
-  }
-
   .table-statistics th:nth-child(1),
   .table-statistics th:nth-child(2),
   .table-statistics td:nth-child(1),
   .table-statistics td:nth-child(2) {
-    @apply text-center;
-  }
-
-  .table-worklog td:nth-child(1),
-  .table-worklog td:nth-child(2),
-  .table-worklog td:nth-child(3) {
-    @apply w-20;
+    @apply w-36 text-center;
   }
 
   .table-worklog th:nth-child(1),
@@ -39,6 +33,6 @@
   .table-worklog td:nth-child(1),
   .table-worklog td:nth-child(2),
   .table-worklog td:nth-child(3) {
-    @apply text-center;
+    @apply w-20 text-center;
   }
 }
