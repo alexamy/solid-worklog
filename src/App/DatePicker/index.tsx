@@ -65,8 +65,8 @@ function ThemeController() {
   const [appStore, setAppStore] = useAppContext();
   const [checked, setChecked] = createSignal(false);
 
-  onMount(() => {
-    document.head.setAttribute('data-theme', appStore.theme);
+  createEffect(() => {
+    document.documentElement.setAttribute('data-theme', appStore.theme);
     setChecked(appStore.theme === 'dark');
   });
 
