@@ -202,7 +202,7 @@ function Toolbar(props: {
 function ItemRow(props: StatEntry & { jiraHost: string }) {
   return (
     <tr>
-      <td class="flex gap-1">
+      <td class="flex gap-1 justify-center">
         <Show when={props.pomodoros > 0}>
           <PomodoroCell tag={props.tag} amount={props.pomodoros} />
         </Show>
