@@ -266,7 +266,7 @@ function ToolbarWorklog(props: {
   }
 
   return (
-    <div class={sToolbarLeft}>
+    <div class='flex align-center gap-3'>
       <button
         class="btn btn-sm btn-active btn-primary"
         title="Start new entry"
@@ -315,7 +315,7 @@ function ToolbarTable(props: {
   const isOnlyOneItemAtAll = () => dataStore.items.length === 1;
 
   return (
-    <div class={sToolbarRight}>
+    <div class='flex align-center gap-3'>
       <button
         class="btn btn-sm btn-neutral"
         title="Add row"
