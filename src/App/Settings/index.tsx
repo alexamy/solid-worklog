@@ -18,6 +18,7 @@ export function Settings() {
             Jira host
           </label>
           <input
+            class="input input-bordered w-full max-w-md"
             id="jira-host"
             type="text"
             placeholder="Jira host"

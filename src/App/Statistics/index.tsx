@@ -111,48 +111,46 @@ function Toolbar(props: {
   } satisfies Record<StatRange, string>));
 
   return (
-    <div class={sToolbar}>
-      <div class={sToolbarLeft}>
-        <label>
-          <input type="radio" name="timeRange" value="day"
-            onChange={() => props.setStatRange('day')}
-            checked={props.statRange === 'day'}
-          />
-          Day ({intervals().day})
-        </label>
+    <div class='flex align-center justify-start gap-5 mb-2'>
+      <label>
+        <input type="radio" name="timeRange" value="day"
+          onChange={() => props.setStatRange('day')}
+          checked={props.statRange === 'day'}
+        />
+        Day ({intervals().day})
+      </label>
 
-        <label>
-          <input type="radio" name="timeRange" value="week"
-            onChange={() => props.setStatRange('week')}
-            checked={props.statRange === 'week'}
-          />
-          Week ({intervals().week})
-        </label>
+      <label>
+        <input type="radio" name="timeRange" value="week"
+          onChange={() => props.setStatRange('week')}
+          checked={props.statRange === 'week'}
+        />
+        Week ({intervals().week})
+      </label>
 
-        <label>
-          <input type="radio" name="timeRange" value="month"
-            onChange={() => props.setStatRange('month')}
-            checked={props.statRange === 'month'}
-          />
-          Month ({intervals().month})
-        </label>
+      <label>
+        <input type="radio" name="timeRange" value="month"
+          onChange={() => props.setStatRange('month')}
+          checked={props.statRange === 'month'}
+        />
+        Month ({intervals().month})
+      </label>
 
-        <label>
-          <input type="radio" name="timeRange" value="year"
-            onChange={() => props.setStatRange('year')}
-            checked={props.statRange === 'year'}
-          />
-          Year ({intervals().year})
-        </label>
+      <label>
+        <input type="radio" name="timeRange" value="year"
+          onChange={() => props.setStatRange('year')}
+          checked={props.statRange === 'year'}
+        />
+        Year ({intervals().year})
+      </label>
 
-        <label>
-          <input type="radio" name="timeRange" value="all"
-            onChange={() => props.setStatRange('all')}
-            checked={props.statRange === 'all'}
-          />
-          All time
-        </label>
-      </div>
+      <label>
+        <input type="radio" name="timeRange" value="all"
+          onChange={() => props.setStatRange('all')}
+          checked={props.statRange === 'all'}
+        />
+        All time
+      </label>
     </div>
   );
 }
