@@ -62,6 +62,8 @@ export function Statistics() {
     sumAll: stats().sumAll,
   }));
 
+  // TODO: fix locked td height
+
   return (
     <div>
       <Toolbar

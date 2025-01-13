@@ -9,7 +9,7 @@
     }
 
     th, td {
-      @apply p-2.5;
+      @apply p-2.5 h-[38px];
     }
 
     td[contenteditable] {
