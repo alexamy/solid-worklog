@@ -282,6 +282,7 @@ function getStartOfStatRange(selectedDate: Date, statRange: StatRange) {
   }
 }
 
+// TODO: proper check of range with start and end of range
 function areItemsInRange(item: Item, target: Date, statRange: StatRange) {
   const itemDate = new Date(item.start);
   itemDate.setHours(0, 0, 0, 0);
