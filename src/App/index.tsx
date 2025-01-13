@@ -7,7 +7,6 @@ import { Utilities } from './Utilities';
 import { persistObject } from './store/persistence';
 import { NowContext } from './store/now';
 import { Worklog } from './Worklog';
-import { css } from '@linaria/core';
 import { Settings } from './Settings';
 import { createDataStore } from './store/dataMethods';
 

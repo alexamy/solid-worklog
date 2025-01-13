@@ -19,7 +19,7 @@ export function Utilities() {
         </div>
         <div class='flex align-center justify-end gap-3'>
           <button class="btn btn-sm btn-warning" onDblClick={() => resetEmpty()}>Remove all</button>
-          <button class="btn btn-sm btn-warning" onDblClick={() => resetToDefault()}>Reset</button>
+          <button class="btn btn-sm btn-warning" onDblClick={() => resetToDefault()}>Reset data</button>
         </div>
       </div>
     </div>
