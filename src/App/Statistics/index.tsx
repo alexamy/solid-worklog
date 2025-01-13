@@ -266,7 +266,7 @@ function TagView(props: { tag: string, jiraHost: string }) {
       <Show when={props.jiraHost} fallback={props.tag}>
         <For each={props.tag.split(jiraRegex)}>
           {(part) => part.match(jiraRegex)
-            ? <a href={`${props.jiraHost}/browse/${part}`}>{part}</a>
+            ? <a class="link" href={`${props.jiraHost}/browse/${part}`}>{part}</a>
             : part
           }
         </For>
