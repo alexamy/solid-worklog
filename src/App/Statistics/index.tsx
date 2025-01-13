@@ -113,7 +113,9 @@ function Toolbar(props: {
   return (
     <div class='flex items-center justify-start gap-5 mb-2'>
       <label>
-        <input type="radio" name="timeRange" value="day"
+        <input
+          class="radio radio-xs"
+          type="radio"  name="timeRange" value="day"
           onChange={() => props.setStatRange('day')}
           checked={props.statRange === 'day'}
         />
@@ -121,7 +123,9 @@ function Toolbar(props: {
       </label>
 
       <label>
-        <input type="radio" name="timeRange" value="week"
+        <input
+          class="radio radio-xs"
+          type="radio" name="timeRange" value="week"
           onChange={() => props.setStatRange('week')}
           checked={props.statRange === 'week'}
         />
@@ -129,7 +133,9 @@ function Toolbar(props: {
       </label>
 
       <label>
-        <input type="radio" name="timeRange" value="month"
+        <input
+          class="radio radio-xs"
+          type="radio" name="timeRange" value="month"
           onChange={() => props.setStatRange('month')}
           checked={props.statRange === 'month'}
         />
@@ -137,7 +143,9 @@ function Toolbar(props: {
       </label>
 
       <label>
-        <input type="radio" name="timeRange" value="year"
+        <input
+          class="radio radio-xs"
+          type="radio" name="timeRange" value="year"
           onChange={() => props.setStatRange('year')}
           checked={props.statRange === 'year'}
         />
@@ -145,7 +153,9 @@ function Toolbar(props: {
       </label>
 
       <label>
-        <input type="radio" name="timeRange" value="all"
+        <input
+          class="radio radio-xs"
+          type="radio" name="timeRange" value="all"
           onChange={() => props.setStatRange('all')}
           checked={props.statRange === 'all'}
         />
