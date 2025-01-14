@@ -42,7 +42,7 @@ export function Worklog() {
   }
 
   // tag list
-  const tagList = createTagListControls(selectedItemId);
+  const tagList = createMenuControls(selectedItemId);
 
   const allTags = createMemo(() => {
     const tags = dataStore.items.map(item => item.tag);
@@ -210,7 +210,7 @@ function TagList(props: {
   );
 }
 
-function createTagListControls(selectedItemId: () => string | undefined) {
+function createMenuControls(selectedItemId: () => string | undefined) {
   const [query, setQuery] = createSignal('');
   const [parent, setParent] = createSignal<MouseEventTarget>();
   const [visible, setVisible] = createSignal(false);
