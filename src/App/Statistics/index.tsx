@@ -122,81 +122,34 @@ function Toolbar(props: {
   } satisfies Record<StatRange, string>));
 
   return (
-    <div class='flex items-center justify-start gap-3'>
-      <label class="label flex items-center gap-2">
-        <input
-          class="radio radio-primary radio-xs translate-y-[-1px]"
-          type="radio"  name="timeRange" value="day"
-          onChange={() => props.setStatRange('day')}
-          checked={props.statRange === 'day'}
-        />
-        <span>
-          <span class="text-sm">Day</span>
-          {' '}
-          <span class="text-xs italic text-gray-500">
-            {intervals().day}
-          </span>
+    <div role="tablist" class="tabs tabs-bordered">
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'day' }} onClick={() => props.setStatRange('day')}>
+        <span class="text-sm mr-1">Day</span>
+        <span class="text-xs italic text-gray-500">
+          {intervals().day}
         </span>
-      </label>
-
-      <label class="label flex items-center gap-2">
-        <input
-          class="radio radio-primary radio-xs translate-y-[-1px]"
-          type="radio" name="timeRange" value="week"
-          onChange={() => props.setStatRange('week')}
-          checked={props.statRange === 'week'}
-        />
-        <span>
-          <span class="text-sm">Week </span>
-          <span class="text-xs italic text-gray-500">
-            {intervals().week}
-          </span>
+      </a>
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'week' }} onClick={() => props.setStatRange('week')}>
+        <span class="text-sm mr-1">Week </span>
+        <span class="text-xs italic text-gray-500">
+          {intervals().week}
         </span>
-      </label>
-
-      <label class="label flex items-center gap-2">
-        <input
-          class="radio radio-primary radio-xs translate-y-[-1px]"
-          type="radio" name="timeRange" value="month"
-          onChange={() => props.setStatRange('month')}
-          checked={props.statRange === 'month'}
-        />
-
-        <span>
-          <span class="text-sm">Month </span>
-          <span class="text-xs italic text-gray-500">
-            {intervals().month}
-          </span>
+      </a>
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'month' }} onClick={() => props.setStatRange('month')}>
+        <span class="text-sm mr-1">Month </span>
+        <span class="text-xs italic text-gray-500">
+          {intervals().month}
         </span>
-      </label>
-
-      <label class="label flex items-center gap-2">
-        <input
-          class="radio radio-primary radio-xs translate-y-[-1px]"
-          type="radio" name="timeRange" value="year"
-          onChange={() => props.setStatRange('year')}
-          checked={props.statRange === 'year'}
-        />
-
-        <span>
-          <span class="text-sm">Year </span>
-          <span class="text-xs italic text-gray-500">
-            {intervals().year}
-          </span>
+      </a>
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'year' }} onClick={() => props.setStatRange('year')}>
+        <span class="text-sm mr-1">Year </span>
+        <span class="text-xs italic text-gray-500">
+          {intervals().year}
         </span>
-      </label>
-
-      <label class="label flex items-center gap-2">
-        <input
-          class="radio radio-primary radio-xs translate-y-[-1px]"
-          type="radio" name="timeRange" value="all"
-          onChange={() => props.setStatRange('all')}
-          checked={props.statRange === 'all'}
-        />
-        <span>
-          <span class="text-sm">All time</span>
-        </span>
-      </label>
+      </a>
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'all' }} onClick={() => props.setStatRange('all')}>
+        <span class="text-sm">All time</span>
+      </a>
     </div>
   );
 }
