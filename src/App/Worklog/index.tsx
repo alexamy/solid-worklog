@@ -284,7 +284,7 @@ function ToolbarWorklog(props: {
     <div class='flex align-center justify-start gap-3'>
       <Show when={!props.isInProgress}>
         <button
-          class="btn btn-sm btn-active btn-primary"
+          class="btn btn-sm btn-primary"
           title="Start new entry"
           disabled={props.isInProgress}
           onClick={() => start()}
@@ -298,7 +298,7 @@ function ToolbarWorklog(props: {
       </Show>
       <Show when={props.isInProgress}>
         <button
-          class="btn btn-sm btn-active btn-secondary"
+          class="btn btn-sm btn-secondary"
           title="Finish current entry"
           disabled={!props.isInProgress}
           onClick={() => finish()}
