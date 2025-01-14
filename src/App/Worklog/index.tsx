@@ -167,7 +167,7 @@ function TagList(props: {
   parent?: MouseEventTarget,
   onTagClick: (tag: string) => void,
 }) {
-  let tagListElement!: HTMLDivElement;
+  let tagListElement!: HTMLUListElement;
   const fuzzySearch = createMemo(() => createFuzzySearch(props.tags));
   const [availableTags, setAvailableTags] = createSignal<string[]>([]);
 
@@ -185,26 +185,29 @@ function TagList(props: {
     const rect = parent.currentTarget.getBoundingClientRect();
     setStyle({
       left: `${rect.left}px`,
-      top: `${rect.top + rect.height + 9}px`, // TODO: why changed from -1 to +9? it was ok before
+      top: `${rect.top + rect.height}px`, // TODO: why changed from -1 to +9? it was ok before
       width: `${rect.width}px`,
     });
   }));
 
   return (
     <Portal>
-      <div
-        class={sTagList}
+      <ul
         ref={tagListElement}
+        class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm'
         style={{ ...style(), display: props.visible ? 'block' : 'none' }}
       >
         <For each={availableTags()}>
           {(tag) =>
-            <div class={sTag} onClick={() => props.onTagClick(tag)}>
-              {tag}
-            </div>
+            <li
+              class='cursor-pointer'
+              onClick={() => props.onTagClick(tag)}
+            >
+              <a>{tag}</a>
+            </li>
           }
         </For>
-      </div>
+      </ul>
     </Portal>
   );
 }
@@ -399,18 +402,3 @@ function triggerNonDestructiveBlur(e: KeyboardEventTarget) {
   selection?.removeAllRanges();
   selection?.addRange(range);
 }
-
-// styles
-const sTagList = css`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-`;
-
-const sTag = css`
-  padding: 5px 10px;
-  background-color: #333;
-  color: #fff;
-  cursor: pointer;
-`;
