@@ -10,6 +10,7 @@ import { Worklog } from './Worklog';
 import { Settings } from './Settings';
 import { createDataStore } from './store/dataMethods';
 import { Show } from 'solid-js';
+import { MetaProvider } from '@solidjs/meta';
 
 // component
 export function App() {
@@ -33,26 +34,28 @@ export function App() {
   );
 
   return (
-    <NowContext.Provider value={now}>
-      <AppContext.Provider value={[appStore, setAppStore]}>
-        <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
-          <div class='container max-w-screen-md px-8 py-4 flex flex-col'>
-            <DatePicker />
-            <div class="mb-6"></div>
-            <Show when={appStore.currentTab === 'worklog'}>
-              <Worklog />
+    <MetaProvider>
+      <NowContext.Provider value={now}>
+        <AppContext.Provider value={[appStore, setAppStore]}>
+          <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
+            <div class='container max-w-screen-md px-8 py-4 flex flex-col'>
+              <DatePicker />
               <div class="mb-6"></div>
-              <Statistics />
-            </Show>
-            <Show when={appStore.currentTab === 'settings'}>
-              <Settings />
-              <div class="mb-4"></div>
-              <Utilities />
-            </Show>
-          </div>
-        </DataContext.Provider>
-      </AppContext.Provider>
-    </NowContext.Provider>
+              <Show when={appStore.currentTab === 'worklog'}>
+                <Worklog />
+                <div class="mb-6"></div>
+                <Statistics />
+              </Show>
+              <Show when={appStore.currentTab === 'settings'}>
+                <Settings />
+                <div class="mb-4"></div>
+                <Utilities />
+              </Show>
+            </div>
+          </DataContext.Provider>
+        </AppContext.Provider>
+      </NowContext.Provider>
+    </MetaProvider>
   )
 }
 
