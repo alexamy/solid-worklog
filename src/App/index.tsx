@@ -37,8 +37,8 @@ export function App() {
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
           <div class='container max-w-screen-md px-8 py-4 flex flex-col'>
             <DatePicker />
+            <div class="mb-6"></div>
             <Show when={appStore.currentTab === 'worklog'}>
-              <div class="mb-6"></div>
               <Worklog />
               <div class="mb-6"></div>
               <Statistics />
