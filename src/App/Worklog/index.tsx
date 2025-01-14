@@ -38,13 +38,20 @@ export function Worklog() {
     }
   }
 
-  // tag list
+  // autocomplete
   const tagMenu = createAutocompleteControls();
+  const descriptionMenu = createAutocompleteControls();
 
   const allTags = createMemo(() => {
     const tags = dataStore.items.map(item => item.tag);
     const uniqueTags = [...new Set(tags)];
     return uniqueTags;
+  });
+
+  const allDescriptions = createMemo(() => {
+    const descriptions = dataStore.items.map(item => item.description);
+    const uniqueDescriptions = [...new Set(descriptions)];
+    return uniqueDescriptions;
   });
 
   function onTagCellKeyDown(e: KeyboardEventTarget) {
@@ -58,6 +65,19 @@ export function Worklog() {
     if (e.key === 'Enter') return;
     tagMenu.setQuery(e.currentTarget.textContent!);
     tagMenu.setVisible(true);
+  }
+
+  function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
+    if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
+      descriptionMenu.setVisible(false);
+    }
+  }
+
+  function onDescriptionCellKeyUp(e: KeyboardEventTarget) {
+    if (e.key === 'Enter') return;
+    descriptionMenu.setQuery(e.currentTarget.textContent!);
+    descriptionMenu.setVisible(true);
   }
 
   return (
@@ -85,6 +105,14 @@ export function Worklog() {
         query={tagMenu.query()}
         parent={tagMenu.parent()}
         onItemClick={(tag) => updateItem({ tag }, selectedItemId()!)}
+      />
+
+      <AutcompleteMenu
+        items={allDescriptions()}
+        visible={descriptionMenu.visible()}
+        query={descriptionMenu.query()}
+        parent={descriptionMenu.parent()}
+        onItemClick={(description) => updateItem({ description }, selectedItemId()!)}
       />
 
       <table class="table table-zebra table-worklog">
@@ -140,7 +168,9 @@ export function Worklog() {
                 <td
                   contentEditable
                   onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                  onKeyDown={(e) => onCellKeyDown(e)}
+                  onKeyDown={(e) => onDescriptionCellKeyDown(e)}
+                  onKeyUp={(e) => onDescriptionCellKeyUp(e)}
+                  onClick={(e) => descriptionMenu.setParent(e)}
                 >
                   {item.description}
                 </td>
