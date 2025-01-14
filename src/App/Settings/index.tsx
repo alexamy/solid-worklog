@@ -19,7 +19,7 @@ export function Settings() {
               <span class="label-text">Jira host</span>
             </div>
             <input
-              class="input input-bordered w-full max-w-md"
+              class="input input-bordered w-full max-w-md text-sm"
               id="jira-host"
               type="text"
               aria-label="Jira host"
