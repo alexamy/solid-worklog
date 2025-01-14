@@ -129,6 +129,7 @@ function ThemeController() {
 function DownloadButton(props: { onClick: () => void }) {
   return (
     <svg
+      aria-label="Download backup"
       class='size-6 stroke-gray-600 hover:stroke-gray-300 cursor-pointer'
       onClick={() => props.onClick()}
       xmlns="http://www.w3.org/2000/svg"
@@ -149,6 +150,7 @@ function SettingsButton(props: {
 }) {
   return (
     <svg
+      aria-label="Settings"
       class="size-6 cursor-pointer"
       classList={{
         'hover:stroke-gray-300 stroke-gray-600': !props.selected,
