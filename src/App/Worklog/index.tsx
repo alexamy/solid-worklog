@@ -1,13 +1,10 @@
-import { createEffect, createMemo, createSignal, For, on, onCleanup, Show } from 'solid-js';
-import { sCell, sCellHeader, sRow, sToolbarLeft, sToolbarRight } from '../styles';
-import { toTimestamp } from '../time';
-import { css, cx } from '@linaria/core';
-import { Portal } from 'solid-js/web';
 import createFuzzySearch from '@nozbe/microfuzz';
+import { createEffect, createMemo, createSignal, For, on, onCleanup, Show } from 'solid-js';
+import { Portal } from 'solid-js/web';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
-import { calculateDuration } from '../time';
 import { useNowContext } from '../store/now';
+import { calculateDuration, toTimestamp } from '../time';
 
 type MouseEventTarget = MouseEvent & { currentTarget: HTMLElement };
 type KeyboardEventTarget = KeyboardEvent & { currentTarget: HTMLElement };
@@ -42,7 +39,7 @@ export function Worklog() {
   }
 
   // tag list
-  const tagList = createMenuControls();
+  const tagMenu = createAutocompleteControls();
 
   const allTags = createMemo(() => {
     const tags = dataStore.items.map(item => item.tag);
@@ -53,14 +50,14 @@ export function Worklog() {
   function onTagCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
-      tagList.setVisible(false);
+      tagMenu.setVisible(false);
     }
   }
 
   function onTagCellKeyUp(e: KeyboardEventTarget) {
     if (e.key === 'Enter') return;
-    tagList.setQuery(e.currentTarget.textContent!);
-    tagList.setVisible(true);
+    tagMenu.setQuery(e.currentTarget.textContent!);
+    tagMenu.setVisible(true);
   }
 
   return (
@@ -82,12 +79,12 @@ export function Worklog() {
         </Show>
       </div>
 
-      <TagList
-        tags={allTags()}
-        visible={tagList.visible()}
-        query={tagList.query()}
-        parent={tagList.parent()}
-        onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
+      <AutcompleteMenu
+        items={allTags()}
+        visible={tagMenu.visible()}
+        query={tagMenu.query()}
+        parent={tagMenu.parent()}
+        onItemClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
 
       <table class="table table-zebra table-worklog">
@@ -136,7 +133,7 @@ export function Worklog() {
                   onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
                   onKeyDown={(e) => onTagCellKeyDown(e)}
                   onKeyUp={(e) => onTagCellKeyUp(e)}
-                  onClick={(e) => tagList.setParent(e)}
+                  onClick={(e) => tagMenu.setParent(e)}
                 >
                   {item.tag}
                 </td>
@@ -156,22 +153,22 @@ export function Worklog() {
   );
 }
 
-function TagList(props: {
-  tags: string[],
+function AutcompleteMenu(props: {
+  items: string[],
   visible: boolean,
   query: string,
   parent?: MouseEventTarget,
-  onTagClick: (tag: string) => void,
+  onItemClick: (item: string) => void,
 }) {
-  let tagListElement!: HTMLUListElement;
-  const fuzzySearch = createMemo(() => createFuzzySearch(props.tags));
-  const [availableTags, setAvailableTags] = createSignal<string[]>([]);
-  const listShown = () => props.visible && availableTags().length > 0;
+  let listElement!: HTMLUListElement;
+  const fuzzySearch = createMemo(() => createFuzzySearch(props.items));
+  const [availableItems, setAvailableItems] = createSignal<string[]>([]);
+  const listShown = () => props.visible && availableItems().length > 0;
 
   // update available tags
   createEffect(on(() => props.query, (query) => {
     const results = fuzzySearch()(query);
-    setAvailableTags(results.map(result => result.item));
+    setAvailableItems(results.map(result => result.item));
   }));
 
   // position tag list
@@ -190,17 +187,17 @@ function TagList(props: {
   return (
     <Portal>
       <ul
-        ref={tagListElement}
+        ref={listElement}
         class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm'
         style={{ ...style(), display: listShown() ? 'block' : 'none' }}
       >
-        <For each={availableTags()}>
-          {(tag) =>
+        <For each={availableItems()}>
+          {(item) =>
             <li
               class='cursor-pointer'
-              onClick={() => props.onTagClick(tag)}
+              onClick={() => props.onItemClick(item)}
             >
-              <a>{tag}</a>
+              <a>{item}</a>
             </li>
           }
         </For>
@@ -209,7 +206,7 @@ function TagList(props: {
   );
 }
 
-function createMenuControls() {
+function createAutocompleteControls() {
   const [query, setQuery] = createSignal('');
   const [parent, setParent] = createSignal<MouseEventTarget>();
   const [visible, setVisible] = createSignal(false);
