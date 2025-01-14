@@ -19,7 +19,8 @@ export function App() {
 
   persistObject(
     appStore,
-    setAppStore,
+    // TODO: move to app store methods
+    state => setAppStore({ ...getDefaultAppStore(), ...state }),
     getDefaultAppStore,
     'solid-worklog-app',
   );
