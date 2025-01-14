@@ -58,10 +58,13 @@ export function DatePicker() {
         {toTimestamp(now())}
       </div>
       <div class='flex items-center justify-end gap-3'>
-        <Cog
-          selected={appStore.currentTab === 'settings'}
-          onClick={toggleSettings}
-        />
+        <div class='flex items-center justify-center gap-2 translate-y-[-2px] mr-2'>
+          <DownloadButton onClick={() => {}} />
+          <Cog
+            selected={appStore.currentTab === 'settings'}
+            onClick={toggleSettings}
+          />
+        </div>
         <ThemeController />
       </div>
     </div>
@@ -121,13 +124,29 @@ function ThemeController() {
   );
 }
 
+function DownloadButton(props: { onClick: () => void }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6"
+      onClick={() => props.onClick()}
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+    </svg>
+  );
+}
+
 function Cog(props: {
   selected: boolean,
   onClick: () => void,
 }) {
   return (
     <svg
-      class="size-6 translate-y-[-1px] mr-2 cursor-pointer"
+      class="size-6 cursor-pointer"
       classList={{
         'hover:stroke-gray-400 stroke-gray-600': !props.selected,
         'hover:stroke-gray-400 stroke-primary': props.selected,
