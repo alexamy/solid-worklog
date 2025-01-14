@@ -18,7 +18,7 @@ export function App() {
 
   persistObject(
     appStore[0],
-    store => appStore[1]({ ...getDefaultAppStore(), ...store }),
+    appStore[1],
     getDefaultAppStore,
     'solid-worklog-app',
   );
