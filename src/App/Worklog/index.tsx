@@ -269,30 +269,34 @@ function ToolbarWorklog(props: {
 
   return (
     <div class='flex align-center justify-start gap-3'>
-      <button
-        class="btn btn-sm btn-active btn-primary"
-        title="Start new entry"
-        disabled={props.isInProgress}
-        onClick={() => start()}
-      >Start</button>
-      <button
-        class="btn btn-sm btn-neutral"
-        title="Add completed entry between last entry and now"
-        disabled={props.isInProgress}
-        onClick={() => fill()}
-      >Fill</button>
-      <button
-        class="btn btn-sm btn-neutral"
-        title="Finish current entry and start new one"
-        disabled={!props.isInProgress}
-        onClick={() => tap()}
-      >Tap</button>
-      <button
-        class="btn btn-sm btn-active btn-primary"
-        title="Finish current entry"
-        disabled={!props.isInProgress}
-        onClick={() => finish()}
-      >Finish</button>
+      <Show when={!props.isInProgress}>
+        <button
+          class="btn btn-sm btn-active btn-primary"
+          title="Start new entry"
+          disabled={props.isInProgress}
+          onClick={() => start()}
+        >Start</button>
+        <button
+          class="btn btn-sm btn-neutral"
+          title="Add completed entry between last entry and now"
+          disabled={props.isInProgress}
+          onClick={() => fill()}
+        >Fill</button>
+      </Show>
+      <Show when={props.isInProgress}>
+        <button
+          class="btn btn-sm btn-active btn-primary"
+          title="Finish current entry"
+          disabled={!props.isInProgress}
+          onClick={() => finish()}
+        >Finish</button>
+        <button
+          class="btn btn-sm btn-neutral"
+          title="Finish current entry and start new one"
+          disabled={!props.isInProgress}
+          onClick={() => tap()}
+        >Tap</button>
+      </Show>
     </div>
   );
 }
