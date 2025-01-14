@@ -34,14 +34,15 @@ export function App() {
     <NowContext.Provider value={now}>
       <AppContext.Provider value={[appStore, setAppStore]}>
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
-          <div class='container max-w-screen-md px-8 py-4 flex flex-col gap-5'>
+          <div class='container max-w-screen-md px-8 py-4 flex flex-col'>
             <DatePicker />
-            <h2 class='text-2xl'>Worklog</h2>
+            <div class="mb-4"></div>
             <Worklog />
-            <h2 class='text-2xl'>Statistics</h2>
+            <div class="divider"></div>
             <Statistics />
-            <h2 class='text-2xl'>Settings</h2>
+            <div class="divider"></div>
             <Settings />
+            <div class="mb-6"></div>
             <Utilities />
           </div>
         </DataContext.Provider>
