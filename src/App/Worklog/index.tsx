@@ -42,7 +42,7 @@ export function Worklog() {
   }
 
   // tag list
-  const tagList = createMenuControls(selectedItemId);
+  const tagList = createMenuControls();
 
   const allTags = createMemo(() => {
     const tags = dataStore.items.map(item => item.tag);
@@ -132,8 +132,6 @@ export function Worklog() {
                   {toTimestamp(item.end ?? now())}
                 </td>
                 <td
-                  data-item-id={item.id}
-                  data-tag={true}
                   contentEditable
                   onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
                   onKeyDown={(e) => onTagCellKeyDown(e)}
@@ -210,22 +208,18 @@ function TagList(props: {
   );
 }
 
-function createMenuControls(selectedItemId: () => string | undefined) {
+function createMenuControls() {
   const [query, setQuery] = createSignal('');
   const [parent, setParent] = createSignal<MouseEventTarget>();
   const [visible, setVisible] = createSignal(false);
 
-  // hide tag list when clicking outside current tag cell
+  // hide tag list when clicking outside
   createEffect(() => {
     document.body.addEventListener('click', onClick);
     onCleanup(() => document.body.removeEventListener('click', onClick));
 
     function onClick(e: MouseEvent) {
-      const target = e.target as HTMLElement;
-      const isCurrentTagCell = target.dataset.tag && target.dataset.itemId === selectedItemId();
-      if (!isCurrentTagCell) {
-        setVisible(false);
-      }
+      setVisible(false);
     }
   });
 
