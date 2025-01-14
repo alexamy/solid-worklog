@@ -166,6 +166,7 @@ function TagList(props: {
   let tagListElement!: HTMLUListElement;
   const fuzzySearch = createMemo(() => createFuzzySearch(props.tags));
   const [availableTags, setAvailableTags] = createSignal<string[]>([]);
+  const listShown = () => props.visible && availableTags().length > 0;
 
   // update available tags
   createEffect(on(() => props.query, (query) => {
@@ -191,7 +192,7 @@ function TagList(props: {
       <ul
         ref={tagListElement}
         class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm'
-        style={{ ...style(), display: props.visible ? 'block' : 'none' }}
+        style={{ ...style(), display: listShown() ? 'block' : 'none' }}
       >
         <For each={availableTags()}>
           {(tag) =>
