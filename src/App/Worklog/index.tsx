@@ -285,7 +285,7 @@ function ToolbarWorklog(props: {
           title="Start new entry"
           disabled={props.isInProgress}
           onClick={() => start()}
-        >Start</button>
+        >{props.selectedItemId ? 'Start selected' : 'Start new'}</button>
         <button
           class="btn btn-sm btn-neutral"
           title="Add completed entry between last entry and now"
