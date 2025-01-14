@@ -1,11 +1,16 @@
 import { createContext, useContext } from 'solid-js';
 import { createStore, SetStoreFunction } from 'solid-js/store';
 
+type SortBy = 'tag' | 'duration';
+type SortOrder = 'asc' | 'desc';
+
 export interface AppStore {
   selectedDate: Date;
   statRange: 'day' | 'week' | 'month' | 'year' | 'all';
   jiraHost: string;
   theme: 'light' | 'dark';
+  sortBy: SortBy;
+  sortOrder: SortOrder;
 }
 
 export type AppContextValue = [AppStore, SetStoreFunction<AppStore>];
@@ -32,5 +37,7 @@ export function getDefaultAppStore(): AppStore {
     statRange: 'day',
     jiraHost: '',
     theme: 'light',
+    sortBy: 'duration',
+    sortOrder: 'desc',
   };
 }

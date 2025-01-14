@@ -30,8 +30,11 @@ export function Statistics() {
   const selectedDate = () => appStore.selectedDate;
 
   // sorting
-  const [sortBy, setSortBy] = createSignal<SortBy>('tag');
-  const [sortOrder, setSortOrder] = createSignal<SortOrder>('asc');
+  const sortBy = () => appStore.sortBy;
+  const setSortBy = (by: SortBy) => setAppStore('sortBy', by);
+
+  const sortOrder = () => appStore.sortOrder;
+  const setSortOrder = (order: SortOrder) => setAppStore('sortOrder', order);
 
   function changeSorting(by: SortBy) {
     if (sortBy() === by) {
