@@ -1,6 +1,8 @@
 import { createStore, produce } from 'solid-js/store';
 import { getDefaultDataStore, Item } from './data';
 import { calculateDuration } from '../time';
+import { uploadJson } from './serialization';
+import { downloadJson } from './serialization';
 
 export type DataContextValue = ReturnType<typeof createDataStore>;
 
@@ -150,6 +152,16 @@ export function createDataStore() {
     ] });
   }
 
+  // serialization
+  function downloadDataStore(): void {
+    downloadJson(dataStore)
+  }
+
+  async function uploadDataStore(): Promise<void> {
+    const data = await uploadJson();
+    if (data) setDataStore(data);
+  }
+
   return [dataStore, setDataStore, {
     isInProgress,
 
@@ -169,6 +181,9 @@ export function createDataStore() {
 
     resetToDefault,
     resetEmpty,
+
+    downloadDataStore,
+    uploadDataStore,
   }] as const;
 }
 

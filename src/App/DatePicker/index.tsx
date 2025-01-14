@@ -6,7 +6,7 @@ import { useDataContext } from '../store/data';
 
 export function DatePicker() {
   const [appStore, setAppStore] = useAppContext();
-  const [_1, _2, { isInProgress }] = useDataContext();
+  const [_1, _2, { isInProgress, downloadDataStore }] = useDataContext();
   const now = useNowContext();
 
   const selectedDate = () => appStore.selectedDate;
@@ -60,7 +60,7 @@ export function DatePicker() {
       <div class='flex items-center justify-end gap-3'>
         <div class='flex items-center justify-center gap-2 translate-y-[-2px] mr-2'>
           <DownloadButton
-            onClick={() => {}}
+            onClick={downloadDataStore}
           />
           <SettingsButton
             selected={appStore.currentTab === 'settings'}
