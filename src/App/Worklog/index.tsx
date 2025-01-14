@@ -38,20 +38,13 @@ export function Worklog() {
     }
   }
 
-  // autocomplete
+  // tag autocomplete
   const tagMenu = createAutocompleteControls();
-  const descriptionMenu = createAutocompleteControls();
 
   const allTags = createMemo(() => {
     const tags = dataStore.items.map(item => item.tag);
     const uniqueTags = [...new Set(tags)];
     return uniqueTags;
-  });
-
-  const allDescriptions = createMemo(() => {
-    const descriptions = dataStore.items.map(item => item.description);
-    const uniqueDescriptions = [...new Set(descriptions)];
-    return uniqueDescriptions;
   });
 
   function onTagCellKeyDown(e: KeyboardEventTarget) {
@@ -66,6 +59,15 @@ export function Worklog() {
     tagMenu.setQuery(e.currentTarget.textContent!);
     tagMenu.setVisible(true);
   }
+
+  // description autocomplete
+  const descriptionMenu = createAutocompleteControls();
+
+  const allDescriptions = createMemo(() => {
+    const descriptions = dataStore.items.map(item => item.description);
+    const uniqueDescriptions = [...new Set(descriptions)];
+    return uniqueDescriptions;
+  });
 
   function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
@@ -246,7 +248,7 @@ function createAutocompleteControls() {
     document.body.addEventListener('click', onClick);
     onCleanup(() => document.body.removeEventListener('click', onClick));
 
-    function onClick(e: MouseEvent) {
+    function onClick() {
       setVisible(false);
     }
   });
