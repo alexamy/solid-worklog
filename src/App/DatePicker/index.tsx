@@ -21,6 +21,13 @@ export function DatePicker() {
     setSelectedDate(next);
   }
 
+  function toggleSettings() {
+    setAppStore(
+      'currentTab',
+      appStore.currentTab === 'settings' ? 'worklog' : 'settings',
+    );
+  }
+
   return (
     <div class='flex items-center justify-between'>
       <div class='flex items-center justify-start gap-3'>
@@ -49,12 +56,12 @@ export function DatePicker() {
         {dayOfWeek()}
         {', '}
         {toTimestamp(now())}
-        {/* <Show when={isInProgress()}>
-          <div class='w-[8px] h-[8px] rounded-full bg-red-600 shadow shadow-red-600' />
-        </Show> */}
       </div>
       <div class='flex items-center justify-end gap-3'>
-        <Cog selected={false} onClick={() => {}} />
+        <Cog
+          selected={appStore.currentTab === 'settings'}
+          onClick={toggleSettings}
+        />
         <ThemeController />
       </div>
     </div>

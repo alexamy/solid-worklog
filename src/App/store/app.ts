@@ -3,7 +3,7 @@ import { createStore, SetStoreFunction } from 'solid-js/store';
 
 export interface AppStore {
   selectedDate: Date;
-  currentTab: 'worklog' | 'statistics' | 'settings';
+  currentTab: 'worklog' | 'settings';
   statRange: 'day' | 'week' | 'month' | 'year' | 'all';
   sortBy: 'tag' | 'duration';
   sortOrder: 'asc' | 'desc';
