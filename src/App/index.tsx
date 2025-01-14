@@ -1,5 +1,5 @@
 import { Statistics } from './Statistics';
-import { AppContext, createAppStore, getDefaultAppStore } from './store/app';
+import { AppContext, createAppStore, getDefaultAppStore, useAppContext } from './store/app';
 import { DataContext, getDefaultDataStore } from './store/data';
 import { DatePicker } from './DatePicker';
 import { createClock } from './store/now';
@@ -9,6 +9,7 @@ import { NowContext } from './store/now';
 import { Worklog } from './Worklog';
 import { Settings } from './Settings';
 import { createDataStore } from './store/dataMethods';
+import { Match, Switch } from 'solid-js';
 
 // component
 export function App() {
@@ -36,17 +37,65 @@ export function App() {
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
           <div class='container max-w-screen-md px-8 py-2 flex flex-col'>
             <DatePicker />
-            <h2 class="text-2xl mt-6 mb-2">Worklog</h2>
-            <Worklog />
-            <h2 class="text-2xl mt-6 mb-2">Statistics</h2>
-            <Statistics />
-            <h2 class="text-2xl mt-6 mb-2">Settings</h2>
-            <Settings />
             <div class="mt-6"/>
-            <Utilities />
+            <TabList
+              tab={appStore.currentTab}
+              setTab={(tab) => setAppStore('currentTab', tab)}
+            />
+            <div class="mt-6"/>
+            <Switch>
+              <Match when={appStore.currentTab === 'worklog'}>
+                <Worklog />
+              </Match>
+              <Match when={appStore.currentTab === 'statistics'}>
+                <Statistics />
+              </Match>
+              <Match when={appStore.currentTab === 'settings'}>
+                <Settings />
+                <div class="mt-6"/>
+                <Utilities />
+              </Match>
+            </Switch>
           </div>
         </DataContext.Provider>
       </AppContext.Provider>
     </NowContext.Provider>
   )
+}
+
+function TabList(props: {
+  tab: 'worklog' | 'statistics' | 'settings';
+  setTab: (tab: 'worklog' | 'statistics' | 'settings') => void;
+}) {
+  return (
+    <div role="tablist" class="tabs tabs-boxed">
+      <a role="tab"
+        class="tab"
+        onClick={() => props.setTab('worklog')}
+        classList={{
+          'tab-active': props.tab === 'worklog',
+        }}
+      >
+        Worklog
+      </a>
+      <a role="tab"
+        class="tab"
+        onClick={() => props.setTab('statistics')}
+        classList={{
+          'tab-active': props.tab === 'statistics',
+        }}
+      >
+        Statistics
+      </a>
+      <a role="tab"
+        class="tab"
+        onClick={() => props.setTab('settings')}
+        classList={{
+          'tab-active': props.tab === 'settings',
+        }}
+      >
+        Settings
+      </a>
+    </div>
+  );
 }
