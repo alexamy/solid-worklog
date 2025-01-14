@@ -36,13 +36,13 @@ export function App() {
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
           <div class='container max-w-screen-md px-8 py-4 flex flex-col'>
             <DatePicker />
-            <div class="mb-4"></div>
-            <Worklog />
-            <div class="divider"></div>
-            <Statistics />
-            <div class="divider"></div>
-            <Settings />
             <div class="mb-6"></div>
+            <Worklog />
+            <div class="mb-6"></div>
+            <Statistics />
+            <div class="mb-6"></div>
+            <Settings />
+            <div class="mb-4"></div>
             <Utilities />
           </div>
         </DataContext.Provider>
