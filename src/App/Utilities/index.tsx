@@ -17,9 +17,9 @@ export function Utilities() {
           <button class="btn btn-sm btn-neutral" onClick={() => downloadJson(dataStore)}>Save backup</button>
           <button class="btn btn-sm btn-neutral" onClick={uploadStore}>Load backup</button>
         </div>
-        <div class='flex align-center justify-end gap-3'>
-          <button class="btn btn-sm btn-warning" onDblClick={() => resetEmpty()}>Remove all</button>
-          <button class="btn btn-sm btn-warning" onDblClick={() => resetToDefault()}>Reset data</button>
+        <div class='group flex align-center justify-end gap-3'>
+          <button class="btn btn-sm btn-outline btn-warning invisible group-hover:visible" onDblClick={() => resetEmpty()}>Remove all</button>
+          <button class="btn btn-sm btn-outline btn-warning invisible group-hover:visible" onDblClick={() => resetToDefault()}>Reset data</button>
         </div>
       </div>
     </div>
