@@ -401,24 +401,6 @@ function triggerNonDestructiveBlur(e: KeyboardEventTarget) {
 }
 
 // styles
-const sTable = css`
-  display: grid;
-  grid-template-columns: auto auto auto auto auto;
-`;
-
-const sCellSpan3 = css`
-  grid-column: span 3;
-`;
-
-const sCellEditable = css`
-  cursor: text;
-`;
-
-const sCellEditableText = css`
-  min-width: 120px;
-  justify-content: flex-start;
-`;
-
 const sTagList = css`
   position: absolute;
   top: 0;
