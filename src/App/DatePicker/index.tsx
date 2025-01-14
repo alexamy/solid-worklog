@@ -59,8 +59,10 @@ export function DatePicker() {
       </div>
       <div class='flex items-center justify-end gap-3'>
         <div class='flex items-center justify-center gap-2 translate-y-[-2px] mr-2'>
-          <DownloadButton onClick={() => {}} />
-          <Cog
+          <DownloadButton
+            onClick={() => {}}
+          />
+          <SettingsButton
             selected={appStore.currentTab === 'settings'}
             onClick={toggleSettings}
           />
@@ -141,7 +143,7 @@ function DownloadButton(props: { onClick: () => void }) {
   );
 }
 
-function Cog(props: {
+function SettingsButton(props: {
   selected: boolean,
   onClick: () => void,
 }) {
