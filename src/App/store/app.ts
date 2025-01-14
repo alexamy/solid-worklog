@@ -8,7 +8,7 @@ export interface AppStore {
   sortBy: 'tag' | 'duration';
   sortOrder: 'asc' | 'desc';
   jiraHost: string;
-  theme: 'light' | 'dark';
+  theme: string;
 }
 
 export type AppContextValue = [AppStore, SetStoreFunction<AppStore>];

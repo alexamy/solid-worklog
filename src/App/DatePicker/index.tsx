@@ -77,14 +77,17 @@ function ThemeController() {
   const [appStore, setAppStore] = useAppContext();
   const [checked, setChecked] = createSignal(false);
 
+  const LIGHT_THEME = 'light';
+  const DARK_THEME = 'dark';
+
   createEffect(() => {
     document.documentElement.setAttribute('data-theme', appStore.theme);
-    setChecked(appStore.theme === 'dark');
+    setChecked(appStore.theme === DARK_THEME);
   });
 
   function onThemeChange() {
     setChecked(!checked());
-    setAppStore('theme', checked() ? 'dark' : 'light');
+    setAppStore('theme', checked() ? DARK_THEME : LIGHT_THEME);
   }
 
   return (
@@ -106,7 +109,7 @@ function ThemeController() {
       <input
         class="toggle theme-controller"
         type="checkbox"
-        value="dark"
+        value={DARK_THEME}
         checked={checked()}
         onChange={onThemeChange}
       />
