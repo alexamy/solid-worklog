@@ -35,12 +35,12 @@ export function App() {
     <NowContext.Provider value={now}>
       <AppContext.Provider value={[appStore, setAppStore]}>
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
-          <div class='container max-w-screen-md px-8 py-4 flex flex-col gap-6'>
-            <DatePicker />
+          <div class='container max-w-screen-md px-8 py-4 flex flex-col gap-5'>
             <TabList
               tab={appStore.currentTab}
               setTab={(tab) => setAppStore('currentTab', tab)}
             />
+            <DatePicker />
             <Switch>
               <Match when={appStore.currentTab === 'worklog'}>
                 <Worklog />
