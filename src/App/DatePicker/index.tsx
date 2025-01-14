@@ -129,8 +129,8 @@ function Cog(props: {
     <svg
       class="size-6 translate-y-[-1px] mr-2 cursor-pointer"
       classList={{
-        'hover:stroke-gray-200': !props.selected,
-        'stroke-gray-200': props.selected,
+        'hover:stroke-gray-400 stroke-gray-600': !props.selected,
+        'hover:stroke-gray-400 stroke-primary': props.selected,
       }}
       onClick={() => props.onClick()}
       xmlns="http://www.w3.org/2000/svg"

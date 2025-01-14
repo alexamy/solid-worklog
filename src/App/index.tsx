@@ -9,6 +9,7 @@ import { NowContext } from './store/now';
 import { Worklog } from './Worklog';
 import { Settings } from './Settings';
 import { createDataStore } from './store/dataMethods';
+import { Show } from 'solid-js';
 
 // component
 export function App() {
@@ -36,14 +37,17 @@ export function App() {
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
           <div class='container max-w-screen-md px-8 py-4 flex flex-col'>
             <DatePicker />
-            <div class="mb-6"></div>
-            <Worklog />
-            <div class="mb-6"></div>
-            <Statistics />
-            <div class="mb-6"></div>
-            <Settings />
-            <div class="mb-4"></div>
-            <Utilities />
+            <Show when={appStore.currentTab === 'worklog'}>
+              <div class="mb-6"></div>
+              <Worklog />
+              <div class="mb-6"></div>
+              <Statistics />
+            </Show>
+            <Show when={appStore.currentTab === 'settings'}>
+              <Settings />
+              <div class="mb-4"></div>
+              <Utilities />
+            </Show>
           </div>
         </DataContext.Provider>
       </AppContext.Provider>
