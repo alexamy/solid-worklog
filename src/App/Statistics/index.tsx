@@ -131,7 +131,7 @@ function Toolbar(props: {
           checked={props.statRange === 'day'}
         />
         <span>
-          Day
+          <span class="text-sm">Day</span>
           {' '}
           <span class="text-xs italic text-gray-500">
             {intervals().day}
@@ -147,8 +147,7 @@ function Toolbar(props: {
           checked={props.statRange === 'week'}
         />
         <span>
-          Week
-          {' '}
+          <span class="text-sm">Week </span>
           <span class="text-xs italic text-gray-500">
             {intervals().week}
           </span>
@@ -164,8 +163,7 @@ function Toolbar(props: {
         />
 
         <span>
-          Month
-          {' '}
+          <span class="text-sm">Month </span>
           <span class="text-xs italic text-gray-500">
             {intervals().month}
           </span>
@@ -181,8 +179,7 @@ function Toolbar(props: {
         />
 
         <span>
-          Year
-          {' '}
+          <span class="text-sm">Year </span>
           <span class="text-xs italic text-gray-500">
             {intervals().year}
           </span>
@@ -197,7 +194,7 @@ function Toolbar(props: {
           checked={props.statRange === 'all'}
         />
         <span>
-          All time
+          <span class="text-sm">All time</span>
         </span>
       </label>
     </div>
