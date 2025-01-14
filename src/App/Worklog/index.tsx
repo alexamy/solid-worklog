@@ -107,8 +107,8 @@ export function Worklog() {
             {(item) => (
               <tr
                 classList={{
-                  'bg-gray-100 dark:bg-gray-800': selectedItemId() === item.id,
-                  'text-gray-600': item.tag === 'idle',
+                  'text-gray-400 dark:text-gray-600 ': item.tag === 'idle',
+                  'outline outline-sky-600': selectedItemId() === item.id,
                 }}
                 onClick={() => setSelectedItemId(item.id)}
               >
