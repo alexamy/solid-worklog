@@ -285,7 +285,7 @@ function ToolbarWorklog(props: {
       </Show>
       <Show when={props.isInProgress}>
         <button
-          class="btn btn-sm btn-active btn-primary"
+          class="btn btn-sm btn-active btn-secondary"
           title="Finish current entry"
           disabled={!props.isInProgress}
           onClick={() => finish()}

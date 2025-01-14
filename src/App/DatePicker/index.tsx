@@ -49,9 +49,9 @@ export function DatePicker() {
         {dayOfWeek()}
         {', '}
         {toTimestamp(now())}
-        <Show when={isInProgress()}>
+        {/* <Show when={isInProgress()}>
           <div class='w-[8px] h-[8px] rounded-full bg-red-600 shadow shadow-red-600' />
-        </Show>
+        </Show> */}
       </div>
       <div class='flex items-center justify-end gap-3'>
         <ThemeController />
