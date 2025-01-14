@@ -106,12 +106,6 @@ function ThemeController() {
       <input
         class="toggle theme-controller"
         type="checkbox"
-        value="light"
-        hidden
-      />
-      <input
-        class="toggle theme-controller"
-        type="checkbox"
         value="dark"
         checked={checked()}
         onChange={onThemeChange}
