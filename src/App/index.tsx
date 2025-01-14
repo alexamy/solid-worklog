@@ -9,7 +9,6 @@ import { NowContext } from './store/now';
 import { Worklog } from './Worklog';
 import { Settings } from './Settings';
 import { createDataStore } from './store/dataMethods';
-import { Match, Switch } from 'solid-js';
 
 // component
 export function App() {
@@ -36,23 +35,14 @@ export function App() {
       <AppContext.Provider value={[appStore, setAppStore]}>
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
           <div class='container max-w-screen-md px-8 py-4 flex flex-col gap-5'>
-            <TabList
-              tab={appStore.currentTab}
-              setTab={(tab) => setAppStore('currentTab', tab)}
-            />
             <DatePicker />
-            <Switch>
-              <Match when={appStore.currentTab === 'worklog'}>
-                <Worklog />
-              </Match>
-              <Match when={appStore.currentTab === 'statistics'}>
-                <Statistics />
-              </Match>
-              <Match when={appStore.currentTab === 'settings'}>
-                <Settings />
-                <Utilities />
-              </Match>
-            </Switch>
+            <h2 class='text-2xl'>Worklog</h2>
+            <Worklog />
+            <h2 class='text-2xl'>Statistics</h2>
+            <Statistics />
+            <h2 class='text-2xl'>Settings</h2>
+            <Settings />
+            <Utilities />
           </div>
         </DataContext.Provider>
       </AppContext.Provider>
