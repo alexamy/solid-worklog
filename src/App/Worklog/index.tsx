@@ -71,6 +71,7 @@ export function Worklog() {
         <ToolbarWorklog
           isInProgress={isInProgress()}
           setSelectedDate={(date) => setAppStore('selectedDate', date)}
+          selectedItemId={selectedItemId()}
           setSelectedItemId={(id) => setSelectedItemId(id)}
         />
         <Show when={!isInProgress()}>
@@ -237,9 +238,10 @@ function createTagListControls(selectedItemId: () => string | undefined) {
 function ToolbarWorklog(props: {
   isInProgress: boolean,
   setSelectedDate: (date: Date) => void,
+  selectedItemId: string | undefined,
   setSelectedItemId: (id: string | undefined) => void,
 }) {
-  const [_1, _2, {
+  const [dataStore, _2, {
     startLog,
     finishLog,
     tapLog,
@@ -247,7 +249,15 @@ function ToolbarWorklog(props: {
   }] = useDataContext();
 
   function start() {
-    startLog();
+    const item = props.selectedItemId
+      ? dataStore.items.find(item => item.id === props.selectedItemId)
+      : {};
+
+    if(props.selectedItemId && !item) {
+      throw new Error('Item not found');
+    }
+
+    startLog({ ...item, start: new Date(), end: undefined });
     props.setSelectedDate(new Date()); // TODO: add app store methods
   }
 
