@@ -35,14 +35,12 @@ export function App() {
     <NowContext.Provider value={now}>
       <AppContext.Provider value={[appStore, setAppStore]}>
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
-          <div class='container max-w-screen-md px-8 py-2 flex flex-col'>
+          <div class='container max-w-screen-md px-8 py-2 flex flex-col gap-6'>
             <DatePicker />
-            <div class="mt-6"/>
             <TabList
               tab={appStore.currentTab}
               setTab={(tab) => setAppStore('currentTab', tab)}
             />
-            <div class="mt-6"/>
             <Switch>
               <Match when={appStore.currentTab === 'worklog'}>
                 <Worklog />
@@ -52,7 +50,6 @@ export function App() {
               </Match>
               <Match when={appStore.currentTab === 'settings'}>
                 <Settings />
-                <div class="mt-6"/>
                 <Utilities />
               </Match>
             </Switch>
