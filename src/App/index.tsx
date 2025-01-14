@@ -10,7 +10,7 @@ import { Worklog } from './Worklog';
 import { Settings } from './Settings';
 import { createDataStore } from './store/dataMethods';
 import { Show } from 'solid-js';
-import { MetaProvider } from '@solidjs/meta';
+import { Link, MetaProvider } from '@solidjs/meta';
 
 // component
 export function App() {
@@ -35,6 +35,7 @@ export function App() {
 
   return (
     <MetaProvider>
+      <Favicon isInProgress={dataMethods.isInProgress()} />
       <NowContext.Provider value={now}>
         <AppContext.Provider value={[appStore, setAppStore]}>
           <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
@@ -57,6 +58,12 @@ export function App() {
       </NowContext.Provider>
     </MetaProvider>
   )
+}
+
+function Favicon(props: { isInProgress: boolean }) {
+  const file = () => props.isInProgress ? 'clock.svg' : 'pomodoro.svg';
+
+  return <Link rel="icon" type="image/svg+xml" href={file()} />;
 }
 
 function TabList(props: {
