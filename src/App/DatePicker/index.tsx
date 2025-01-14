@@ -43,9 +43,8 @@ export function DatePicker() {
         <input
           class="w-auto px-2 py-1"
           type="date"
-          // FIX: iso string is not a local date string
-          value={selectedDate().toISOString().split('T')[0]}
-          max={new Date().toISOString().split('T')[0]}
+          value={selectedDate().toLocaleDateString('en-CA')}
+          max={new Date().toLocaleDateString('en-CA')}
           onChange={(e) => setSelectedDate(new Date(e.target.value))}
         />
         <button
