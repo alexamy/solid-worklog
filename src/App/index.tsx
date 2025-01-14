@@ -35,7 +35,7 @@ export function App() {
     <NowContext.Provider value={now}>
       <AppContext.Provider value={[appStore, setAppStore]}>
         <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
-          <div class='container max-w-screen-md px-8 py-2 flex flex-col gap-6'>
+          <div class='container max-w-screen-md px-8 py-4 flex flex-col gap-6'>
             <DatePicker />
             <TabList
               tab={appStore.currentTab}
@@ -65,7 +65,7 @@ function TabList(props: {
   setTab: (tab: 'worklog' | 'statistics' | 'settings') => void;
 }) {
   return (
-    <div role="tablist" class="tabs tabs-boxed">
+    <div role="tablist" class="tabs tabs-bordered">
       <a role="tab"
         class="tab"
         onClick={() => props.setTab('worklog')}
