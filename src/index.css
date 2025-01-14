@@ -4,10 +4,6 @@
 
 @layer components {
   .table {
-    tr {
-      @apply border-b-[1px] border-gray-700;
-    }
-
     th, td {
       @apply p-2.5 h-[38px];
     }

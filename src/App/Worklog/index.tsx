@@ -91,7 +91,7 @@ export function Worklog() {
         onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
 
-      <table class="table table-worklog">
+      <table class="table table-zebra table-worklog">
         <thead>
           <tr class="cursor-pointer" onClick={() => setSelectedItemId(undefined)}>
             <th>Start</th>

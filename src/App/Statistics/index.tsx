@@ -76,7 +76,7 @@ export function Statistics() {
       />
 
       <div class="overflow-x-auto">
-        <table class="table table-statistics">
+        <table class="table table-zebra table-statistics">
           <thead>
             <tr class="cursor-pointer">
               <th onClick={() => changeSorting('duration')}>
