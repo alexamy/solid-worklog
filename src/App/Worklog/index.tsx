@@ -44,22 +44,22 @@ export function Worklog() {
   );
 
   function onTagCellKeyDown(e: KeyboardEventTarget) {
-    if(e.ctrlKey && e.key === 'Enter') {
-      const items = tagMenu.availableItems();
+    if(e.key === 'Enter') {
+      e.preventDefault();
 
-      if(items.length > 0) {
-        updateItem({ tag: items[tagMenu.selectedIndex()] }, selectedItemId()!);
-        e.currentTarget.textContent = items[tagMenu.selectedIndex()];
+      if(tagMenu.selectedIndex() >= 0) {
+        const items = tagMenu.availableItems();
+        const item = items?.[tagMenu.selectedIndex()];
+
+        if(item) {
+          updateItem({ tag: item }, selectedItemId()!);
+          e.currentTarget.textContent = item;
+        }
+      } else {
+        triggerNonDestructiveBlur(e);
       }
 
       tagMenu.toggleVisible('hide');
-      return;
-    }
-
-    if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
-      tagMenu.toggleVisible('hide');
-      return;
     }
 
     if(e.key === 'ArrowUp') {
@@ -72,7 +72,7 @@ export function Worklog() {
   }
 
   function onTagCellKeyUp(e: KeyboardEventTarget) {
-    if (e.key === 'Enter' || e.key === 'Control') return;
+    if (e.key === 'Enter' || e.key === 'Control' || e.key === 'ArrowUp' || e.key === 'ArrowDown') return;
     tagMenu.setQuery(e.currentTarget.textContent!);
     tagMenu.toggleVisible('show');
   }
@@ -83,22 +83,22 @@ export function Worklog() {
   );
 
   function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
-    if(e.ctrlKey && e.key === 'Enter') {
-      const items = descriptionMenu.availableItems();
+    if(e.key === 'Enter') {
+      e.preventDefault();
 
-      if(items.length > 0) {
-        updateItem({ description: items[descriptionMenu.selectedIndex()] }, selectedItemId()!);
-        e.currentTarget.textContent = items[descriptionMenu.selectedIndex()];
+      if(descriptionMenu.selectedIndex() >= 0) {
+        const items = descriptionMenu.availableItems();
+        const item = items?.[descriptionMenu.selectedIndex()];
+
+        if(item) {
+          updateItem({ description: item }, selectedItemId()!);
+          e.currentTarget.textContent = item;
+        }
+      } else {
+        triggerNonDestructiveBlur(e);
       }
 
       descriptionMenu.toggleVisible('hide');
-      return;
-    }
-
-    if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
-      descriptionMenu.toggleVisible('hide');
-      return;
     }
 
     if(e.key === 'ArrowUp') {
@@ -111,7 +111,7 @@ export function Worklog() {
   }
 
   function onDescriptionCellKeyUp(e: KeyboardEventTarget) {
-    if (e.key === 'Enter' || e.key === 'Control') return;
+    if (e.key === 'Enter' || e.key === 'Control' || e.key === 'ArrowUp' || e.key === 'ArrowDown') return;
     descriptionMenu.setQuery(e.currentTarget.textContent!);
     descriptionMenu.toggleVisible('show');
   }
@@ -273,15 +273,15 @@ function createAutocompleteControls(items: () => string[]) {
   const uniqueItems = createMemo(() => ([...new Set(items())]));
 
   // allow to select item by index
-  const [selectedIndex, setSelectedIndex] = createSignal(0);
+  const [selectedIndex, setSelectedIndex] = createSignal(-1);
   function selectItem(direction: 'up' | 'down') {
     const index = selectedIndex();
     const length = uniqueItems().length;
 
     if(direction === 'up') {
-      setSelectedIndex((index - 1 + length) % length);
+      setSelectedIndex(index === -1 ? 0 : (index - 1 + length) % length);
     } else {
-      setSelectedIndex((index + 1) % length);
+      setSelectedIndex(index === -1 ? 0 : (index + 1) % length);
     }
   }
 
@@ -309,7 +309,7 @@ function createAutocompleteControls(items: () => string[]) {
     if(state === 'show') {
       setVisible(true);
     } else {
-      setSelectedIndex(0);
+      setSelectedIndex(-1);
       setVisible(false);
     }
   }
