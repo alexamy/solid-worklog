@@ -14,6 +14,7 @@ interface StatEntry {
 interface StatResult {
   entries: StatEntry[];
   sumAll: number;
+  sumAllNoIdle: number;
 }
 
 type StatRange = 'day' | 'week' | 'month' | 'year' | 'all';
@@ -62,6 +63,13 @@ export function Statistics() {
     getSortedEntries(stats().entries, sortBy(), sortOrder())
   );
 
+  const allStats = createMemo(() => {
+    const sumAll = stats().sumAll;
+    const sumAllNoIdle = stats().sumAllNoIdle;
+
+    return `${minutesToHoursMinutes(sumAll)} (${minutesToHoursMinutes(sumAllNoIdle)})`;
+  });
+
   // TODO: fix locked td height
 
   return (
@@ -95,8 +103,7 @@ export function Statistics() {
 
             <tr>
               <td></td>
-              <td><b>{minutesToHoursMinutes(stats().sumAll)}</b></td>
-              <td></td>
+              <td colspan={2} class="statistics-all-stats"><b>{allStats()}</b></td>
             </tr>
           </tbody>
         </table>
@@ -261,8 +268,9 @@ function aggregateByTag(items: Item[]): StatResult {
   });
 
   const sumAll = entries.reduce((sum, entry) => sum + entry.duration, 0);
+  const sumAllNoIdle = entries.reduce((sum, entry) => sum + (entry.tag === 'idle' ? 0 : entry.duration), 0);
 
-  return { entries, sumAll };
+  return { entries, sumAll, sumAllNoIdle };
 }
 
 // stat range
