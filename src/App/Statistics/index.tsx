@@ -118,8 +118,11 @@ function Toolbar(props: {
   statRange: StatRange;
   setStatRange: (time: StatRange) => void;
 }) {
+  const day = () => props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+  const weekday = () => props.selectedDate.toLocaleDateString('en-US', { weekday: 'short' });
+
   const intervals = createMemo(() => ({
-    day: props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }),
+    day: `${weekday()} ${day()}`,
     week: getWeekInterval(props.selectedDate),
     month: props.selectedDate.toLocaleDateString('en-US', { month: 'long' }),
     year: props.selectedDate.toLocaleDateString('en-US', { year: 'numeric' }),
