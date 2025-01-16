@@ -39,20 +39,21 @@ export function Worklog() {
   }
 
   // tag autocomplete
-  const tagMenu = createAutocompleteControls();
+  const tagMenu = createAutocompleteControls(
+    () => dataStore.items.map(item => item.tag)
+  );
 
   function onTagCellKeyDown(e: KeyboardEventTarget) {
     if(e.ctrlKey && e.key === 'Enter') {
-      tagMenu.setTriggerFirstSelect();
-      tagMenu.setVisible(false);
-      e.currentTarget.focus();
-      return;
+      const items = tagMenu.uniqueItems();
+      if(items.length > 0) {
+        updateItem({ tag: items[0] }, selectedItemId()!);
+      }
+    } else if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
     }
 
-    if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
-      tagMenu.setVisible(false);
-    }
+    tagMenu.setVisible(false);
   }
 
   function onTagCellKeyUp(e: KeyboardEventTarget) {
@@ -62,17 +63,17 @@ export function Worklog() {
   }
 
   // description autocomplete
-  const descriptionMenu = createAutocompleteControls();
+  const descriptionMenu = createAutocompleteControls(
+    () => dataStore.items.map(item => item.description)
+  );
 
   function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
     if(e.ctrlKey && e.key === 'Enter') {
-      descriptionMenu.setTriggerFirstSelect();
-      descriptionMenu.setVisible(false);
-      e.currentTarget.focus();
-      return;
-    }
-
-    if (e.key === 'Enter') {
+      const items = descriptionMenu.uniqueItems();
+      if(items.length > 0) {
+        updateItem({ description: items[0] }, selectedItemId()!);
+      }
+    } else if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
       descriptionMenu.setVisible(false);
     }
@@ -104,21 +105,19 @@ export function Worklog() {
       </div>
 
       <AutcompleteMenu
-        items={dataStore.items.map(item => item.tag)}
+        items={tagMenu.uniqueItems()}
         visible={tagMenu.visible()}
         query={tagMenu.query()}
         parent={tagMenu.parent()}
         onItemClick={(tag) => updateItem({ tag }, selectedItemId()!)}
-        triggerFirstSelect={tagMenu.triggerFirstSelect()}
       />
 
       <AutcompleteMenu
-        items={dataStore.items.map(item => item.description)}
+        items={descriptionMenu.uniqueItems()}
         visible={descriptionMenu.visible()}
         query={descriptionMenu.query()}
         parent={descriptionMenu.parent()}
         onItemClick={(description) => updateItem({ description }, selectedItemId()!)}
-        triggerFirstSelect={descriptionMenu.triggerFirstSelect()}
       />
 
       <table class="table table-zebra table-worklog">
@@ -194,14 +193,12 @@ function AutcompleteMenu(props: {
   visible: boolean,
   query: string,
   parent?: MouseEventTarget,
-  triggerFirstSelect: undefined,
   onItemClick: (item: string) => void,
 }) {
   let listElement!: HTMLUListElement;
 
   // TODO: add debounce if performance is an issue
-  const uniqueItems = createMemo(() => ([...new Set(props.items)]));
-  const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
+  const fuzzySearch = createMemo(() => createFuzzySearch(props.items));
   const [availableItems, setAvailableItems] = createSignal<string[]>([]);
   const listShown = () => props.visible && availableItems().length > 0;
 
@@ -222,13 +219,6 @@ function AutcompleteMenu(props: {
       top: `${rect.top + rect.height}px`,
       width: `${rect.width}px`,
     });
-  }));
-
-  // select first item on request
-  createEffect(on(() => props.triggerFirstSelect, () => {
-    if (availableItems().length > 0) {
-      props.onItemClick(availableItems()[0]);
-    }
   }));
 
   return (
@@ -253,11 +243,12 @@ function AutcompleteMenu(props: {
   );
 }
 
-function createAutocompleteControls() {
+function createAutocompleteControls(items: () => string[]) {
   const [query, setQuery] = createSignal('');
   const [parent, setParent] = createSignal<MouseEventTarget>();
   const [visible, setVisible] = createSignal(false);
-  const [triggerFirstSelect, setTriggerFirstSelect] = createSignal(undefined, { equals: false });
+
+  const uniqueItems = createMemo(() => ([...new Set(items())]));
 
   // hide tag list when clicking outside
   createEffect(() => {
@@ -270,10 +261,10 @@ function createAutocompleteControls() {
   });
 
   return {
+    uniqueItems,
     query, setQuery,
     parent, setParent,
     visible, setVisible,
-    triggerFirstSelect, setTriggerFirstSelect,
   };
 }
 
