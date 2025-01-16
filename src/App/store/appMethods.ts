@@ -16,5 +16,8 @@ export function createAppStore() {
     setAppStore({ ...getDefaultAppStore(), ...state });
   }
 
-  return [appStore, setAppStore, { resetWithDefaults, moveDate }] as const;
+  return [appStore, setAppStore, {
+    resetWithDefaults,
+    moveDate,
+  }] as const;
 };

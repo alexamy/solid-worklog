@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal } from 'solid-js';
 import { toTimestamp } from '../time';
 import { useAppContext } from '../store/app';
 import { useNowContext } from '../store/now';
@@ -9,11 +9,8 @@ export function DatePicker() {
   const [_1, _2, { isInProgress, downloadDataStore }] = useDataContext();
   const now = useNowContext();
 
-  const selectedDate = () => appStore.selectedDate;
-  const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
-
-  const isToday = createMemo(() => selectedDate().toDateString() === new Date().toDateString());
-  const dayOfWeek = () => selectedDate().toLocaleDateString(undefined, { weekday: 'long' });
+  const isToday = createMemo(() => appStore.selectedDate.toDateString() === new Date().toDateString());
+  const dayOfWeek = () => appStore.selectedDate.toLocaleDateString(undefined, { weekday: 'long' });
 
   function toggleSettings() {
     setAppStore(
@@ -28,7 +25,7 @@ export function DatePicker() {
         <button
           class="btn btn-xs btn-neutral"
           disabled={isToday()}
-          onClick={() => setSelectedDate(new Date())}
+          onClick={() => setAppStore('selectedDate', new Date())}
         >Today</button>
         <button
           class="btn btn-xs btn-neutral"
@@ -37,9 +34,9 @@ export function DatePicker() {
         <input
           class="w-auto px-2 py-1"
           type="date"
-          value={selectedDate().toLocaleDateString('en-CA')}
+          value={appStore.selectedDate.toLocaleDateString('en-CA')}
           max={new Date().toLocaleDateString('en-CA')}
-          onChange={(e) => setSelectedDate(new Date(e.target.value))}
+          onChange={(e) => setAppStore('selectedDate', new Date(e.target.value))}
         />
         <button
           class="btn btn-xs btn-neutral"
