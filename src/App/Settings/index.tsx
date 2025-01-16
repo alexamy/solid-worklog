@@ -1,4 +1,3 @@
-import { css } from '@linaria/core';
 import { useAppContext } from '../store/app';
 import { sToolbar } from '../styles';
 
@@ -13,7 +12,7 @@ export function Settings() {
   return (
     <div>
       <div class={sToolbar}>
-        <div class={sInput}>
+        <div class='flex flex-col gap-4'>
           <label class="form-control w-full max-w-md">
             <div class="label">
               <span class="label-text">Jira host</span>
@@ -33,9 +32,3 @@ export function Settings() {
     </div>
   )
 }
-
-const sInput = css`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;

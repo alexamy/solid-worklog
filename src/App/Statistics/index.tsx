@@ -1,4 +1,3 @@
-import { css } from '@linaria/core';
 import { createMemo, For, Match, Show, Switch } from 'solid-js';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
@@ -204,7 +203,7 @@ function PomodoroIcon(props: { amount?: number }) {
   }
 
   return <img
-    classList={{ [sPomodoroGrayed]: amount() < 1 }}
+    classList={{ 'grayscale brightness-125': amount() < 1 }}
     width={width()}
     height={size}
     src={pomodoroSvg}
@@ -336,8 +335,3 @@ function minutesToHoursMinutes(minutesAmount: number) {
 
   return `${minutes} min`;
 }
-
-// styles
-const sPomodoroGrayed = css`
-  filter: grayscale(100%) brightness(120%);
-`;
