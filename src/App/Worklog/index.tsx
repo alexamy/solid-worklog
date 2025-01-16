@@ -207,13 +207,16 @@ function createAutocompleteControls(
   const [parent, setParent] = createSignal<MouseEventTarget>();
   const [visible, setVisible] = createSignal(false);
 
+  // add debounce if performance is an issue
   const uniqueItems = createMemo(() => ([...new Set(items())]));
+  const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
+  const [availableItems, setAvailableItems] = createSignal<string[]>([]);
 
   // allow to select item by index
   const [selectedIndex, setSelectedIndex] = createSignal(-1);
   function selectItem(direction: 'up' | 'down') {
     const index = selectedIndex();
-    const length = uniqueItems().length;
+    const length = availableItems().length;
 
     if(direction === 'up') {
       setSelectedIndex(index === -1 ? 0 : (index - 1 + length) % length);
@@ -221,10 +224,6 @@ function createAutocompleteControls(
       setSelectedIndex(index === -1 ? 0 : (index + 1) % length);
     }
   }
-
-  // add debounce if performance is an issue
-  const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
-  const [availableItems, setAvailableItems] = createSignal<string[]>([]);
 
   // update available tags
   createEffect(on(() => query(), (query) => {
