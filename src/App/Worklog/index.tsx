@@ -48,12 +48,16 @@ export function Worklog() {
       const items = tagMenu.uniqueItems();
       if(items.length > 0) {
         updateItem({ tag: items[0] }, selectedItemId()!);
+        e.currentTarget.textContent = items[0];
       }
-    } else if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
+      tagMenu.setVisible(false);
+      return;
     }
 
-    tagMenu.setVisible(false);
+    if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
+      tagMenu.setVisible(false);
+    }
   }
 
   function onTagCellKeyUp(e: KeyboardEventTarget) {
@@ -72,8 +76,12 @@ export function Worklog() {
       const items = descriptionMenu.uniqueItems();
       if(items.length > 0) {
         updateItem({ description: items[0] }, selectedItemId()!);
+        e.currentTarget.textContent = items[0];
       }
-    } else if (e.key === 'Enter') {
+      return;
+    }
+
+    if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
       descriptionMenu.setVisible(false);
     }
