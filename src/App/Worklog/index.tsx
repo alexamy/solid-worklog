@@ -187,7 +187,7 @@ function AutcompleteMenu(props: {
           {(item, index) =>
             <li
               class='cursor-pointer'
-              classList={{ 'bg-primary': index() === props.selectedIndex }}
+              classList={{ 'bg-base-300': index() === props.selectedIndex }}
               onClick={() => props.onItemClick(item)}
             >
               <a>{item}</a>
