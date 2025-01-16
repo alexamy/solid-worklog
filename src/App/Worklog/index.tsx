@@ -271,6 +271,10 @@ function createAutocompleteControls(
       toggleVisible('hide');
     }
 
+    if(e.key === 'Escape') {
+      toggleVisible('hide');
+    }
+
     if(e.key === 'ArrowUp') {
       selectItem('up');
     }
@@ -283,7 +287,8 @@ function createAutocompleteControls(
   function onKeyUp(e: KeyboardEventTarget) {
     if (
       e.key === 'Enter' || e.key === 'Control' ||
-      e.key === 'ArrowUp' || e.key === 'ArrowDown'
+      e.key === 'ArrowUp' || e.key === 'ArrowDown' ||
+      e.key === 'Escape'
     ) return;
 
     setQuery(e.currentTarget.textContent!);
