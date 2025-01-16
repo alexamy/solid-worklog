@@ -48,8 +48,8 @@ export function Worklog() {
       const items = tagMenu.availableItems();
 
       if(items.length > 0) {
-        updateItem({ tag: items[0] }, selectedItemId()!);
-        e.currentTarget.textContent = items[0];
+        updateItem({ tag: items[tagMenu.selectedIndex()] }, selectedItemId()!);
+        e.currentTarget.textContent = items[tagMenu.selectedIndex()];
       }
 
       tagMenu.toggleVisible('hide');
@@ -59,6 +59,15 @@ export function Worklog() {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
       tagMenu.toggleVisible('hide');
+      return;
+    }
+
+    if(e.key === 'ArrowUp') {
+      tagMenu.selectItem('up');
+    }
+
+    if(e.key === 'ArrowDown') {
+      tagMenu.selectItem('down');
     }
   }
 
@@ -78,8 +87,8 @@ export function Worklog() {
       const items = descriptionMenu.availableItems();
 
       if(items.length > 0) {
-        updateItem({ description: items[0] }, selectedItemId()!);
-        e.currentTarget.textContent = items[0];
+        updateItem({ description: items[descriptionMenu.selectedIndex()] }, selectedItemId()!);
+        e.currentTarget.textContent = items[descriptionMenu.selectedIndex()];
       }
 
       descriptionMenu.toggleVisible('hide');
@@ -89,6 +98,15 @@ export function Worklog() {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
       descriptionMenu.toggleVisible('hide');
+      return;
+    }
+
+    if(e.key === 'ArrowUp') {
+      descriptionMenu.selectItem('up');
+    }
+
+    if(e.key === 'ArrowDown') {
+      descriptionMenu.selectItem('down');
     }
   }
 
@@ -121,6 +139,7 @@ export function Worklog() {
         items={tagMenu.availableItems()}
         visible={tagMenu.visible()}
         parent={tagMenu.parent()}
+        selectedIndex={tagMenu.selectedIndex()}
         onItemClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
 
@@ -128,6 +147,7 @@ export function Worklog() {
         items={descriptionMenu.availableItems()}
         visible={descriptionMenu.visible()}
         parent={descriptionMenu.parent()}
+        selectedIndex={descriptionMenu.selectedIndex()}
         onItemClick={(description) => updateItem({ description }, selectedItemId()!)}
       />
 
@@ -203,6 +223,7 @@ function AutcompleteMenu(props: {
   items: string[],
   visible: boolean,
   parent?: MouseEventTarget,
+  selectedIndex: number,
   onItemClick: (item: string) => void,
 }) {
   let listElement!: HTMLUListElement;
@@ -229,9 +250,10 @@ function AutcompleteMenu(props: {
         style={{ ...style(), display: listShown() ? 'block' : 'none' }}
       >
         <For each={props.items}>
-          {(item) =>
+          {(item, index) =>
             <li
               class='cursor-pointer'
+              classList={{ 'bg-primary': index() === props.selectedIndex }}
               onClick={() => props.onItemClick(item)}
             >
               <a>{item}</a>
@@ -297,6 +319,7 @@ function createAutocompleteControls(items: () => string[]) {
     query, setQuery,
     parent, setParent,
     visible, toggleVisible,
+    selectedIndex, selectItem,
   };
 }
 
