@@ -9,6 +9,7 @@ export interface AppStore {
   sortOrder: 'asc' | 'desc';
   jiraHost: string;
   theme: 'light' | 'dark';
+  skipEmptyDays: boolean;
 }
 
 export type AppContextValue = [AppStore, SetStoreFunction<AppStore>];
@@ -38,5 +39,6 @@ export function getDefaultAppStore(): AppStore {
     sortOrder: 'desc',
     jiraHost: '',
     theme: 'light',
+    skipEmptyDays: false,
   };
 }
