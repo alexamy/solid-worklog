@@ -291,7 +291,13 @@ function ToolbarWorklog(props: {
     fillLog,
   }] = useDataContext();
 
-  function start() {
+
+  function startNew() {
+    startLog({ start: new Date(), end: undefined });
+    props.setSelectedDate(new Date()); // TODO: add app store methods
+  }
+
+  function startSelected() {
     const item = props.selectedItemId
       ? dataStore.items.find(item => item.id === props.selectedItemId)
       : {};
@@ -327,8 +333,16 @@ function ToolbarWorklog(props: {
           class="btn btn-sm btn-primary"
           title="Start new entry"
           disabled={props.isInProgress}
-          onClick={() => start()}
-        >{props.selectedItemId ? 'Start selected' : 'Start new'}</button>
+          onClick={() => startNew()}
+        >Start new</button>
+        <Show when={props.selectedItemId}>
+          <button
+            class="btn btn-sm btn-primary"
+            title="Start selected entry"
+            disabled={props.isInProgress}
+            onClick={() => startSelected()}
+          >Start selected</button>
+        </Show>
         <button
           class="btn btn-sm btn-neutral"
           title="Add completed entry between last entry and now"
