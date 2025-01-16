@@ -45,6 +45,7 @@ export function Worklog() {
     if(e.ctrlKey && e.key === 'Enter') {
       tagMenu.setTriggerFirstSelect();
       tagMenu.setVisible(false);
+      e.currentTarget.focus();
       return;
     }
 
@@ -67,6 +68,7 @@ export function Worklog() {
     if(e.ctrlKey && e.key === 'Enter') {
       descriptionMenu.setTriggerFirstSelect();
       descriptionMenu.setVisible(false);
+      e.currentTarget.focus();
       return;
     }
 
