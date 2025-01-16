@@ -1,5 +1,4 @@
 import { useAppContext } from '../store/app';
-import { sToolbar } from '../styles';
 
 export function Settings() {
   const [appStore, setAppStore] = useAppContext();
@@ -11,7 +10,7 @@ export function Settings() {
 
   return (
     <div>
-      <div class={sToolbar}>
+      <div class='flex align-center justify-start gap-3'>
         <div class='flex flex-col gap-4'>
           <label class="form-control w-full max-w-md">
             <div class="label">
