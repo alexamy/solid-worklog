@@ -1,8 +1,6 @@
-import { css, cx } from '@linaria/core';
-import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
+import { createMemo, For, Match, Show, Switch } from 'solid-js';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
-import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft } from '../styles';
 import { calculateDuration } from '../time';
 import pomodoroSvg from './pomodoro.svg';
 import { useNowContext } from '../store/now';
@@ -30,8 +28,11 @@ export function Statistics() {
   const selectedDate = () => appStore.selectedDate;
 
   // sorting
-  const [sortBy, setSortBy] = createSignal<SortBy>('tag');
-  const [sortOrder, setSortOrder] = createSignal<SortOrder>('asc');
+  const sortBy = () => appStore.sortBy;
+  const setSortBy = (by: SortBy) => setAppStore('sortBy', by);
+
+  const sortOrder = () => appStore.sortOrder;
+  const setSortOrder = (order: SortOrder) => setAppStore('sortOrder', order);
 
   function changeSorting(by: SortBy) {
     if (sortBy() === by) {
@@ -62,38 +63,46 @@ export function Statistics() {
     sumAll: stats().sumAll,
   }));
 
+  // TODO: fix locked td height
+
   return (
-    <>
+    <div>
       <Toolbar
         selectedDate={selectedDate()}
         statRange={range()}
         setStatRange={setRange}
       />
 
-      <div class={sTableStats}>
-        <div class={sRow}>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-          Pomodoros
-        </div>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('duration')}>
-          Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
-        </div>
-        <div class={cx(sCell, sCellHeader)} onClick={() => changeSorting('tag')}>
-          Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
-        </div>
-      </div>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra table-statistics">
+          <thead>
+            <tr class="cursor-pointer">
+              <th onClick={() => changeSorting('duration')}>
+                Pomodoros
+              </th>
+              <th onClick={() => changeSorting('duration')}>
+                Duration {sortBy() === 'duration' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+              </th>
+              <th onClick={() => changeSorting('tag')}>
+                Tag {sortBy() === 'tag' ? (sortOrder() === 'asc' ? '↑' : '↓') : ''}
+              </th>
+            </tr>
+          </thead>
 
-      <For each={sortedStats().entries}>
-        {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
-      </For>
+          <tbody>
+            <For each={sortedStats().entries}>
+              {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
+            </For>
 
-      <div class={sRow}>
-        <div class={cx(sCell)}></div>
-        <div class={cx(sCell)}><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></div>
-        <div class={cx(sCell)}></div>
+            <tr>
+              <td></td>
+              <td><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-    </>
   );
 }
 
@@ -111,65 +120,53 @@ function Toolbar(props: {
   } satisfies Record<StatRange, string>));
 
   return (
-    <div class={sToolbar}>
-      <div class={sToolbarLeft}>
-        <label>
-          <input type="radio" name="timeRange" value="day"
-            onChange={() => props.setStatRange('day')}
-            checked={props.statRange === 'day'}
-          />
-          Day ({intervals().day})
-        </label>
-
-        <label>
-          <input type="radio" name="timeRange" value="week"
-            onChange={() => props.setStatRange('week')}
-            checked={props.statRange === 'week'}
-          />
-          Week ({intervals().week})
-        </label>
-
-        <label>
-          <input type="radio" name="timeRange" value="month"
-            onChange={() => props.setStatRange('month')}
-            checked={props.statRange === 'month'}
-          />
-          Month ({intervals().month})
-        </label>
-
-        <label>
-          <input type="radio" name="timeRange" value="year"
-            onChange={() => props.setStatRange('year')}
-            checked={props.statRange === 'year'}
-          />
-          Year ({intervals().year})
-        </label>
-
-        <label>
-          <input type="radio" name="timeRange" value="all"
-            onChange={() => props.setStatRange('all')}
-            checked={props.statRange === 'all'}
-          />
-          All time
-        </label>
-      </div>
+    <div role="tablist" class="tabs tabs-bordered">
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'day' }} onClick={() => props.setStatRange('day')}>
+        <span class="text-sm mr-1">Day</span>
+        <span class="text-xs italic text-gray-500">
+          {intervals().day}
+        </span>
+      </a>
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'week' }} onClick={() => props.setStatRange('week')}>
+        <span class="text-sm mr-1">Week </span>
+        <span class="text-xs italic text-gray-500">
+          {intervals().week}
+        </span>
+      </a>
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'month' }} onClick={() => props.setStatRange('month')}>
+        <span class="text-sm mr-1">Month </span>
+        <span class="text-xs italic text-gray-500">
+          {intervals().month}
+        </span>
+      </a>
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'year' }} onClick={() => props.setStatRange('year')}>
+        <span class="text-sm mr-1">Year </span>
+        <span class="text-xs italic text-gray-500">
+          {intervals().year}
+        </span>
+      </a>
+      <a role="tab" class="tab" classList={{ 'tab-active': props.statRange === 'all' }} onClick={() => props.setStatRange('all')}>
+        <span class="text-sm">All time</span>
+      </a>
     </div>
   );
 }
 
 function ItemRow(props: StatEntry & { jiraHost: string }) {
   return (
-    <div class={sRow}>
-      <div class={cx(sCell, sCellPomodoro)}>
+    <tr>
+      <td class="flex gap-1 justify-center">
         <Show when={props.pomodoros > 0}>
           <PomodoroCell tag={props.tag} amount={props.pomodoros} />
         </Show>
-      </div>
-      <div class={sCell}>{minutesToHoursMinutes(props.duration)}</div>
-      <div class={cx(sCell, sCellText)}>
+      </td>
+      <td>
+        {minutesToHoursMinutes(props.duration)}
+      </td>
+      <td>
         <TagView tag={props.tag} jiraHost={props.jiraHost} />
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 }
 
@@ -196,17 +193,19 @@ function PomodoroCell(props: { tag: string, amount: number }) {
 }
 
 function PomodoroIcon(props: { amount?: number }) {
+  const size = 20;
+
   const amount = () => props.amount ?? 1;
   const width = () => {
-    const full = amount() * 24;
+    const full = amount() * size;
     const result = full >= 10 ? full : 0;
     return result.toFixed(2);
   }
 
   return <img
-    classList={{ [sPomodoroGrayed]: amount() < 1 }}
+    classList={{ 'grayscale brightness-125': amount() < 1 }}
     width={width()}
-    height={24}
+    height={size}
     src={pomodoroSvg}
   />;
 }
@@ -220,7 +219,7 @@ function TagView(props: { tag: string, jiraHost: string }) {
       <Show when={props.jiraHost} fallback={props.tag}>
         <For each={props.tag.split(jiraRegex)}>
           {(part) => part.match(jiraRegex)
-            ? <a href={`${props.jiraHost}/browse/${part}`}>{part}</a>
+            ? <a class="link" href={`${props.jiraHost}/browse/${part}`}>{part}</a>
             : part
           }
         </For>
@@ -282,6 +281,7 @@ function getStartOfStatRange(selectedDate: Date, statRange: StatRange) {
   }
 }
 
+// TODO: proper check of range with start and end of range
 function areItemsInRange(item: Item, target: Date, statRange: StatRange) {
   const itemDate = new Date(item.start);
   itemDate.setHours(0, 0, 0, 0);
@@ -335,22 +335,3 @@ function minutesToHoursMinutes(minutesAmount: number) {
 
   return `${minutes} min`;
 }
-
-// styles
-const sTableStats = css`
-  display: grid;
-  grid-template-columns: 180px 160px auto;
-`;
-
-const sCellText = css`
-  justify-content: flex-start;
-`;
-
-const sCellPomodoro = css`
-  display: flex;
-  gap: 5px;
-`;
-
-const sPomodoroGrayed = css`
-  filter: grayscale(100%) brightness(120%);
-`;

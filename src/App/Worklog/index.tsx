@@ -1,13 +1,10 @@
-import { createEffect, createMemo, createSignal, For, on, onCleanup, Show } from 'solid-js';
-import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft, sToolbarRight } from '../styles';
-import { toTimestamp } from '../time';
-import { css, cx } from '@linaria/core';
-import { Portal } from 'solid-js/web';
 import createFuzzySearch from '@nozbe/microfuzz';
+import { createEffect, createMemo, createSignal, For, on, onCleanup, Show } from 'solid-js';
+import { Portal } from 'solid-js/web';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
-import { calculateDuration } from '../time';
 import { useNowContext } from '../store/now';
+import { calculateDuration, toTimestamp } from '../time';
 
 type MouseEventTarget = MouseEvent & { currentTarget: HTMLElement };
 type KeyboardEventTarget = KeyboardEvent & { currentTarget: HTMLElement };
@@ -41,34 +38,45 @@ export function Worklog() {
     }
   }
 
-  // tag list
-  const tagList = createTagListControls(selectedItemId);
-
-  const allTags = createMemo(() => {
-    const tags = dataStore.items.map(item => item.tag);
-    const uniqueTags = [...new Set(tags)];
-    return uniqueTags;
-  });
+  // tag autocomplete
+  const tagMenu = createAutocompleteControls();
 
   function onTagCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
-      tagList.setVisible(false);
+      tagMenu.setVisible(false);
     }
   }
 
   function onTagCellKeyUp(e: KeyboardEventTarget) {
     if (e.key === 'Enter') return;
-    tagList.setQuery(e.currentTarget.textContent!);
-    tagList.setVisible(true);
+    tagMenu.setQuery(e.currentTarget.textContent!);
+    tagMenu.setVisible(true);
+  }
+
+  // description autocomplete
+  const descriptionMenu = createAutocompleteControls();
+
+  function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
+    if (e.key === 'Enter') {
+      triggerNonDestructiveBlur(e);
+      descriptionMenu.setVisible(false);
+    }
+  }
+
+  function onDescriptionCellKeyUp(e: KeyboardEventTarget) {
+    if (e.key === 'Enter') return;
+    descriptionMenu.setQuery(e.currentTarget.textContent!);
+    descriptionMenu.setVisible(true);
   }
 
   return (
-    <>
-      <div class={sToolbar}>
+    <div>
+      <div class='flex items-center justify-between mb-2'>
         <ToolbarWorklog
           isInProgress={isInProgress()}
           setSelectedDate={(date) => setAppStore('selectedDate', date)}
+          selectedItemId={selectedItemId()}
           setSelectedItemId={(id) => setSelectedItemId(id)}
         />
         <Show when={!isInProgress()}>
@@ -81,92 +89,109 @@ export function Worklog() {
         </Show>
       </div>
 
-      <TagList
-        tags={allTags()}
-        visible={tagList.visible()}
-        query={tagList.query()}
-        parent={tagList.parent()}
-        onTagClick={(tag) => updateItem({ tag }, selectedItemId()!)}
+      <AutcompleteMenu
+        items={dataStore.items.map(item => item.tag)}
+        visible={tagMenu.visible()}
+        query={tagMenu.query()}
+        parent={tagMenu.parent()}
+        onItemClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
 
-      <div class={sTable}>
-        <div class={sRow} onClick={() => setSelectedItemId(undefined)}>
-          <div class={cx(sCell, sCellHeader, sCellSpan3)}>Duration</div>
-          <div class={cx(sCell, sCellHeader)}>Tag</div>
-          <div class={cx(sCell, sCellHeader)}>Description</div>
-        </div>
-        <For each={itemsAtDate()}>
-          {(item) => (
-            <div class={cx(sRow)}
-              classList={{
-                [sRowSelected]: selectedItemId() === item.id,
-                [sRowIdle]: item.tag === 'idle',
-              }}
-              onClick={() => setSelectedItemId(item.id)}
-            >
-              <div
-                class={cx(sCell, sCellEditable)}
-                contentEditable
-                onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
+      <AutcompleteMenu
+        items={dataStore.items.map(item => item.description)}
+        visible={descriptionMenu.visible()}
+        query={descriptionMenu.query()}
+        parent={descriptionMenu.parent()}
+        onItemClick={(description) => updateItem({ description }, selectedItemId()!)}
+      />
+
+      <table class="table table-zebra table-worklog">
+        <thead>
+          <tr class="cursor-pointer" onClick={() => setSelectedItemId(undefined)}>
+            <th>Start</th>
+            <th>Duration</th>
+            <th>Finish</th>
+            <th>Tag</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <For each={itemsAtDate()}>
+            {(item) => (
+              <tr
+                classList={{
+                  'text-gray-400 dark:text-gray-600 ': item.tag === 'idle',
+                  'outline outline-primary': selectedItemId() === item.id,
+                }}
+                onClick={() => setSelectedItemId(item.id)}
               >
-                {toTimestamp(item.start)}
-              </div>
-              <div class={sCell}>
-                {calculateDuration(item.start, item.end ?? now())}
-              </div>
-              <div
-                class={cx(sCell, sCellEditable)}
-                classList={{ [sCellGrayed]: !item.end }}
-                contentEditable={Boolean(item.end)}
-                onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {toTimestamp(item.end ?? now())}
-              </div>
-              <div
-                data-item-id={item.id}
-                data-tag={true}
-                class={cx(sCell, sCellEditable, sCellEditableText)}
-                contentEditable
-                onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => onTagCellKeyDown(e)}
-                onKeyUp={(e) => onTagCellKeyUp(e)}
-                onClick={(e) => tagList.setParent(e)}
-              >
-                {item.tag}
-              </div>
-              <div
-                class={cx(sCell, sCellEditable, sCellEditableText)}
-                contentEditable
-                onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                onKeyDown={(e) => onCellKeyDown(e)}
-              >
-                {item.description}
-              </div>
-            </div>
-          )}
-        </For>
-      </div>
-    </>
+                <td
+                  contentEditable
+                  onBlur={(e) => updateItem({ start: updateTimestamp(item.start, e.currentTarget.textContent!) }, item.id)}
+                  onKeyDown={(e) => onCellKeyDown(e)}
+                >
+                  {toTimestamp(item.start)}
+                </td>
+                <td>
+                  {calculateDuration(item.start, item.end ?? now())}
+                </td>
+                <td
+                  classList={{
+                    'text-gray-600': !item.end
+                  }}
+                  contentEditable={Boolean(item.end)}
+                  onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
+                  onKeyDown={(e) => onCellKeyDown(e)}
+                >
+                  {toTimestamp(item.end ?? now())}
+                </td>
+                <td
+                  contentEditable
+                  onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
+                  onKeyDown={(e) => onTagCellKeyDown(e)}
+                  onKeyUp={(e) => onTagCellKeyUp(e)}
+                  onClick={(e) => tagMenu.setParent(e)}
+                >
+                  {item.tag}
+                </td>
+                <td
+                  contentEditable
+                  onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
+                  onKeyDown={(e) => onDescriptionCellKeyDown(e)}
+                  onKeyUp={(e) => onDescriptionCellKeyUp(e)}
+                  onClick={(e) => descriptionMenu.setParent(e)}
+                >
+                  {item.description}
+                </td>
+              </tr>
+            )}
+          </For>
+        </tbody>
+      </table>
+    </div>
   );
 }
 
-function TagList(props: {
-  tags: string[],
+function AutcompleteMenu(props: {
+  items: string[],
   visible: boolean,
   query: string,
   parent?: MouseEventTarget,
-  onTagClick: (tag: string) => void,
+  onItemClick: (item: string) => void,
 }) {
-  let tagListElement!: HTMLDivElement;
-  const fuzzySearch = createMemo(() => createFuzzySearch(props.tags));
-  const [availableTags, setAvailableTags] = createSignal<string[]>([]);
+  let listElement!: HTMLUListElement;
+
+  // TODO: add debounce if performance is an issue
+  const uniqueItems = createMemo(() => ([...new Set(props.items)]));
+  const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
+  const [availableItems, setAvailableItems] = createSignal<string[]>([]);
+  const listShown = () => props.visible && availableItems().length > 0;
 
   // update available tags
   createEffect(on(() => props.query, (query) => {
     const results = fuzzySearch()(query);
-    setAvailableTags(results.map(result => result.item));
+    setAvailableItems(results.map(result => result.item));
   }));
 
   // position tag list
@@ -177,46 +202,45 @@ function TagList(props: {
     const rect = parent.currentTarget.getBoundingClientRect();
     setStyle({
       left: `${rect.left}px`,
-      top: `${rect.top + rect.height + 9}px`, // TODO: why changed from -1 to +9? it was ok before
+      top: `${rect.top + rect.height}px`,
       width: `${rect.width}px`,
     });
   }));
 
   return (
     <Portal>
-      <div
-        class={sTagList}
-        ref={tagListElement}
-        style={{ ...style(), display: props.visible ? 'block' : 'none' }}
+      <ul
+        ref={listElement}
+        class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm'
+        style={{ ...style(), display: listShown() ? 'block' : 'none' }}
       >
-        <For each={availableTags()}>
-          {(tag) =>
-            <div class={sTag} onClick={() => props.onTagClick(tag)}>
-              {tag}
-            </div>
+        <For each={availableItems()}>
+          {(item) =>
+            <li
+              class='cursor-pointer'
+              onClick={() => props.onItemClick(item)}
+            >
+              <a>{item}</a>
+            </li>
           }
         </For>
-      </div>
+      </ul>
     </Portal>
   );
 }
 
-function createTagListControls(selectedItemId: () => string | undefined) {
+function createAutocompleteControls() {
   const [query, setQuery] = createSignal('');
   const [parent, setParent] = createSignal<MouseEventTarget>();
   const [visible, setVisible] = createSignal(false);
 
-  // hide tag list when clicking outside current tag cell
+  // hide tag list when clicking outside
   createEffect(() => {
     document.body.addEventListener('click', onClick);
     onCleanup(() => document.body.removeEventListener('click', onClick));
 
-    function onClick(e: MouseEvent) {
-      const target = e.target as HTMLElement;
-      const isCurrentTagCell = target.dataset.tag && target.dataset.itemId === selectedItemId();
-      if (!isCurrentTagCell) {
-        setVisible(false);
-      }
+    function onClick() {
+      setVisible(false);
     }
   });
 
@@ -230,9 +254,10 @@ function createTagListControls(selectedItemId: () => string | undefined) {
 function ToolbarWorklog(props: {
   isInProgress: boolean,
   setSelectedDate: (date: Date) => void,
+  selectedItemId: string | undefined,
   setSelectedItemId: (id: string | undefined) => void,
 }) {
-  const [_1, _2, {
+  const [dataStore, _2, {
     startLog,
     finishLog,
     tapLog,
@@ -240,12 +265,21 @@ function ToolbarWorklog(props: {
   }] = useDataContext();
 
   function start() {
-    startLog();
+    const item = props.selectedItemId
+      ? dataStore.items.find(item => item.id === props.selectedItemId)
+      : {};
+
+    if(props.selectedItemId && !item) {
+      throw new Error('Item not found');
+    }
+
+    startLog({ ...item, start: new Date(), end: undefined });
     props.setSelectedDate(new Date()); // TODO: add app store methods
   }
 
+  // FIX: case when filling from the past day
   function fill() {
-    const item = fillLog();
+    const item = fillLog({ tag: 'idle' });
     props.setSelectedDate(new Date());
     props.setSelectedItemId(item.id);
   }
@@ -260,27 +294,35 @@ function ToolbarWorklog(props: {
   }
 
   return (
-    <div class={sToolbarLeft}>
-      <button
-        title="Start new entry"
-        disabled={props.isInProgress}
-        onClick={() => start()}
-      >Start</button>
-      <button
-        title="Add completed entry between last entry and now"
-        disabled={props.isInProgress}
-        onClick={() => fill()}
-      >Fill</button>
-      <button
-        title="Finish current entry and start new one"
-        disabled={!props.isInProgress}
-        onClick={() => tap()}
-      >Tap</button>
-      <button
-        title="Finish current entry"
-        disabled={!props.isInProgress}
-        onClick={() => finish()}
-      >Finish</button>
+    <div class='flex align-center justify-start gap-3'>
+      <Show when={!props.isInProgress}>
+        <button
+          class="btn btn-sm btn-primary"
+          title="Start new entry"
+          disabled={props.isInProgress}
+          onClick={() => start()}
+        >{props.selectedItemId ? 'Start selected' : 'Start new'}</button>
+        <button
+          class="btn btn-sm btn-neutral"
+          title="Add completed entry between last entry and now"
+          disabled={props.isInProgress}
+          onClick={() => fill()}
+        >Fill</button>
+      </Show>
+      <Show when={props.isInProgress}>
+        <button
+          class="btn btn-sm btn-secondary"
+          title="Finish current entry"
+          disabled={!props.isInProgress}
+          onClick={() => finish()}
+        >Finish</button>
+        <button
+          class="btn btn-sm btn-neutral"
+          title="Finish current entry and start new one"
+          disabled={!props.isInProgress}
+          onClick={() => tap()}
+        >Tap</button>
+      </Show>
     </div>
   );
 }
@@ -299,33 +341,26 @@ function ToolbarTable(props: {
     duplicateRow,
   }] = useDataContext();
 
-
   const isFirstItem = () => props.items[0]?.id === props.selectedItemId;
   const isLastItem = () => props.items[props.items.length - 1]?.id === props.selectedItemId;
   const isOnlyOneItemAtAll = () => dataStore.items.length === 1;
 
   return (
-    <div class={sToolbarRight}>
+    <div class='flex align-center justify-end gap-3'>
       <button
-        title="Add row"
-        onClick={() => addRow(props.selectedDate)}
-      >+</button>
-      <button
-        title="Duplicate row"
-        disabled={!props.selectedItemId}
-        onClick={() => duplicateRow(props.selectedItemId!)}
-      >++</button>
-      <button
+        class="btn btn-sm btn-neutral"
         title="Move row up"
         disabled={!props.selectedItemId || isFirstItem()}
         onClick={() => moveRowUp(props.selectedItemId!)}
       >↑</button>
       <button
+        class="btn btn-sm btn-neutral"
         title="Move row down"
         disabled={!props.selectedItemId || isLastItem()}
         onClick={() => moveRowDown(props.selectedItemId!)}
       >↓</button>
       <button
+        class="btn btn-sm btn-neutral"
         title="Remove row"
         disabled={!props.selectedItemId || isOnlyOneItemAtAll()}
         onClick={() => removeRow(props.selectedItemId!, props.setSelectedItemId)}
@@ -368,49 +403,3 @@ function triggerNonDestructiveBlur(e: KeyboardEventTarget) {
   selection?.removeAllRanges();
   selection?.addRange(range);
 }
-
-// styles
-const sTable = css`
-  display: grid;
-  grid-template-columns: auto auto auto auto auto;
-`;
-
-const sRowSelected = css`
-  background-color: #161616;
-`;
-
-const sRowIdle = css`
-  color: #999;
-`;
-
-const sCellSpan3 = css`
-  grid-column: span 3;
-`;
-
-const sCellEditable = css`
-  cursor: text;
-`;
-
-const sCellEditableText = css`
-  min-width: 120px;
-  justify-content: flex-start;
-`;
-
-const sCellGrayed = css`
-  color: #555;
-  font-style: italic;
-`;
-
-const sTagList = css`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-`;
-
-const sTag = css`
-  padding: 5px 10px;
-  background-color: #333;
-  color: #fff;
-  cursor: pointer;
-`;

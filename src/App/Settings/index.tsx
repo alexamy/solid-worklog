@@ -1,6 +1,4 @@
-import { css } from '@linaria/core';
 import { useAppContext } from '../store/app';
-import { sToolbar } from '../styles';
 
 export function Settings() {
   const [appStore, setAppStore] = useAppContext();
@@ -11,27 +9,25 @@ export function Settings() {
   }
 
   return (
-    <div class={sToolbar}>
-      <div class={sInput}>
-        <label for="jira-host">
-          Jira host
-        </label>
-        <input
-          id="jira-host"
-          type="text"
-          placeholder="Jira host"
-          aria-label="Jira host"
-          size={60}
-          value={appStore.jiraHost}
-          onInput={(e) => setJiraHost(e.target.value)}
-        />
+    <div>
+      <div class='flex align-center justify-start gap-3'>
+        <div class='flex flex-col gap-4'>
+          <label class="form-control w-full max-w-md">
+            <div class="label">
+              <span class="label-text">Jira host</span>
+            </div>
+            <input
+              class="input input-bordered w-full max-w-md text-sm"
+              id="jira-host"
+              type="text"
+              aria-label="Jira host"
+              size={60}
+              value={appStore.jiraHost}
+              onInput={(e) => setJiraHost(e.target.value)}
+            />
+          </label>
+        </div>
       </div>
     </div>
   )
 }
-
-const sInput = css`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;

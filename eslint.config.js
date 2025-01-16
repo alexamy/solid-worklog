@@ -25,5 +25,6 @@ export default [
       '@typescript-eslint/no-unused-vars': 'off',
       'solid/self-closing-comp': 'off',
     },
-  }
+  },
+  { ignores: ['vite.config.ts'] },
 ];

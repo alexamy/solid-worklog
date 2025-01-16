@@ -1,5 +1,5 @@
 import { Statistics } from './Statistics';
-import { AppContext, createAppStore, getDefaultAppStore } from './store/app';
+import { AppContext, createAppStore, getDefaultAppStore, useAppContext } from './store/app';
 import { DataContext, getDefaultDataStore } from './store/data';
 import { DatePicker } from './DatePicker';
 import { createClock } from './store/now';
@@ -7,57 +7,61 @@ import { Utilities } from './Utilities';
 import { persistObject } from './store/persistence';
 import { NowContext } from './store/now';
 import { Worklog } from './Worklog';
-import { css } from '@linaria/core';
 import { Settings } from './Settings';
 import { createDataStore } from './store/dataMethods';
+import { Show } from 'solid-js';
+import { Link, MetaProvider } from '@solidjs/meta';
 
 // component
 export function App() {
   const now = createClock();
-  const appStore = createAppStore();
-  const dataStore = createDataStore();
+  const [appStore, setAppStore] = createAppStore();
+  const [dataStore, setDataStore, dataMethods] = createDataStore();
 
-  const persistApp = persistObject(
-    appStore[0],
-    appStore[1],
+  persistObject(
+    appStore,
+    // TODO: move to app store methods
+    state => setAppStore({ ...getDefaultAppStore(), ...state }),
     getDefaultAppStore,
     'solid-worklog-app',
   );
 
-  const persistData = persistObject(
-    dataStore[0],
-    dataStore[1],
+  persistObject(
+    dataStore,
+    setDataStore,
     getDefaultDataStore,
     'solid-worklog-store',
   );
 
   return (
-    <NowContext.Provider value={now}>
-      <AppContext.Provider value={appStore}>
-        <DataContext.Provider value={dataStore}>
-          <div class={sApp}>
-            <DatePicker />
-            Worklog
-            <Worklog />
-            <br />
-            Statistics
-            <Statistics />
-            <br />
-            Settings
-            <Settings />
-            <br />
-            Utilities
-            <Utilities reset={persistData.reset} />
-          </div>
-        </DataContext.Provider>
-      </AppContext.Provider>
-    </NowContext.Provider>
+    <MetaProvider>
+      <Favicon isInProgress={dataMethods.isInProgress()} />
+      <NowContext.Provider value={now}>
+        <AppContext.Provider value={[appStore, setAppStore]}>
+          <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
+            <div class='container max-w-screen-md px-8 py-4 flex flex-col'>
+              <DatePicker />
+              <div class="mb-6"></div>
+              <Show when={appStore.currentTab === 'worklog'}>
+                <Worklog />
+                <div class="mb-6"></div>
+                <Statistics />
+              </Show>
+              <Show when={appStore.currentTab === 'settings'}>
+                <Settings />
+                <div class="mb-4"></div>
+                <Utilities />
+              </Show>
+            </div>
+          </DataContext.Provider>
+        </AppContext.Provider>
+      </NowContext.Provider>
+    </MetaProvider>
   )
 }
 
-const sApp = css`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 500px;
-`;
+function Favicon(props: { isInProgress: boolean }) {
+  const file = () => props.isInProgress ? 'clock.svg' : 'pomodoro.svg';
+
+  return <Link rel="icon" type="image/svg+xml" href={file()} />;
+}

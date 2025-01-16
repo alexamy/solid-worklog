@@ -1,44 +1,49 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@layer components {
+  .table {
+    th, td {
+      @apply p-2.5 h-[38px];
+    }
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+    td[contenteditable] {
+      @apply cursor-text outline-none;
+    }
 
-body {
-  margin: 0;
-  display: flex;
-  justify-content: flex-start;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-#root {
-  max-width: 1280px;
-  padding: 2rem;
-}
-
-a {
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+    td:not([contenteditable]) {
+      @apply cursor-default;
+    }
   }
-}
 
-@keyframes lamp-fade {
-  0% { opacity: 1; }
-  10% { opacity: 1; }
-  100% { opacity: 0; }
+  .table-statistics {
+    th:nth-child(1), th:nth-child(2),
+    td:nth-child(1), td:nth-child(2) {
+      @apply w-36 text-center;
+    }
+
+    td:nth-child(3) {
+      @apply pr-10;
+    }
+  }
+
+  .table-worklog {
+    th:nth-child(1), th:nth-child(2), th:nth-child(3),
+    td:nth-child(1), td:nth-child(2), td:nth-child(3) {
+      @apply w-20 text-center;
+    }
+
+    td:nth-child(4) {
+      @apply w-1/4;
+    }
+
+    td:nth-child(4), td:nth-child(5) {
+      @apply pr-10;
+    }
+  }
+
+  .label {
+    padding-top: 0;
+  }
 }
