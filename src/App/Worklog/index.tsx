@@ -40,81 +40,15 @@ export function Worklog() {
 
   // tag autocomplete
   const tagMenu = createAutocompleteControls(
-    () => dataStore.items.map(item => item.tag)
+    () => dataStore.items.map(item => item.tag),
+    (tag) => updateItem({ tag }, selectedItemId()!),
   );
-
-  function onTagCellKeyDown(e: KeyboardEventTarget) {
-    if(e.key === 'Enter') {
-      e.preventDefault();
-
-      if(tagMenu.selectedIndex() >= 0) {
-        const items = tagMenu.availableItems();
-        const item = items?.[tagMenu.selectedIndex()];
-
-        if(item) {
-          updateItem({ tag: item }, selectedItemId()!);
-          e.currentTarget.textContent = item;
-        }
-      } else {
-        triggerNonDestructiveBlur(e);
-      }
-
-      tagMenu.toggleVisible('hide');
-    }
-
-    if(e.key === 'ArrowUp') {
-      tagMenu.selectItem('up');
-    }
-
-    if(e.key === 'ArrowDown') {
-      tagMenu.selectItem('down');
-    }
-  }
-
-  function onTagCellKeyUp(e: KeyboardEventTarget) {
-    if (e.key === 'Enter' || e.key === 'Control' || e.key === 'ArrowUp' || e.key === 'ArrowDown') return;
-    tagMenu.setQuery(e.currentTarget.textContent!);
-    tagMenu.toggleVisible('show');
-  }
 
   // description autocomplete
   const descriptionMenu = createAutocompleteControls(
-    () => dataStore.items.map(item => item.description)
+    () => dataStore.items.map(item => item.description),
+    (description) => updateItem({ description }, selectedItemId()!),
   );
-
-  function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
-    if(e.key === 'Enter') {
-      e.preventDefault();
-
-      if(descriptionMenu.selectedIndex() >= 0) {
-        const items = descriptionMenu.availableItems();
-        const item = items?.[descriptionMenu.selectedIndex()];
-
-        if(item) {
-          updateItem({ description: item }, selectedItemId()!);
-          e.currentTarget.textContent = item;
-        }
-      } else {
-        triggerNonDestructiveBlur(e);
-      }
-
-      descriptionMenu.toggleVisible('hide');
-    }
-
-    if(e.key === 'ArrowUp') {
-      descriptionMenu.selectItem('up');
-    }
-
-    if(e.key === 'ArrowDown') {
-      descriptionMenu.selectItem('down');
-    }
-  }
-
-  function onDescriptionCellKeyUp(e: KeyboardEventTarget) {
-    if (e.key === 'Enter' || e.key === 'Control' || e.key === 'ArrowUp' || e.key === 'ArrowDown') return;
-    descriptionMenu.setQuery(e.currentTarget.textContent!);
-    descriptionMenu.toggleVisible('show');
-  }
 
   return (
     <div>
@@ -195,8 +129,8 @@ export function Worklog() {
                 <td
                   contentEditable
                   onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                  onKeyDown={(e) => onTagCellKeyDown(e)}
-                  onKeyUp={(e) => onTagCellKeyUp(e)}
+                  onKeyDown={(e) => tagMenu.onKeyDown(e)}
+                  onKeyUp={(e) => tagMenu.onKeyUp(e)}
                   onClick={(e) => tagMenu.setParent(e)}
                 >
                   {item.tag}
@@ -204,8 +138,8 @@ export function Worklog() {
                 <td
                   contentEditable
                   onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                  onKeyDown={(e) => onDescriptionCellKeyDown(e)}
-                  onKeyUp={(e) => onDescriptionCellKeyUp(e)}
+                  onKeyDown={(e) => descriptionMenu.onKeyDown(e)}
+                  onKeyUp={(e) => descriptionMenu.onKeyUp(e)}
                   onClick={(e) => descriptionMenu.setParent(e)}
                 >
                   {item.description}
@@ -265,7 +199,10 @@ function AutcompleteMenu(props: {
   );
 }
 
-function createAutocompleteControls(items: () => string[]) {
+function createAutocompleteControls(
+  items: () => string[],
+  update: (item: string) => void,
+) {
   const [query, setQuery] = createSignal('');
   const [parent, setParent] = createSignal<MouseEventTarget>();
   const [visible, setVisible] = createSignal(false);
@@ -305,6 +242,7 @@ function createAutocompleteControls(items: () => string[]) {
     }
   });
 
+  // toggle visible state and reset selected index
   function toggleVisible(state: 'show' | 'hide') {
     if(state === 'show') {
       setVisible(true);
@@ -314,12 +252,52 @@ function createAutocompleteControls(items: () => string[]) {
     }
   }
 
+  // keyboard handlers
+  function onKeyDown(e: KeyboardEventTarget) {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+
+      if(selectedIndex() >= 0) {
+        const items = availableItems();
+        const item = items?.[selectedIndex()];
+
+        if(item) {
+          update(item);
+          e.currentTarget.textContent = item;
+        }
+      } else {
+        triggerNonDestructiveBlur(e);
+      }
+
+      toggleVisible('hide');
+    }
+
+    if(e.key === 'ArrowUp') {
+      selectItem('up');
+    }
+
+    if(e.key === 'ArrowDown') {
+      selectItem('down');
+    }
+  }
+
+  function onKeyUp(e: KeyboardEventTarget) {
+    if (
+      e.key === 'Enter' || e.key === 'Control' ||
+      e.key === 'ArrowUp' || e.key === 'ArrowDown'
+    ) return;
+
+    setQuery(e.currentTarget.textContent!);
+    toggleVisible('show');
+  }
+
   return {
     availableItems,
     query, setQuery,
     parent, setParent,
     visible, toggleVisible,
     selectedIndex, selectItem,
+    onKeyDown, onKeyUp,
   };
 }
 
