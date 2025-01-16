@@ -41,12 +41,6 @@ export function Worklog() {
   // tag autocomplete
   const tagMenu = createAutocompleteControls();
 
-  const allTags = createMemo(() => {
-    const tags = dataStore.items.map(item => item.tag);
-    const uniqueTags = [...new Set(tags)];
-    return uniqueTags;
-  });
-
   function onTagCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
@@ -62,12 +56,6 @@ export function Worklog() {
 
   // description autocomplete
   const descriptionMenu = createAutocompleteControls();
-
-  const allDescriptions = createMemo(() => {
-    const descriptions = dataStore.items.map(item => item.description);
-    const uniqueDescriptions = [...new Set(descriptions)];
-    return uniqueDescriptions;
-  });
 
   function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
@@ -102,7 +90,7 @@ export function Worklog() {
       </div>
 
       <AutcompleteMenu
-        items={allTags()}
+        items={dataStore.items.map(item => item.tag)}
         visible={tagMenu.visible()}
         query={tagMenu.query()}
         parent={tagMenu.parent()}
@@ -110,7 +98,7 @@ export function Worklog() {
       />
 
       <AutcompleteMenu
-        items={allDescriptions()}
+        items={dataStore.items.map(item => item.description)}
         visible={descriptionMenu.visible()}
         query={descriptionMenu.query()}
         parent={descriptionMenu.parent()}
@@ -193,7 +181,10 @@ function AutcompleteMenu(props: {
   onItemClick: (item: string) => void,
 }) {
   let listElement!: HTMLUListElement;
-  const fuzzySearch = createMemo(() => createFuzzySearch(props.items));
+
+  // TODO: add debounce if performance is an issue
+  const uniqueItems = createMemo(() => ([...new Set(props.items)]));
+  const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
   const [availableItems, setAvailableItems] = createSignal<string[]>([]);
   const listShown = () => props.visible && availableItems().length > 0;
 
@@ -211,7 +202,7 @@ function AutcompleteMenu(props: {
     const rect = parent.currentTarget.getBoundingClientRect();
     setStyle({
       left: `${rect.left}px`,
-      top: `${rect.top + rect.height}px`, // TODO: why changed from -1 to +9? it was ok before
+      top: `${rect.top + rect.height}px`,
       width: `${rect.width}px`,
     });
   }));
