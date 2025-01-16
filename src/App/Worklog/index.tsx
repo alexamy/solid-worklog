@@ -237,7 +237,7 @@ function createAutocompleteControls(
     onCleanup(() => document.body.removeEventListener('click', onClick));
 
     function onClick() {
-      setVisible(false);
+      toggleVisible('hide');
     }
   });
 
