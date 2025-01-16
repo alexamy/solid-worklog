@@ -11,6 +11,20 @@ export function Settings() {
   return (
     <div>
       <div class='flex flex-col gap-4'>
+        <div class="form-control w-fit">
+          <label class="label cursor-pointer p-0">
+            <input
+              class="checkbox mr-2"
+              id="skip-empty-days"
+              type="checkbox"
+              aria-label="Skip empty days"
+              checked={appStore.skipEmptyDays}
+              onInput={(e) => setAppStore('skipEmptyDays', e.target.checked)}
+            />
+            <span class="label-text"> Skip empty days in date picker</span>
+          </label>
+        </div>
+
         <label class="form-control w-full max-w-md">
           <div class="label">
             <span class="label-text">Jira host</span>
@@ -25,19 +39,6 @@ export function Settings() {
             onInput={(e) => setJiraHost(e.target.value)}
           />
         </label>
-        <div class="form-control w-fit">
-          <label class="label cursor-pointer p-0">
-            <input
-              class="checkbox mr-2"
-              id="skip-empty-days"
-              type="checkbox"
-              aria-label="Skip empty days"
-              checked={appStore.skipEmptyDays}
-              onInput={(e) => setAppStore('skipEmptyDays', e.target.checked)}
-            />
-            <span class="label-text"> Skip empty days</span>
-          </label>
-        </div>
       </div>
     </div>
   )
