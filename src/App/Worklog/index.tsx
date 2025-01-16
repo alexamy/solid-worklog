@@ -52,20 +52,20 @@ export function Worklog() {
         e.currentTarget.textContent = items[0];
       }
 
-      tagMenu.setVisible(false);
+      tagMenu.toggleVisible('hide');
       return;
     }
 
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
-      tagMenu.setVisible(false);
+      tagMenu.toggleVisible('hide');
     }
   }
 
   function onTagCellKeyUp(e: KeyboardEventTarget) {
     if (e.key === 'Enter' || e.key === 'Control') return;
     tagMenu.setQuery(e.currentTarget.textContent!);
-    tagMenu.setVisible(true);
+    tagMenu.toggleVisible('show');
   }
 
   // description autocomplete
@@ -82,20 +82,20 @@ export function Worklog() {
         e.currentTarget.textContent = items[0];
       }
 
-      descriptionMenu.setVisible(false);
+      descriptionMenu.toggleVisible('hide');
       return;
     }
 
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
-      descriptionMenu.setVisible(false);
+      descriptionMenu.toggleVisible('hide');
     }
   }
 
   function onDescriptionCellKeyUp(e: KeyboardEventTarget) {
     if (e.key === 'Enter' || e.key === 'Control') return;
     descriptionMenu.setQuery(e.currentTarget.textContent!);
-    descriptionMenu.setVisible(true);
+    descriptionMenu.toggleVisible('show');
   }
 
   return (
@@ -250,6 +250,7 @@ function createAutocompleteControls(items: () => string[]) {
 
   const uniqueItems = createMemo(() => ([...new Set(items())]));
 
+  // allow to select item by index
   const [selectedIndex, setSelectedIndex] = createSignal(0);
   function selectItem(direction: 'up' | 'down') {
     const index = selectedIndex();
@@ -282,11 +283,20 @@ function createAutocompleteControls(items: () => string[]) {
     }
   });
 
+  function toggleVisible(state: 'show' | 'hide') {
+    if(state === 'show') {
+      setVisible(true);
+    } else {
+      setSelectedIndex(0);
+      setVisible(false);
+    }
+  }
+
   return {
     availableItems,
     query, setQuery,
     parent, setParent,
-    visible, setVisible,
+    visible, toggleVisible,
   };
 }
 
