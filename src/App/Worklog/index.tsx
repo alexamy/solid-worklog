@@ -42,15 +42,20 @@ export function Worklog() {
   const tagMenu = createAutocompleteControls();
 
   function onTagCellKeyDown(e: KeyboardEventTarget) {
+    if(e.ctrlKey && e.key === 'Enter') {
+      tagMenu.setTriggerFirstSelect();
+      tagMenu.setVisible(false);
+      return;
+    }
+
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
-      if(e.ctrlKey) tagMenu.setTriggerFirstSelect();
       tagMenu.setVisible(false);
     }
   }
 
   function onTagCellKeyUp(e: KeyboardEventTarget) {
-    if (e.key === 'Enter') return;
+    if (e.key === 'Enter' || e.key === 'Control') return;
     tagMenu.setQuery(e.currentTarget.textContent!);
     tagMenu.setVisible(true);
   }
@@ -59,15 +64,20 @@ export function Worklog() {
   const descriptionMenu = createAutocompleteControls();
 
   function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
+    if(e.ctrlKey && e.key === 'Enter') {
+      descriptionMenu.setTriggerFirstSelect();
+      descriptionMenu.setVisible(false);
+      return;
+    }
+
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
-      if(e.ctrlKey) descriptionMenu.setTriggerFirstSelect();
       descriptionMenu.setVisible(false);
     }
   }
 
   function onDescriptionCellKeyUp(e: KeyboardEventTarget) {
-    if (e.key === 'Enter') return;
+    if (e.key === 'Enter' || e.key === 'Control') return;
     descriptionMenu.setQuery(e.currentTarget.textContent!);
     descriptionMenu.setVisible(true);
   }
