@@ -5,12 +5,18 @@ import { useNowContext } from '../store/now';
 import { useDataContext } from '../store/data';
 
 export function DatePicker() {
-  const [appStore, setAppStore, { moveDate }] = useAppContext();
+  const [appStore, setAppStore] = useAppContext();
   const [_1, _2, { isInProgress, downloadDataStore }] = useDataContext();
   const now = useNowContext();
 
   const isToday = createMemo(() => appStore.selectedDate.toDateString() === new Date().toDateString());
   const dayOfWeek = () => appStore.selectedDate.toLocaleDateString(undefined, { weekday: 'long' });
+
+  function moveDate(delta: number) {
+    const next = new Date(appStore.selectedDate);
+    next.setDate(next.getDate() + delta);
+    setAppStore('selectedDate', next);
+  }
 
   function toggleSettings() {
     setAppStore(
