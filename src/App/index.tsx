@@ -9,7 +9,6 @@ import { DataContext, getDefaultDataStore } from './store/data';
 import { createDataStore } from './store/dataMethods';
 import { createClock, NowContext } from './store/now';
 import { persistObject } from './store/persistence';
-import { Utilities } from './Utilities';
 import { Worklog } from './Worklog';
 
 // component
@@ -48,8 +47,6 @@ export function App() {
               </Show>
               <Show when={appStore.currentTab === 'settings'}>
                 <Settings />
-                <div class="mb-4"></div>
-                <Utilities />
               </Show>
             </div>
           </DataContext.Provider>
