@@ -250,6 +250,18 @@ function createAutocompleteControls(items: () => string[]) {
 
   const uniqueItems = createMemo(() => ([...new Set(items())]));
 
+  const [selectedIndex, setSelectedIndex] = createSignal(0);
+  function selectItem(direction: 'up' | 'down') {
+    const index = selectedIndex();
+    const length = uniqueItems().length;
+
+    if(direction === 'up') {
+      setSelectedIndex((index - 1 + length) % length);
+    } else {
+      setSelectedIndex((index + 1) % length);
+    }
+  }
+
   // add debounce if performance is an issue
   const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
   const [availableItems, setAvailableItems] = createSignal<string[]>([]);
