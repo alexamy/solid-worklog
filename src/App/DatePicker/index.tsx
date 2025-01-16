@@ -6,16 +6,36 @@ import { useDataContext } from '../store/data';
 
 export function DatePicker() {
   const [appStore, setAppStore] = useAppContext();
-  const [_1, _2, { isInProgress, downloadDataStore }] = useDataContext();
+  const [dataStore, _2, { downloadDataStore }] = useDataContext();
   const now = useNowContext();
 
   const isToday = createMemo(() => appStore.selectedDate.toDateString() === new Date().toDateString());
   const dayOfWeek = () => appStore.selectedDate.toLocaleDateString(undefined, { weekday: 'long' });
 
+  const uniqueDates = createMemo(() => new Set([
+    ...dataStore.items.map(date => date.start.toLocaleDateString('en-CA')),
+    new Date().toLocaleDateString('en-CA'),
+  ]));
+
+  const uniqueDatesArray = createMemo(() => Array.from(uniqueDates()).sort());
+  const selectedDateIndex = createMemo(() =>
+    uniqueDatesArray().indexOf(appStore.selectedDate.toLocaleDateString('en-CA'))
+  );
+
+  const prevDisabled = () => appStore.skipEmptyDays && selectedDateIndex() === 0;
+  const nextDisabled = () => isToday() || (appStore.skipEmptyDays && selectedDateIndex() === uniqueDatesArray().length - 1);
+
   function moveDate(delta: number) {
-    const next = new Date(appStore.selectedDate);
-    next.setDate(next.getDate() + delta);
-    setAppStore('selectedDate', next);
+    if(appStore.skipEmptyDays) {
+      const next = uniqueDatesArray()[selectedDateIndex() + delta];
+      if(next) {
+        setAppStore('selectedDate', new Date(next));
+      }
+    } else {
+      const next = new Date(appStore.selectedDate);
+      next.setDate(next.getDate() + delta);
+      setAppStore('selectedDate', next);
+    }
   }
 
   function toggleSettings() {
@@ -35,9 +55,11 @@ export function DatePicker() {
         >Today</button>
         <button
           class="btn btn-xs btn-neutral"
+          disabled={prevDisabled()}
           onClick={() => moveDate(-1)}
         >{'<'}</button>
         <input
+          disabled={appStore.skipEmptyDays}
           class="w-auto px-2 py-1"
           type="date"
           value={appStore.selectedDate.toLocaleDateString('en-CA')}
@@ -46,7 +68,7 @@ export function DatePicker() {
         />
         <button
           class="btn btn-xs btn-neutral"
-          disabled={isToday()}
+          disabled={nextDisabled()}
           onClick={() => moveDate(1)}
         >{'>'}</button>
         {dayOfWeek()}
