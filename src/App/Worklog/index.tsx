@@ -164,7 +164,7 @@ export function Worklog() {
                 </td>
                 <td
                   classList={{
-                    'text-gray-600': !item.end
+                    'text-gray-400 dark:text-gray-600': !item.end
                   }}
                   contentEditable={Boolean(item.end)}
                   onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
