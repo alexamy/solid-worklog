@@ -64,10 +64,10 @@ export function Statistics() {
   );
 
   const allStats = createMemo(() => {
-    const sumAll = stats().sumAll;
-    const sumAllNoIdle = stats().sumAllNoIdle;
+    const sumAll = minutesToHoursMinutes(stats().sumAll);
+    const sumAllNoIdle = minutesToHoursMinutes(stats().sumAllNoIdle);
 
-    return `${minutesToHoursMinutes(sumAll)} (${minutesToHoursMinutes(sumAllNoIdle)})`;
+    return `${sumAll} (${sumAllNoIdle} on tasks)`;
   });
 
   // TODO: fix locked td height
