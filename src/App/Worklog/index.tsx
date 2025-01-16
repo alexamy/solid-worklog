@@ -412,6 +412,17 @@ function ToolbarTable(props: {
     <div class='flex align-center justify-end gap-3'>
       <button
         class="btn btn-sm btn-neutral"
+        title="Add new row"
+        onClick={() => addRow(props.selectedDate)}
+      >+</button>
+      <button
+        class="btn btn-sm btn-neutral"
+        title="Duplicate selected row"
+        disabled={!props.selectedItemId}
+        onClick={() => duplicateRow(props.selectedItemId!)}
+      >++</button>
+      <button
+        class="btn btn-sm btn-neutral"
         title="Move row up"
         disabled={!props.selectedItemId || isFirstItem()}
         onClick={() => moveRowUp(props.selectedItemId!)}

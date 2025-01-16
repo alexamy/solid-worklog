@@ -87,7 +87,7 @@ export function createDataStore() {
 
     return createItem({
       start: new Date(date.setHours(12, 0, 0, 0)),
-      end: new Date(date.setHours(12, 5, 0, 0)),
+      end: new Date(date.setHours(12, 0, 0, 0)),
     });
   }
 
