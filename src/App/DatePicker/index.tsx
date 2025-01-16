@@ -10,7 +10,7 @@ export function DatePicker() {
   const now = useNowContext();
 
   const isToday = createMemo(() => appStore.selectedDate.toDateString() === new Date().toDateString());
-  const dayOfWeek = () => appStore.selectedDate.toLocaleDateString(undefined, { weekday: 'long' });
+  const dayOfWeek = () => new Date().toLocaleDateString(undefined, { weekday: 'long' });
 
   const uniqueDates = createMemo(() => new Set([
     ...dataStore.items.map(date => date.start.toLocaleDateString('en-CA')),
