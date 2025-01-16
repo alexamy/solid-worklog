@@ -58,10 +58,9 @@ export function Statistics() {
     return result;
   });
 
-  const sortedStats = createMemo(() => ({
-    entries: getSortedEntries(stats().entries, sortBy(), sortOrder()),
-    sumAll: stats().sumAll,
-  }));
+  const sortedStats = createMemo(() =>
+    getSortedEntries(stats().entries, sortBy(), sortOrder())
+  );
 
   // TODO: fix locked td height
 
@@ -90,13 +89,13 @@ export function Statistics() {
           </thead>
 
           <tbody>
-            <For each={sortedStats().entries}>
+            <For each={sortedStats()}>
               {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
             </For>
 
             <tr>
               <td></td>
-              <td><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></td>
+              <td><b>{minutesToHoursMinutes(stats().sumAll)}</b></td>
               <td></td>
             </tr>
           </tbody>
