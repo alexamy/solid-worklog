@@ -45,11 +45,13 @@ export function Worklog() {
 
   function onTagCellKeyDown(e: KeyboardEventTarget) {
     if(e.ctrlKey && e.key === 'Enter') {
-      const items = tagMenu.uniqueItems();
+      const items = tagMenu.availableItems();
+
       if(items.length > 0) {
         updateItem({ tag: items[0] }, selectedItemId()!);
         e.currentTarget.textContent = items[0];
       }
+
       tagMenu.setVisible(false);
       return;
     }
@@ -73,11 +75,14 @@ export function Worklog() {
 
   function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
     if(e.ctrlKey && e.key === 'Enter') {
-      const items = descriptionMenu.uniqueItems();
+      const items = descriptionMenu.availableItems();
+
       if(items.length > 0) {
         updateItem({ description: items[0] }, selectedItemId()!);
         e.currentTarget.textContent = items[0];
       }
+
+      descriptionMenu.setVisible(false);
       return;
     }
 
@@ -113,17 +118,15 @@ export function Worklog() {
       </div>
 
       <AutcompleteMenu
-        items={tagMenu.uniqueItems()}
+        items={tagMenu.availableItems()}
         visible={tagMenu.visible()}
-        query={tagMenu.query()}
         parent={tagMenu.parent()}
         onItemClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
 
       <AutcompleteMenu
-        items={descriptionMenu.uniqueItems()}
+        items={descriptionMenu.availableItems()}
         visible={descriptionMenu.visible()}
-        query={descriptionMenu.query()}
         parent={descriptionMenu.parent()}
         onItemClick={(description) => updateItem({ description }, selectedItemId()!)}
       />
@@ -199,22 +202,11 @@ export function Worklog() {
 function AutcompleteMenu(props: {
   items: string[],
   visible: boolean,
-  query: string,
   parent?: MouseEventTarget,
   onItemClick: (item: string) => void,
 }) {
   let listElement!: HTMLUListElement;
-
-  // TODO: add debounce if performance is an issue
-  const fuzzySearch = createMemo(() => createFuzzySearch(props.items));
-  const [availableItems, setAvailableItems] = createSignal<string[]>([]);
-  const listShown = () => props.visible && availableItems().length > 0;
-
-  // update available tags
-  createEffect(on(() => props.query, (query) => {
-    const results = fuzzySearch()(query);
-    setAvailableItems(results.map(result => result.item));
-  }));
+  const listShown = () => props.visible && props.items.length > 0;
 
   // position tag list
   const [style, setStyle] = createSignal({});
@@ -236,7 +228,7 @@ function AutcompleteMenu(props: {
         class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm'
         style={{ ...style(), display: listShown() ? 'block' : 'none' }}
       >
-        <For each={availableItems()}>
+        <For each={props.items}>
           {(item) =>
             <li
               class='cursor-pointer'
@@ -258,6 +250,16 @@ function createAutocompleteControls(items: () => string[]) {
 
   const uniqueItems = createMemo(() => ([...new Set(items())]));
 
+  // add debounce if performance is an issue
+  const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
+  const [availableItems, setAvailableItems] = createSignal<string[]>([]);
+
+  // update available tags
+  createEffect(on(() => query(), (query) => {
+    const results = fuzzySearch()(query);
+    setAvailableItems(results.map(result => result.item));
+  }));
+
   // hide tag list when clicking outside
   createEffect(() => {
     document.body.addEventListener('click', onClick);
@@ -269,7 +271,7 @@ function createAutocompleteControls(items: () => string[]) {
   });
 
   return {
-    uniqueItems,
+    availableItems,
     query, setQuery,
     parent, setParent,
     visible, setVisible,
