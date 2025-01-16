@@ -1,8 +1,7 @@
-import { css, cx } from '@linaria/core';
-import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
+import { css } from '@linaria/core';
+import { createMemo, For, Match, Show, Switch } from 'solid-js';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
-import { sCell, sCellHeader, sRow, sToolbar, sToolbarLeft } from '../styles';
 import { calculateDuration } from '../time';
 import pomodoroSvg from './pomodoro.svg';
 import { useNowContext } from '../store/now';
