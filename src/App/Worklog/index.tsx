@@ -44,6 +44,7 @@ export function Worklog() {
   function onTagCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
+      if(e.ctrlKey) tagMenu.setTriggerFirstSelect();
       tagMenu.setVisible(false);
     }
   }
@@ -60,6 +61,7 @@ export function Worklog() {
   function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
     if (e.key === 'Enter') {
       triggerNonDestructiveBlur(e);
+      if(e.ctrlKey) descriptionMenu.setTriggerFirstSelect();
       descriptionMenu.setVisible(false);
     }
   }
@@ -95,6 +97,7 @@ export function Worklog() {
         query={tagMenu.query()}
         parent={tagMenu.parent()}
         onItemClick={(tag) => updateItem({ tag }, selectedItemId()!)}
+        triggerFirstSelect={tagMenu.triggerFirstSelect()}
       />
 
       <AutcompleteMenu
@@ -103,6 +106,7 @@ export function Worklog() {
         query={descriptionMenu.query()}
         parent={descriptionMenu.parent()}
         onItemClick={(description) => updateItem({ description }, selectedItemId()!)}
+        triggerFirstSelect={descriptionMenu.triggerFirstSelect()}
       />
 
       <table class="table table-zebra table-worklog">
@@ -178,6 +182,7 @@ function AutcompleteMenu(props: {
   visible: boolean,
   query: string,
   parent?: MouseEventTarget,
+  triggerFirstSelect: undefined,
   onItemClick: (item: string) => void,
 }) {
   let listElement!: HTMLUListElement;
@@ -207,6 +212,13 @@ function AutcompleteMenu(props: {
     });
   }));
 
+  // select first item on request
+  createEffect(on(() => props.triggerFirstSelect, () => {
+    if (availableItems().length > 0) {
+      props.onItemClick(availableItems()[0]);
+    }
+  }));
+
   return (
     <Portal>
       <ul
@@ -233,6 +245,7 @@ function createAutocompleteControls() {
   const [query, setQuery] = createSignal('');
   const [parent, setParent] = createSignal<MouseEventTarget>();
   const [visible, setVisible] = createSignal(false);
+  const [triggerFirstSelect, setTriggerFirstSelect] = createSignal(undefined, { equals: false });
 
   // hide tag list when clicking outside
   createEffect(() => {
@@ -248,6 +261,7 @@ function createAutocompleteControls() {
     query, setQuery,
     parent, setParent,
     visible, setVisible,
+    triggerFirstSelect, setTriggerFirstSelect,
   };
 }
 
