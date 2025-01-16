@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'solid-js';
-import { createStore, SetStoreFunction } from 'solid-js/store';
+import { AppContextValue } from './appMethods';
 
 export interface AppStore {
   selectedDate: Date;
@@ -12,14 +12,7 @@ export interface AppStore {
   skipEmptyDays: boolean;
 }
 
-export type AppContextValue = [AppStore, SetStoreFunction<AppStore>];
 export const AppContext = createContext<AppContextValue>();
-
-export function createAppStore() {
-  const [appStore, setAppStore] = createStore(getDefaultAppStore());
-
-  return [appStore, setAppStore] satisfies AppContextValue;
-}
 
 export function useAppContext() {
   const context = useContext(AppContext);
