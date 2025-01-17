@@ -120,7 +120,7 @@ export function Worklog() {
                   classList={{
                     'text-gray-400 dark:text-gray-600': isInProgress() && index() === 0
                   }}
-                  contentEditable={!isInProgress()}
+                  contentEditable={!(isInProgress() && index() === 0)}
                   onBlur={(e) => updateItem({ end: updateTimestamp(item.end, e.currentTarget.textContent!) }, item.id)}
                   onKeyDown={(e) => onCellKeyDown(e)}
                 >
