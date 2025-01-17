@@ -1,4 +1,5 @@
-export function calculateDuration(start: Date, end: Date) {
+/** @returns duration in minutes */
+export function calculateDuration(start: Date, end: Date): number {
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60));
 }
 
