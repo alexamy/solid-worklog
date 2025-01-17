@@ -1,3 +1,4 @@
+import { createMemo, For } from 'solid-js';
 import { useAppContext } from '../store/app';
 import { useDataContext } from '../store/data';
 
@@ -6,6 +7,7 @@ export function Settings() {
     <div class="flex flex-col gap-8">
       <SettingsForm />
       <Utilities />
+      <TagList />
     </div>
   )
 }
@@ -70,6 +72,36 @@ function Utilities() {
         <button class="btn btn-sm btn-outline btn-warning" onDblClick={() => resetEmpty()}>Remove all</button>
         <button class="btn btn-sm btn-outline btn-warning" onDblClick={() => resetToDefault()}>Reset data</button>
       </div>
+    </div>
+  )
+}
+
+function TagList() {
+  const [dataStore, setDataStore] = useDataContext();
+  const uniqueTags = createMemo(() => {
+    const set = new Set(dataStore.items.map(item => item.tag));
+    set.delete('');
+
+    const sorted = [...set].sort((a, b) => a.localeCompare(b));
+    return sorted;
+  });
+
+  return (
+    <div class="flex flex-col gap-2">
+      <h1 class="text-lg font-bold">Tag List:</h1>
+      <For each={uniqueTags()}>
+        {(tag) =>
+          <input
+          class="input input-bordered w-full max-w-md text-sm"
+          type="text"
+          id="tag"
+          aria-label="Tag"
+          size={60}
+          value={tag}
+          onInput={(e) => {}}
+        />
+        }
+      </For>
     </div>
   )
 }
