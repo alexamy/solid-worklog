@@ -61,19 +61,6 @@ export function createDataStore() {
     });
   }
 
-  function finishLog(): Item {
-    setDataStore('items', 0, {
-      end: new Date(),
-    });
-
-    return dataStore.items[0];
-  }
-
-  function tapLog(): Item {
-    finishLog();
-    return startLog();
-  }
-
   // item movement
   function addRow(at: Date): Item {
     const date = new Date(at);
@@ -160,9 +147,7 @@ export function createDataStore() {
     updateItem,
 
     startLog,
-    finishLog,
     fillLog,
-    tapLog,
 
     addRow,
     duplicateRow,

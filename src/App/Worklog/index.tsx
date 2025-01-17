@@ -314,8 +314,6 @@ function ToolbarWorklog(props: {
   const [appStore, setAppStore] = useAppContext();
   const [dataStore, _2, {
     startLog,
-    finishLog,
-    tapLog,
     fillLog,
   }] = useDataContext();
 
@@ -334,10 +332,9 @@ function ToolbarWorklog(props: {
       throw new Error('Item not found');
     }
 
-    startNew(item);
+    startNew({ ...item, start: new Date() });
   }
 
-  // FIX: case when filling from the past day
   function fill() {
     const item = fillLog({ tag: 'idle' });
     props.setSelectedDate(new Date());
@@ -345,13 +342,12 @@ function ToolbarWorklog(props: {
   }
 
   function tap() {
-    tapLog();
+    startLog();
   }
 
   function finish() {
     setAppStore('isInProgress', false);
-    const item = finishLog();
-    props.setSelectedItemId(item.id);
+    props.setSelectedItemId(dataStore.items[0].id);
   }
 
   return (
