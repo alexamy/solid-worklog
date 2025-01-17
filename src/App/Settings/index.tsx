@@ -86,20 +86,32 @@ function TagList() {
     return sorted;
   });
 
+  function onKeyUp(e: KeyboardEvent & { currentTarget: HTMLInputElement }) {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      const oldValue = e.currentTarget.dataset.tag;
+      const newValue = e.currentTarget.value;
+
+      setDataStore('items', item => item.tag === oldValue, 'tag', newValue);
+      e.currentTarget.dataset.tag = newValue;
+    }
+  }
+
   return (
     <div class="flex flex-col gap-2">
-      <h1 class="text-lg font-bold">Tag List:</h1>
+      <h1 class="text-lg font-bold">Tag List</h1>
       <For each={uniqueTags()}>
         {(tag) =>
           <input
-          class="input input-bordered w-full max-w-md text-sm"
-          type="text"
-          id="tag"
-          aria-label="Tag"
-          size={60}
-          value={tag}
-          onInput={(e) => {}}
-        />
+            class="input input-bordered w-full max-w-md text-sm"
+            type="text"
+            id="tag"
+            aria-label="Tag"
+            size={60}
+            data-tag={tag}
+            value={tag}
+            onKeyUp={(e) => onKeyUp(e)}
+          />
         }
       </For>
     </div>
