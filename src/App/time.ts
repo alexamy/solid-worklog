@@ -2,7 +2,7 @@
 export function calculateDuration(start: Date, end: Date): number {
   const startHours = start.getHours();
   const startMinutes = start.getMinutes();
-  const endHours = end.getHours() < startHours ? end.getHours() + 24 : end.getHours();
+  const endHours = end.getHours() + (end.getHours() < startHours ? 24 : 0);
   const endMinutes = end.getMinutes();
 
   const hoursDiff = endHours - startHours;
