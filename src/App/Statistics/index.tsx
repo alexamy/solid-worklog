@@ -50,24 +50,21 @@ export function Statistics() {
 
   // stats
   const stats = createMemo(() => {
-    now(); // force update on clock change
-
     const start = getStartOfStatRange(selectedDate(), range());
     const items = dataStore.items.filter(item => areItemsInRange(item, start, range()));
     const result = aggregateByTag(items);
-
     return result;
   });
 
-  const sortedStats = createMemo(() =>
-    getSortedEntries(stats().entries, sortBy(), sortOrder())
-  );
+  const sortedStats = createMemo(() => {
+    const result = getSortedEntries(stats().entries, sortBy(), sortOrder());
+    return result;
+  });
 
   const allStats = createMemo(() => {
     const sumAll = minutesToHoursMinutes(stats().sumAll);
     const sumAllNoIdle = minutesToHoursMinutes(stats().sumAllNoIdle);
     const isMatch = sumAll === sumAllNoIdle;
-
     return isMatch ? sumAll : `${sumAll} (${sumAllNoIdle} on tasks)`;
   });
 
@@ -243,7 +240,7 @@ function getSortedEntries<T extends object>(
   sortBy: keyof T,
   sortOrder: 'asc' | 'desc'
 ): T[] {
-  return entries.sort((a, b) => {
+  return [...entries].sort((a, b) => {
     const aVal = a[sortBy];
     const bVal = b[sortBy];
 
