@@ -5,7 +5,7 @@ import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
 import { calculateDuration, toTimestamp } from '../time';
 
-type MouseEventTarget = MouseEvent & { currentTarget: HTMLElement };
+type FocusEventTarget = FocusEvent & { currentTarget: HTMLElement };
 type KeyboardEventTarget = KeyboardEvent & { currentTarget: HTMLElement };
 
 export function Worklog() {
@@ -131,7 +131,7 @@ export function Worklog() {
                   onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
                   onKeyDown={(e) => tagMenu.onKeyDown(e)}
                   onKeyUp={(e) => tagMenu.onKeyUp(e)}
-                  onClick={(e) => tagMenu.setParent(e)}
+                  onFocus={(e) => tagMenu.setParent(e)}
                 >
                   {item.tag}
                 </td>
@@ -140,7 +140,7 @@ export function Worklog() {
                   onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
                   onKeyDown={(e) => descriptionMenu.onKeyDown(e)}
                   onKeyUp={(e) => descriptionMenu.onKeyUp(e)}
-                  onClick={(e) => descriptionMenu.setParent(e)}
+                  onFocus={(e) => descriptionMenu.setParent(e)}
                 >
                   {item.description}
                 </td>
@@ -156,7 +156,7 @@ export function Worklog() {
 function AutcompleteMenu(props: {
   items: string[],
   visible: boolean,
-  parent?: MouseEventTarget,
+  parent?: FocusEventTarget,
   selectedIndex: number,
   onItemClick: (item: string) => void,
 }) {
@@ -204,7 +204,7 @@ function createAutocompleteControls(
   update: (item: string) => void,
 ) {
   const [query, setQuery] = createSignal('');
-  const [parent, setParent] = createSignal<MouseEventTarget>();
+  const [parent, setParent] = createSignal<FocusEventTarget>();
   const [visible, setVisible] = createSignal(false);
 
   // add debounce if performance is an issue
