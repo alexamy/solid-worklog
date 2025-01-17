@@ -29,6 +29,10 @@ export function App() {
     setDataStore,
     getDefaultDataStore,
     'solid-worklog-store',
+    store => {
+      store.items[0].end ??= now();
+      return store;
+    },
   );
 
   return (
