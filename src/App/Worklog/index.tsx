@@ -180,7 +180,7 @@ function AutcompleteMenu(props: {
     <Portal>
       <ul
         ref={listElement}
-        class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm'
+        class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm p-0'
         style={{ ...style(), display: listShown() ? 'block' : 'none' }}
       >
         <For each={props.items}>
