@@ -1,5 +1,5 @@
 import { Link, MetaProvider } from '@solidjs/meta';
-import { Show } from 'solid-js';
+import { createEffect, Show } from 'solid-js';
 import { DatePicker } from './DatePicker';
 import { Settings } from './Settings';
 import { Statistics } from './Statistics';
@@ -13,7 +13,6 @@ import { Worklog } from './Worklog';
 
 // component
 export function App() {
-  const now = createClock();
   const [appStore, setAppStore, appMethods] = createAppStore();
   const [dataStore, setDataStore, dataMethods] = createDataStore();
 
@@ -30,14 +29,20 @@ export function App() {
     getDefaultDataStore,
     'solid-worklog-store',
     store => {
-      store.items[0].end ??= now();
+      store.items[0].end ??= new Date();
       return store;
     },
   );
 
+  const now = createClock();
+  createEffect(() => {
+    if(!appStore.isInProgress) return;
+    setDataStore('items', 0, 'end', now());
+  });
+
   return (
     <MetaProvider>
-      <Favicon isInProgress={dataMethods.isInProgress()} />
+      <Favicon isInProgress={appStore.isInProgress} />
       <NowContext.Provider value={now}>
         <AppContext.Provider value={[appStore, setAppStore, appMethods]}>
           <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>

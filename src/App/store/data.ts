@@ -10,7 +10,7 @@ export interface Item {
   description: string;
   tag: string;
   start: Date;
-  end: Date | undefined;
+  end: Date;
 }
 
 export const DataContext = createContext<DataContextValue>();

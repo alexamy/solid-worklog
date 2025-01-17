@@ -3,7 +3,6 @@ import { createEffect, createMemo, createSignal, For, on, onCleanup, Show } from
 import { Portal } from 'solid-js/web';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
-import { useNowContext } from '../store/now';
 import { calculateDuration, toTimestamp } from '../time';
 
 type MouseEventTarget = MouseEvent & { currentTarget: HTMLElement };
@@ -11,8 +10,9 @@ type KeyboardEventTarget = KeyboardEvent & { currentTarget: HTMLElement };
 
 export function Worklog() {
   const [appStore, setAppStore] = useAppContext();
-  const [dataStore, _, { isInProgress, updateItem }] = useDataContext();
-  const now = useNowContext();
+  const [dataStore, _, { updateItem }] = useDataContext();
+
+  const isInProgress = () => appStore.isInProgress;
 
   // worklog table data
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
@@ -98,7 +98,7 @@ export function Worklog() {
 
         <tbody>
           <For each={itemsAtDate()}>
-            {(item) => (
+            {(item, index) => (
               <tr
                 classList={{
                   'text-gray-400 dark:text-gray-600 ': item.tag === 'idle',
@@ -114,17 +114,17 @@ export function Worklog() {
                   {toTimestamp(item.start)}
                 </td>
                 <td>
-                  {calculateDuration(item.start, item.end ?? now())}
+                  {calculateDuration(item.start, item.end)}
                 </td>
                 <td
                   classList={{
-                    'text-gray-400 dark:text-gray-600': !item.end
+                    'text-gray-400 dark:text-gray-600': isInProgress() && index() === 0
                   }}
-                  contentEditable={Boolean(item.end)}
-                  onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
+                  contentEditable={!isInProgress()}
+                  onBlur={(e) => updateItem({ end: updateTimestamp(item.end, e.currentTarget.textContent!) }, item.id)}
                   onKeyDown={(e) => onCellKeyDown(e)}
                 >
-                  {toTimestamp(item.end ?? now())}
+                  {toTimestamp(item.end)}
                 </td>
                 <td
                   contentEditable
@@ -311,6 +311,7 @@ function ToolbarWorklog(props: {
   selectedItemId: string | undefined,
   setSelectedItemId: (id: string | undefined) => void,
 }) {
+  const [appStore, setAppStore] = useAppContext();
   const [dataStore, _2, {
     startLog,
     finishLog,
@@ -318,9 +319,9 @@ function ToolbarWorklog(props: {
     fillLog,
   }] = useDataContext();
 
-
-  function startNew() {
-    startLog({ start: new Date(), end: undefined });
+  function startNew(item: Partial<Item> = {}) {
+    startLog(item);
+    setAppStore('isInProgress', true);
     props.setSelectedDate(new Date()); // TODO: add app store methods
   }
 
@@ -333,8 +334,7 @@ function ToolbarWorklog(props: {
       throw new Error('Item not found');
     }
 
-    startLog({ ...item, start: new Date(), end: undefined });
-    props.setSelectedDate(new Date()); // TODO: add app store methods
+    startNew(item);
   }
 
   // FIX: case when filling from the past day
@@ -349,6 +349,7 @@ function ToolbarWorklog(props: {
   }
 
   function finish() {
+    setAppStore('isInProgress', false);
     const item = finishLog();
     props.setSelectedItemId(item.id);
   }

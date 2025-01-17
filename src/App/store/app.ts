@@ -10,6 +10,7 @@ export interface AppStore {
   jiraHost: string;
   theme: 'light' | 'dark';
   skipEmptyDays: boolean;
+  isInProgress: boolean;
 }
 
 export const AppContext = createContext<AppContextValue>();
@@ -33,5 +34,6 @@ export function getDefaultAppStore(): AppStore {
     jiraHost: '',
     theme: 'light',
     skipEmptyDays: false,
+    isInProgress: false,
   };
 }

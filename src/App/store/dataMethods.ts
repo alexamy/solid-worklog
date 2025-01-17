@@ -9,16 +9,13 @@ export type DataContextValue = ReturnType<typeof createDataStore>;
 export function createDataStore() {
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
 
-  // memos
-  const isInProgress = () => dataStore.items[0].end === undefined;
-
   // item management
   function createItem(partial: Partial<Item>): Item {
     const item = {
       description: '',
       tag: '',
       start: new Date(),
-      end: undefined,
+      end: new Date(),
       ...partial,
       id: randomId(),
     };
@@ -48,11 +45,7 @@ export function createDataStore() {
     }
 
     // start new item
-    return createItem({
-      start: now,
-      end: undefined,
-      ...item,
-    });
+    return createItem(item);
   }
 
   function fillLog(item: Partial<Item> = {}): Item {
@@ -163,8 +156,6 @@ export function createDataStore() {
   }
 
   return [dataStore, setDataStore, {
-    isInProgress,
-
     createItem,
     updateItem,
 
