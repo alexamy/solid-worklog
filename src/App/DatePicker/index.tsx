@@ -76,7 +76,7 @@ export function DatePicker() {
         {toTimestamp(now())}
       </div>
       <div class='flex items-center justify-end gap-3'>
-        <div class='flex items-center justify-center gap-2 translate-y-[-2px] mr-2'>
+        <div class='flex items-center justify-center gap-2 translate-y-[-2px]'>
           <DownloadButton
             onClick={downloadDataStore}
           />
