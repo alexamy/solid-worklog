@@ -98,12 +98,12 @@ function TagList() {
   }
 
   return (
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1">
       <h1 class="text-lg font-bold">Tag List</h1>
       <For each={uniqueTags()}>
         {(tag) =>
           <input
-            class="input input-bordered w-full max-w-md text-sm"
+            class="input input-bordered rounded-none w-full max-w-md h-fit text-sm p-2 focus:outline-offset-0"
             type="text"
             id="tag"
             aria-label="Tag"
