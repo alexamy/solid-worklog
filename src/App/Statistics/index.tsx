@@ -49,6 +49,7 @@ export function Statistics() {
   const setRange = (range: StatRange) => setAppStore('statRange', range);
 
   // stats
+  // TODO: extract to data methods
   const stats = createMemo(() => {
     const start = getStartOfStatRange(selectedDate(), range());
     const items = dataStore.items.filter(item => areItemsInRange(item, start, range()));
