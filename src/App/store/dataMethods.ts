@@ -9,16 +9,13 @@ export type DataContextValue = ReturnType<typeof createDataStore>;
 export function createDataStore() {
   const [dataStore, setDataStore] = createStore(getDefaultDataStore());
 
-  // memos
-  const isInProgress = () => dataStore.items[0].end === undefined;
-
   // item management
   function createItem(partial: Partial<Item>): Item {
     const item = {
       description: '',
       tag: '',
       start: new Date(),
-      end: undefined,
+      end: new Date(),
       ...partial,
       id: randomId(),
     };
@@ -48,11 +45,7 @@ export function createDataStore() {
     }
 
     // start new item
-    return createItem({
-      start: now,
-      end: undefined,
-      ...item,
-    });
+    return createItem(item);
   }
 
   function fillLog(item: Partial<Item> = {}): Item {
@@ -68,26 +61,13 @@ export function createDataStore() {
     });
   }
 
-  function finishLog(): Item {
-    setDataStore('items', 0, {
-      end: new Date(),
-    });
-
-    return dataStore.items[0];
-  }
-
-  function tapLog(): Item {
-    finishLog();
-    return startLog();
-  }
-
   // item movement
   function addRow(at: Date): Item {
     const date = new Date(at);
 
     return createItem({
       start: new Date(date.setHours(12, 0, 0, 0)),
-      end: new Date(date.setHours(12, 5, 0, 0)),
+      end: new Date(date.setHours(12, 0, 0, 0)),
     });
   }
 
@@ -163,15 +143,11 @@ export function createDataStore() {
   }
 
   return [dataStore, setDataStore, {
-    isInProgress,
-
     createItem,
     updateItem,
 
     startLog,
-    finishLog,
     fillLog,
-    tapLog,
 
     addRow,
     duplicateRow,

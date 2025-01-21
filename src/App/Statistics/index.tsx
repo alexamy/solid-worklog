@@ -14,6 +14,7 @@ interface StatEntry {
 interface StatResult {
   entries: StatEntry[];
   sumAll: number;
+  sumAllNoIdle: number;
 }
 
 type StatRange = 'day' | 'week' | 'month' | 'year' | 'all';
@@ -49,19 +50,23 @@ export function Statistics() {
 
   // stats
   const stats = createMemo(() => {
-    now(); // force update on clock change
-
     const start = getStartOfStatRange(selectedDate(), range());
     const items = dataStore.items.filter(item => areItemsInRange(item, start, range()));
     const result = aggregateByTag(items);
-
     return result;
   });
 
-  const sortedStats = createMemo(() => ({
-    entries: getSortedEntries(stats().entries, sortBy(), sortOrder()),
-    sumAll: stats().sumAll,
-  }));
+  const sortedStats = createMemo(() => {
+    const result = getSortedEntries(stats().entries, sortBy(), sortOrder());
+    return result;
+  });
+
+  const allStats = createMemo(() => {
+    const sumAll = minutesToHoursMinutes(stats().sumAll);
+    const sumAllNoIdle = minutesToHoursMinutes(stats().sumAllNoIdle);
+    const isMatch = sumAll === sumAllNoIdle;
+    return isMatch ? sumAll : `${sumAll} (${sumAllNoIdle} on tasks)`;
+  });
 
   // TODO: fix locked td height
 
@@ -90,14 +95,13 @@ export function Statistics() {
           </thead>
 
           <tbody>
-            <For each={sortedStats().entries}>
+            <For each={sortedStats()}>
               {(entry) => <ItemRow {...entry} jiraHost={appStore.jiraHost} />}
             </For>
 
             <tr>
               <td></td>
-              <td><b>{minutesToHoursMinutes(sortedStats().sumAll)}</b></td>
-              <td></td>
+              <td colspan={2} class="statistics-all-stats"><b>{allStats()}</b></td>
             </tr>
           </tbody>
         </table>
@@ -111,8 +115,11 @@ function Toolbar(props: {
   statRange: StatRange;
   setStatRange: (time: StatRange) => void;
 }) {
+  const day = () => props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+  const weekday = () => props.selectedDate.toLocaleDateString('en-US', { weekday: 'short' });
+
   const intervals = createMemo(() => ({
-    day: props.selectedDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }),
+    day: `${weekday()} ${day()}`,
     week: getWeekInterval(props.selectedDate),
     month: props.selectedDate.toLocaleDateString('en-US', { month: 'long' }),
     year: props.selectedDate.toLocaleDateString('en-US', { year: 'numeric' }),
@@ -219,7 +226,7 @@ function TagView(props: { tag: string, jiraHost: string }) {
       <Show when={props.jiraHost} fallback={props.tag}>
         <For each={props.tag.split(jiraRegex)}>
           {(part) => part.match(jiraRegex)
-            ? <a class="link" href={`${props.jiraHost}/browse/${part}`}>{part}</a>
+            ? <a class="link" target="_blank" href={`${props.jiraHost}/browse/${part}`}>{part}</a>
             : part
           }
         </For>
@@ -233,7 +240,7 @@ function getSortedEntries<T extends object>(
   sortBy: keyof T,
   sortOrder: 'asc' | 'desc'
 ): T[] {
-  return entries.sort((a, b) => {
+  return [...entries].sort((a, b) => {
     const aVal = a[sortBy];
     const bVal = b[sortBy];
 
@@ -262,8 +269,9 @@ function aggregateByTag(items: Item[]): StatResult {
   });
 
   const sumAll = entries.reduce((sum, entry) => sum + entry.duration, 0);
+  const sumAllNoIdle = entries.reduce((sum, entry) => sum + (entry.tag === 'idle' ? 0 : entry.duration), 0);
 
-  return { entries, sumAll };
+  return { entries, sumAll, sumAllNoIdle };
 }
 
 // stat range

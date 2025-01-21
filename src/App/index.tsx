@@ -1,27 +1,24 @@
-import { Statistics } from './Statistics';
-import { AppContext, createAppStore, getDefaultAppStore, useAppContext } from './store/app';
-import { DataContext, getDefaultDataStore } from './store/data';
-import { DatePicker } from './DatePicker';
-import { createClock } from './store/now';
-import { Utilities } from './Utilities';
-import { persistObject } from './store/persistence';
-import { NowContext } from './store/now';
-import { Worklog } from './Worklog';
-import { Settings } from './Settings';
-import { createDataStore } from './store/dataMethods';
-import { Show } from 'solid-js';
 import { Link, MetaProvider } from '@solidjs/meta';
+import { createEffect, Show } from 'solid-js';
+import { DatePicker } from './DatePicker';
+import { Settings } from './Settings';
+import { Statistics } from './Statistics';
+import { AppContext, getDefaultAppStore } from './store/app';
+import { createAppStore } from './store/appMethods';
+import { DataContext, getDefaultDataStore } from './store/data';
+import { createDataStore } from './store/dataMethods';
+import { createClock, NowContext } from './store/now';
+import { persistObject } from './store/persistence';
+import { Worklog } from './Worklog';
 
 // component
 export function App() {
-  const now = createClock();
-  const [appStore, setAppStore] = createAppStore();
+  const [appStore, setAppStore, appMethods] = createAppStore();
   const [dataStore, setDataStore, dataMethods] = createDataStore();
 
   persistObject(
     appStore,
-    // TODO: move to app store methods
-    state => setAppStore({ ...getDefaultAppStore(), ...state }),
+    appMethods.resetWithDefaults,
     getDefaultAppStore,
     'solid-worklog-app',
   );
@@ -31,13 +28,23 @@ export function App() {
     setDataStore,
     getDefaultDataStore,
     'solid-worklog-store',
+    store => {
+      store.items[0].end ??= new Date();
+      return store;
+    },
   );
+
+  const now = createClock();
+  createEffect(() => {
+    if(!appStore.isInProgress) return;
+    setDataStore('items', 0, 'end', now());
+  });
 
   return (
     <MetaProvider>
-      <Favicon isInProgress={dataMethods.isInProgress()} />
+      <Favicon isInProgress={appStore.isInProgress} />
       <NowContext.Provider value={now}>
-        <AppContext.Provider value={[appStore, setAppStore]}>
+        <AppContext.Provider value={[appStore, setAppStore, appMethods]}>
           <DataContext.Provider value={[dataStore, setDataStore, dataMethods]}>
             <div class='container max-w-screen-md px-8 py-4 flex flex-col'>
               <DatePicker />
@@ -49,8 +56,6 @@ export function App() {
               </Show>
               <Show when={appStore.currentTab === 'settings'}>
                 <Settings />
-                <div class="mb-4"></div>
-                <Utilities />
               </Show>
             </div>
           </DataContext.Provider>

@@ -3,16 +3,16 @@ import { createEffect, createMemo, createSignal, For, on, onCleanup, Show } from
 import { Portal } from 'solid-js/web';
 import { useAppContext } from '../store/app';
 import { Item, useDataContext } from '../store/data';
-import { useNowContext } from '../store/now';
 import { calculateDuration, toTimestamp } from '../time';
 
-type MouseEventTarget = MouseEvent & { currentTarget: HTMLElement };
+type FocusEventTarget = FocusEvent & { currentTarget: HTMLElement };
 type KeyboardEventTarget = KeyboardEvent & { currentTarget: HTMLElement };
 
 export function Worklog() {
   const [appStore, setAppStore] = useAppContext();
-  const [dataStore, _, { isInProgress, updateItem }] = useDataContext();
-  const now = useNowContext();
+  const [dataStore, _, { updateItem }] = useDataContext();
+
+  const isInProgress = () => appStore.isInProgress;
 
   // worklog table data
   const [selectedItemId, setSelectedItemId] = createSignal<string | undefined>(undefined);
@@ -39,36 +39,16 @@ export function Worklog() {
   }
 
   // tag autocomplete
-  const tagMenu = createAutocompleteControls();
-
-  function onTagCellKeyDown(e: KeyboardEventTarget) {
-    if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
-      tagMenu.setVisible(false);
-    }
-  }
-
-  function onTagCellKeyUp(e: KeyboardEventTarget) {
-    if (e.key === 'Enter') return;
-    tagMenu.setQuery(e.currentTarget.textContent!);
-    tagMenu.setVisible(true);
-  }
+  const tagMenu = createAutocompleteControls(
+    () => dataStore.items.map(item => item.tag),
+    (tag) => updateItem({ tag }, selectedItemId()!),
+  );
 
   // description autocomplete
-  const descriptionMenu = createAutocompleteControls();
-
-  function onDescriptionCellKeyDown(e: KeyboardEventTarget) {
-    if (e.key === 'Enter') {
-      triggerNonDestructiveBlur(e);
-      descriptionMenu.setVisible(false);
-    }
-  }
-
-  function onDescriptionCellKeyUp(e: KeyboardEventTarget) {
-    if (e.key === 'Enter') return;
-    descriptionMenu.setQuery(e.currentTarget.textContent!);
-    descriptionMenu.setVisible(true);
-  }
+  const descriptionMenu = createAutocompleteControls(
+    () => dataStore.items.map(item => item.description),
+    (description) => updateItem({ description }, selectedItemId()!),
+  );
 
   return (
     <div>
@@ -90,18 +70,18 @@ export function Worklog() {
       </div>
 
       <AutcompleteMenu
-        items={dataStore.items.map(item => item.tag)}
+        items={tagMenu.availableItems()}
         visible={tagMenu.visible()}
-        query={tagMenu.query()}
         parent={tagMenu.parent()}
+        selectedIndex={tagMenu.selectedIndex()}
         onItemClick={(tag) => updateItem({ tag }, selectedItemId()!)}
       />
 
       <AutcompleteMenu
-        items={dataStore.items.map(item => item.description)}
+        items={descriptionMenu.availableItems()}
         visible={descriptionMenu.visible()}
-        query={descriptionMenu.query()}
         parent={descriptionMenu.parent()}
+        selectedIndex={descriptionMenu.selectedIndex()}
         onItemClick={(description) => updateItem({ description }, selectedItemId()!)}
       />
 
@@ -118,7 +98,7 @@ export function Worklog() {
 
         <tbody>
           <For each={itemsAtDate()}>
-            {(item) => (
+            {(item, index) => (
               <tr
                 classList={{
                   'text-gray-400 dark:text-gray-600 ': item.tag === 'idle',
@@ -134,33 +114,33 @@ export function Worklog() {
                   {toTimestamp(item.start)}
                 </td>
                 <td>
-                  {calculateDuration(item.start, item.end ?? now())}
+                  {calculateDuration(item.start, item.end)}
                 </td>
                 <td
                   classList={{
-                    'text-gray-600': !item.end
+                    'text-gray-400 dark:text-gray-600': isInProgress() && index() === 0
                   }}
-                  contentEditable={Boolean(item.end)}
-                  onBlur={(e) => updateItem({ end: updateTimestamp(item.end!, e.currentTarget.textContent!) }, item.id)}
+                  contentEditable={!(isInProgress() && index() === 0)}
+                  onBlur={(e) => updateItem({ end: updateTimestamp(item.end, e.currentTarget.textContent!) }, item.id)}
                   onKeyDown={(e) => onCellKeyDown(e)}
                 >
-                  {toTimestamp(item.end ?? now())}
+                  {toTimestamp(item.end)}
                 </td>
                 <td
                   contentEditable
                   onBlur={(e) => updateItem({ tag: e.currentTarget.textContent! }, item.id)}
-                  onKeyDown={(e) => onTagCellKeyDown(e)}
-                  onKeyUp={(e) => onTagCellKeyUp(e)}
-                  onClick={(e) => tagMenu.setParent(e)}
+                  onKeyDown={(e) => tagMenu.onKeyDown(e)}
+                  onKeyUp={(e) => tagMenu.onKeyUp(e)}
+                  onFocus={(e) => tagMenu.setParent(e)}
                 >
                   {item.tag}
                 </td>
                 <td
                   contentEditable
                   onBlur={(e) => updateItem({ description: e.currentTarget.textContent! }, item.id)}
-                  onKeyDown={(e) => onDescriptionCellKeyDown(e)}
-                  onKeyUp={(e) => onDescriptionCellKeyUp(e)}
-                  onClick={(e) => descriptionMenu.setParent(e)}
+                  onKeyDown={(e) => descriptionMenu.onKeyDown(e)}
+                  onKeyUp={(e) => descriptionMenu.onKeyUp(e)}
+                  onFocus={(e) => descriptionMenu.setParent(e)}
                 >
                   {item.description}
                 </td>
@@ -176,23 +156,12 @@ export function Worklog() {
 function AutcompleteMenu(props: {
   items: string[],
   visible: boolean,
-  query: string,
-  parent?: MouseEventTarget,
+  parent?: FocusEventTarget,
+  selectedIndex: number,
   onItemClick: (item: string) => void,
 }) {
   let listElement!: HTMLUListElement;
-
-  // TODO: add debounce if performance is an issue
-  const uniqueItems = createMemo(() => ([...new Set(props.items)]));
-  const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
-  const [availableItems, setAvailableItems] = createSignal<string[]>([]);
-  const listShown = () => props.visible && availableItems().length > 0;
-
-  // update available tags
-  createEffect(on(() => props.query, (query) => {
-    const results = fuzzySearch()(query);
-    setAvailableItems(results.map(result => result.item));
-  }));
+  const listShown = () => props.visible && props.items.length > 0;
 
   // position tag list
   const [style, setStyle] = createSignal({});
@@ -211,13 +180,14 @@ function AutcompleteMenu(props: {
     <Portal>
       <ul
         ref={listElement}
-        class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm'
+        class='menu rounded-sm shadow-sm absolute top-0 left-0 z-1000 bg-base-100 text-sm p-0'
         style={{ ...style(), display: listShown() ? 'block' : 'none' }}
       >
-        <For each={availableItems()}>
-          {(item) =>
+        <For each={props.items}>
+          {(item, index) =>
             <li
               class='cursor-pointer'
+              classList={{ 'bg-base-300': index() === props.selectedIndex }}
               onClick={() => props.onItemClick(item)}
             >
               <a>{item}</a>
@@ -229,10 +199,37 @@ function AutcompleteMenu(props: {
   );
 }
 
-function createAutocompleteControls() {
+function createAutocompleteControls(
+  items: () => string[],
+  update: (item: string) => void,
+) {
   const [query, setQuery] = createSignal('');
-  const [parent, setParent] = createSignal<MouseEventTarget>();
+  const [parent, setParent] = createSignal<FocusEventTarget>();
   const [visible, setVisible] = createSignal(false);
+
+  // add debounce if performance is an issue
+  const uniqueItems = createMemo(() => ([...new Set(items())]));
+  const fuzzySearch = createMemo(() => createFuzzySearch(uniqueItems()));
+  const [availableItems, setAvailableItems] = createSignal<string[]>([]);
+
+  // allow to select item by index
+  const [selectedIndex, setSelectedIndex] = createSignal(-1);
+  function selectItem(direction: 'up' | 'down') {
+    const index = selectedIndex();
+    const length = availableItems().length;
+
+    if(direction === 'up') {
+      setSelectedIndex(index === -1 ? 0 : (index - 1 + length) % length);
+    } else {
+      setSelectedIndex(index === -1 ? 0 : (index + 1) % length);
+    }
+  }
+
+  // update available tags
+  createEffect(on(() => query(), (query) => {
+    const results = fuzzySearch()(query);
+    setAvailableItems(results.map(result => result.item));
+  }));
 
   // hide tag list when clicking outside
   createEffect(() => {
@@ -240,14 +237,71 @@ function createAutocompleteControls() {
     onCleanup(() => document.body.removeEventListener('click', onClick));
 
     function onClick() {
-      setVisible(false);
+      toggleVisible('hide');
     }
   });
 
+  // toggle visible state and reset selected index
+  function toggleVisible(state: 'show' | 'hide') {
+    if(state === 'show') {
+      setVisible(true);
+    } else {
+      setSelectedIndex(-1);
+      setVisible(false);
+    }
+  }
+
+  // keyboard handlers
+  function onKeyDown(e: KeyboardEventTarget) {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+
+      if(selectedIndex() >= 0) {
+        const items = availableItems();
+        const item = items?.[selectedIndex()];
+
+        if(item) {
+          update(item);
+          e.currentTarget.textContent = item;
+        }
+      } else {
+        triggerNonDestructiveBlur(e);
+      }
+
+      toggleVisible('hide');
+    }
+
+    if(e.key === 'Escape') {
+      toggleVisible('hide');
+    }
+
+    if(e.key === 'ArrowUp') {
+      selectItem('up');
+    }
+
+    if(e.key === 'ArrowDown') {
+      selectItem('down');
+    }
+  }
+
+  function onKeyUp(e: KeyboardEventTarget) {
+    if (
+      e.key === 'Enter' || e.key === 'Control' ||
+      e.key === 'ArrowUp' || e.key === 'ArrowDown' ||
+      e.key === 'Escape'
+    ) return;
+
+    setQuery(e.currentTarget.textContent!);
+    toggleVisible('show');
+  }
+
   return {
+    availableItems,
     query, setQuery,
     parent, setParent,
-    visible, setVisible,
+    visible, toggleVisible,
+    selectedIndex, selectItem,
+    onKeyDown, onKeyUp,
   };
 }
 
@@ -257,14 +311,19 @@ function ToolbarWorklog(props: {
   selectedItemId: string | undefined,
   setSelectedItemId: (id: string | undefined) => void,
 }) {
+  const [appStore, setAppStore] = useAppContext();
   const [dataStore, _2, {
     startLog,
-    finishLog,
-    tapLog,
     fillLog,
   }] = useDataContext();
 
-  function start() {
+  function startNew(item: Partial<Item> = {}) {
+    startLog(item);
+    setAppStore('isInProgress', true);
+    props.setSelectedDate(new Date()); // TODO: add app store methods
+  }
+
+  function startSelected() {
     const item = props.selectedItemId
       ? dataStore.items.find(item => item.id === props.selectedItemId)
       : {};
@@ -273,11 +332,9 @@ function ToolbarWorklog(props: {
       throw new Error('Item not found');
     }
 
-    startLog({ ...item, start: new Date(), end: undefined });
-    props.setSelectedDate(new Date()); // TODO: add app store methods
+    startNew({ ...item, start: new Date() });
   }
 
-  // FIX: case when filling from the past day
   function fill() {
     const item = fillLog({ tag: 'idle' });
     props.setSelectedDate(new Date());
@@ -285,12 +342,12 @@ function ToolbarWorklog(props: {
   }
 
   function tap() {
-    tapLog();
+    startLog();
   }
 
   function finish() {
-    const item = finishLog();
-    props.setSelectedItemId(item.id);
+    setAppStore('isInProgress', false);
+    props.setSelectedItemId(dataStore.items[0].id);
   }
 
   return (
@@ -300,8 +357,16 @@ function ToolbarWorklog(props: {
           class="btn btn-sm btn-primary"
           title="Start new entry"
           disabled={props.isInProgress}
-          onClick={() => start()}
-        >{props.selectedItemId ? 'Start selected' : 'Start new'}</button>
+          onClick={() => startNew()}
+        >Start new</button>
+        <Show when={props.selectedItemId}>
+          <button
+            class="btn btn-sm btn-primary"
+            title="Start selected entry"
+            disabled={props.isInProgress}
+            onClick={() => startSelected()}
+          >Start selected</button>
+        </Show>
         <button
           class="btn btn-sm btn-neutral"
           title="Add completed entry between last entry and now"
@@ -347,6 +412,17 @@ function ToolbarTable(props: {
 
   return (
     <div class='flex align-center justify-end gap-3'>
+      <button
+        class="btn btn-sm btn-neutral"
+        title="Add new row"
+        onClick={() => addRow(props.selectedDate)}
+      >+</button>
+      <button
+        class="btn btn-sm btn-neutral"
+        title="Duplicate selected row"
+        disabled={!props.selectedItemId}
+        onClick={() => duplicateRow(props.selectedItemId!)}
+      >++</button>
       <button
         class="btn btn-sm btn-neutral"
         title="Move row up"

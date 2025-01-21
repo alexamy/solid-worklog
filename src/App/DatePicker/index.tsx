@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal } from 'solid-js';
 import { toTimestamp } from '../time';
 import { useAppContext } from '../store/app';
 import { useNowContext } from '../store/now';
@@ -6,19 +6,36 @@ import { useDataContext } from '../store/data';
 
 export function DatePicker() {
   const [appStore, setAppStore] = useAppContext();
-  const [_1, _2, { isInProgress, downloadDataStore }] = useDataContext();
+  const [dataStore, _2, { downloadDataStore }] = useDataContext();
   const now = useNowContext();
 
-  const selectedDate = () => appStore.selectedDate;
-  const setSelectedDate = (date: Date) => setAppStore('selectedDate', date);
+  const isToday = createMemo(() => appStore.selectedDate.toDateString() === new Date().toDateString());
+  const dayOfWeek = () => new Date().toLocaleDateString(undefined, { weekday: 'long' });
 
-  const isToday = createMemo(() => selectedDate().toDateString() === new Date().toDateString());
-  const dayOfWeek = () => selectedDate().toLocaleDateString(undefined, { weekday: 'long' });
+  const uniqueDates = createMemo(() => new Set([
+    ...dataStore.items.map(date => date.start.toLocaleDateString('en-CA')),
+    new Date().toLocaleDateString('en-CA'),
+  ]));
+
+  const uniqueDatesArray = createMemo(() => Array.from(uniqueDates()).sort());
+  const selectedDateIndex = createMemo(() =>
+    uniqueDatesArray().indexOf(appStore.selectedDate.toLocaleDateString('en-CA'))
+  );
+
+  const prevDisabled = () => appStore.skipEmptyDays && selectedDateIndex() === 0;
+  const nextDisabled = () => isToday() || (appStore.skipEmptyDays && selectedDateIndex() === uniqueDatesArray().length - 1);
 
   function moveDate(delta: number) {
-    const next = new Date(selectedDate());
-    next.setDate(next.getDate() + delta);
-    setSelectedDate(next);
+    if(appStore.skipEmptyDays) {
+      const next = uniqueDatesArray()[selectedDateIndex() + delta];
+      if(next) {
+        setAppStore('selectedDate', new Date(next));
+      }
+    } else {
+      const next = new Date(appStore.selectedDate);
+      next.setDate(next.getDate() + delta);
+      setAppStore('selectedDate', next);
+    }
   }
 
   function toggleSettings() {
@@ -34,22 +51,24 @@ export function DatePicker() {
         <button
           class="btn btn-xs btn-neutral"
           disabled={isToday()}
-          onClick={() => setSelectedDate(new Date())}
+          onClick={() => setAppStore('selectedDate', new Date())}
         >Today</button>
         <button
           class="btn btn-xs btn-neutral"
+          disabled={prevDisabled()}
           onClick={() => moveDate(-1)}
         >{'<'}</button>
         <input
+          disabled={appStore.skipEmptyDays}
           class="w-auto px-2 py-1"
           type="date"
-          value={selectedDate().toLocaleDateString('en-CA')}
+          value={appStore.selectedDate.toLocaleDateString('en-CA')}
           max={new Date().toLocaleDateString('en-CA')}
-          onChange={(e) => setSelectedDate(new Date(e.target.value))}
+          onChange={(e) => setAppStore('selectedDate', new Date(e.target.value))}
         />
         <button
           class="btn btn-xs btn-neutral"
-          disabled={isToday()}
+          disabled={nextDisabled()}
           onClick={() => moveDate(1)}
         >{'>'}</button>
         {dayOfWeek()}
@@ -57,7 +76,7 @@ export function DatePicker() {
         {toTimestamp(now())}
       </div>
       <div class='flex items-center justify-end gap-3'>
-        <div class='flex items-center justify-center gap-2 translate-y-[-2px] mr-2'>
+        <div class='flex items-center justify-center gap-2 translate-y-[-2px]'>
           <DownloadButton
             onClick={downloadDataStore}
           />
@@ -65,8 +84,8 @@ export function DatePicker() {
             selected={appStore.currentTab === 'settings'}
             onClick={toggleSettings}
           />
+          <ThemeController />
         </div>
-        <ThemeController />
       </div>
     </div>
   );
@@ -90,39 +109,21 @@ function ThemeController() {
   }
 
   return (
-    <label class="flex cursor-pointer gap-2">
+    <label class="swap swap-rotate">
+      <input type="checkbox" checked={!checked()} onChange={onThemeChange} />
       <svg
+        class="size-6 swap-on fill-current"
         xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5" />
+        viewBox="0 0 24 24">
         <path
-          d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
+          d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
       </svg>
-      <input
-        class="toggle theme-controller"
-        type="checkbox"
-        value={DARK_THEME}
-        checked={checked()}
-        onChange={onThemeChange}
-      />
       <svg
+        class="size-6 swap-off fill-current"
         xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        viewBox="0 0 24 24">
+        <path
+          d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
       </svg>
     </label>
   );
@@ -132,7 +133,7 @@ function DownloadButton(props: { onClick: () => void }) {
   return (
     <svg
       aria-label="Download backup"
-      class='size-6 stroke-gray-600 hover:stroke-gray-300 cursor-pointer'
+      class='size-6 stroke-gray-600 hover:stroke-gray-400 dark:hover:stroke-gray-300 cursor-pointer'
       onClick={() => props.onClick()}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -155,8 +156,8 @@ function SettingsButton(props: {
       aria-label="Settings"
       class="size-6 cursor-pointer"
       classList={{
-        'hover:stroke-gray-300 stroke-gray-600': !props.selected,
-        'hover:stroke-gray-300 stroke-primary': props.selected,
+        'hover:stroke-gray-400 dark:hover:stroke-gray-300 stroke-gray-600': !props.selected,
+        'hover:stroke-gray-400 stroke-primary': props.selected,
       }}
       onClick={() => props.onClick()}
       xmlns="http://www.w3.org/2000/svg"

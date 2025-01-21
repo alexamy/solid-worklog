@@ -6,6 +6,7 @@ export function persistObject<T extends object>(
   setStore: (store: T) => void,
   getDefaultStore: () => T,
   storageKey: string,
+  migrate: (store: T) => T = (store) => store,
 ) {
   createEffect(load);
   createEffect(save);
@@ -14,7 +15,7 @@ export function persistObject<T extends object>(
     const items = localStorage.getItem(storageKey);
     if (items) {
       try {
-        setStore(superjson.parse(items));
+        setStore(migrate(superjson.parse(items)));
       } catch (error) {
         console.error(error);
         localStorage.removeItem(storageKey);
