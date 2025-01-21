@@ -10,7 +10,6 @@ import { createDataStore } from './store/dataMethods';
 import { createClock, NowContext } from './store/now';
 import { persistObject } from './store/persistence';
 import { Worklog } from './Worklog';
-import { DayStats } from './DayStats';
 
 // component
 export function App() {
@@ -54,8 +53,6 @@ export function App() {
                 <Worklog />
                 <div class="mb-6"></div>
                 <Statistics />
-                <div class="mb-6"></div>
-                <DayStats />
               </Show>
               <Show when={appStore.currentTab === 'settings'}>
                 <Settings />
